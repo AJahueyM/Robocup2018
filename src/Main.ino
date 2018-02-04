@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Motor *right1; // = Motor(2);
+Motor *right1;
 Motor *right2;
 Motor *left1;
 Motor *left2;
