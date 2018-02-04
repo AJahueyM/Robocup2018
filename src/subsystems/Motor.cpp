@@ -13,13 +13,8 @@ Motor::Motor(int port){
 	Serial.println("DESPUES DE");
 }
 
-double map(double x, double in_min, double in_max, double out_min, double out_max)
-{
-  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
-
 void Motor::driveVelocity(double velocity){
-	double output = map(fabs(velocity), 0.0,1.0,0.0,255.0);
+	double output = mapD(fabs(velocity), 0.0,1.0,0.0,255.0);
 	Serial.println(output);
 
 	myMotor->setSpeed(output);
