@@ -3,7 +3,7 @@
 
 #include "Motor.h"
 #include "Gyro.h"
-
+#include "Utils.h"
 class DriveTrain{
 private:
 	Motor topRight, topLeft, lowRight, lowLeft;
@@ -19,6 +19,8 @@ public:
 	void resetYaw();
 	void resetPitch();
 	void resetAll();
+	void turnToAngle(int angle);
+	void driveStraight(double velocity, int angle);
 };
 
 

@@ -1,19 +1,21 @@
-#include "subsystems/Gyro.h"
+#include "subsystems/DriveTrain.h"
 
-Gyro *gyro;
-
+DriveTrain *driveTrain;
+long time = millis();
 void setup(){
 
 	Serial.begin(9600);
 	Serial.println("INICIAR PROG");
 
-	gyro = new Gyro();
-
+	driveTrain = new DriveTrain();
 	
 }
 
 void loop(){
- 	Serial.print(gyro->getPitch());
- 	Serial.print("       ");
- 	Serial.println(gyro->getYaw());
+	//time = millis();
+	//while(millis() - time < 2000){
+		//driveTrain->driveStraight(1, 0);
+	Serial.println(driveTrain->getYaw());
+	//}
+	//driveTrain->turnToAngle(driveTrain->getYaw() + 90);
 }

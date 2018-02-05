@@ -1,6 +1,8 @@
+#ifndef __GYRO_HEADER_
+#define __GYRO_HEADER_
+
 #include <Adafruit_BNO055.h>
 #include <Adafruit_Sensor.h>
-#include "subsystems/DriveTrain.h"
 
 using namespace std;
 
@@ -20,3 +22,4 @@ public:
 	void resetAll();
 
 };
+#endif

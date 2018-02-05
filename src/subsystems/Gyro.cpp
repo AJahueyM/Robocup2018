@@ -1,7 +1,6 @@
 #include "Gyro.h"
 
 Gyro::Gyro(){
-
 	if(!bno.begin()){
 		Serial.print("NO BNO 055 DETECTED");
 		while(1);
@@ -9,20 +8,18 @@ Gyro::Gyro(){
 
 	bno.setExtCrystalUse(true);
 	delay(5000);
-
 	resetAll();
-
 }
 
 
 int Gyro::getYaw(){
 	imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
 
-	double yaw = euler.x(); ///TODO FIX THIS NONSENSE, por algun motivo siempre inicia en un valor de 40
+	double yaw = euler.x(); ///TODO= REVISAR ESTO, Primero fue 40, luego fue 160, no se que esta pasando
      
-     if(yaw - lastYaw < -320 ){
+     if(yaw - lastYaw < -355 ){
      	iTurnCounter++;
-     }else if(yaw - lastYaw > 320){
+     }else if(yaw - lastYaw > 355){
      	iTurnCounter--;
      }
 
@@ -46,6 +43,7 @@ int Gyro::getYaw(){
 	}
 
     lastYaw = yaw;
+
 	return finalAngle;
 }
 
