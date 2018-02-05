@@ -22,6 +22,4 @@ void DriveTrain::driveVelocity(double velocity){
 void DriveTrain::turn(double rotation){
 	setRightMotorsVelocity(rotation * -1);
 	setLeftMotorsVelocity(rotation); 
-
-
 }

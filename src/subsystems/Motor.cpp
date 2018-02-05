@@ -11,7 +11,6 @@ Motor::Motor(int port){
 
 void Motor::driveVelocity(double velocity){
 	double output = mapD(fabs(velocity), 0.0,1.0,0.0,255.0);
-	Serial.println(output);
 
 	myMotor->setSpeed(output);
 	if(velocity > 0.0){
