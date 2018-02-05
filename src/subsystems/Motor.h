@@ -15,6 +15,7 @@ private:
 
 public:
 	Motor(int port);
+	~Motor();
 	void driveVelocity(double velocity);
 	void driveDisplacement(double displacement);
 
