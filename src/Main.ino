@@ -13,5 +13,7 @@ void setup(){
 }
 
 void loop(){
+ 	Serial.print(gyro->getPitch());
+ 	Serial.print("       ");
  	Serial.println(gyro->getYaw());
 }

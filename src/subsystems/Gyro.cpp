@@ -18,7 +18,7 @@ Gyro::Gyro(){
 int Gyro::getYaw(){
 	imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
 
-	double yaw = euler.x() -40;
+	double yaw = euler.x(); ///TODO FIX THIS NONSENSE, por algun motivo siempre inicia en un valor de 40
      
      if(yaw - lastYaw < -320 ){
      	iTurnCounter++;
@@ -52,7 +52,8 @@ int Gyro::getYaw(){
 int Gyro::getPitch(){
 	imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
 
-	double pitch = euler.z() - pitchOffSet;
+	double pitch = abs(abs(euler.z()) - pitchOffSet);
+
 	return pitch;
 
 }
@@ -65,7 +66,7 @@ void Gyro::resetYaw(){
 
 void Gyro::resetPitch(){
 	imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
-  	pitchOffSet = euler.z();	
+  	pitchOffSet = abs(euler.z());	
 }
 
 void Gyro::resetAll(){

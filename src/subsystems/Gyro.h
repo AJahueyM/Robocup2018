@@ -8,7 +8,7 @@ class Gyro{
 private:
 	Adafruit_BNO055 bno = Adafruit_BNO055(55);
 	double yawOffSet, pitchOffSet, lastYaw;
-	int iTurnCounter;
+	int iTurnCounter, iPitchCounter, lastPitch;
 
 
 public:

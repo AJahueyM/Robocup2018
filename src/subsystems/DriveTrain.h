@@ -2,16 +2,23 @@
 #define __DRIVETRAIN_HEADER_
 
 #include "Motor.h"
+#include "Gyro.h"
 
 class DriveTrain{
 private:
 	Motor topRight, topLeft, lowRight, lowLeft;
+	Gyro gyro;
 	void setRightMotorsVelocity(double velocity);
 	void setLeftMotorsVelocity(double velocity);
 public:
 	DriveTrain();
 	void driveVelocity(double velocity);
 	void turn(double rotation);
+	int getYaw();
+	int getPitch();
+	void resetYaw();
+	void resetPitch();
+	void resetAll();
 };
 
 
