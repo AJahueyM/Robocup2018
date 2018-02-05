@@ -1,5 +1,5 @@
 #include "Motor.h"
-
+Adafruit_MotorShield Motor::AFMS = Adafruit_MotorShield();
 
 Motor::Motor(int port){
 	AFMS.begin();

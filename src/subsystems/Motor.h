@@ -9,7 +9,7 @@ using namespace std;
 
 class Motor{
 private:
-	Adafruit_MotorShield AFMS = Adafruit_MotorShield(); 
+	static Adafruit_MotorShield AFMS; 
 	Adafruit_DCMotor *myMotor;
 
 
