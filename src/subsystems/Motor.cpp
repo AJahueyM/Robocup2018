@@ -18,7 +18,7 @@ void Motor::driveVelocity(double velocity){
 	}else if(velocity < 0.0){
 		myMotor->run(BACKWARD);
 	}else{
-		myMotor->run(RELEASE);
+		//myMotor->run(RELEASE);
 	}
 }
 
