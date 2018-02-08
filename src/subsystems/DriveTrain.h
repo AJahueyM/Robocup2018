@@ -6,6 +6,12 @@
 #include "Gyro.h"
 #include "Utils.h"
 #include "Sharp.h"
+#include "Button.h"
+
+enum RobotFace {
+	Back,
+	Front
+};
 
 class DriveTrain{
 private:
@@ -13,6 +19,7 @@ private:
 	Gyro gyro;
 	Sharp frontSharp, rightSharp, leftSharp, backSharp;
 	Encoder enc;
+	Button frontRLimitS, frontLLimitS, backRLimitS, backLLimitS;
 	double wheelCircunference = 7.0 * M_PI, encCountsPerRev = 3630.0;
 
 public:
@@ -33,5 +40,6 @@ public:
 	int getDistanceRight();
 	int getDistanceBack();
 	void driveDisplacement(double displacement, double velocity);
+	void alignWithWall(RobotFace faceToAlign);
 };
 #endif

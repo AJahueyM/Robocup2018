@@ -1,6 +1,8 @@
 #include "DriveTrain.h"
 ///Constructor
-DriveTrain::DriveTrain() : topRight(1), topLeft(3), lowRight(2), lowLeft(4),enc(19,18), frontSharp(8), backSharp(7), rightSharp(6), leftSharp(5){
+DriveTrain::DriveTrain() : topRight(1), topLeft(3), lowRight(2), lowLeft(4),enc(19,18), 
+							frontSharp(8), backSharp(7), rightSharp(6), leftSharp(5),
+								frontRLimitS(0), frontLLimitS(1), backRLimitS(2), backLLimitS(3){
 
 }
 
@@ -98,8 +100,6 @@ void DriveTrain::driveStraight(double velocity, int angle){
 void DriveTrain::driveDisplacement(double displacement, double velocity){
 
 	double startCount = enc.read();
-	int startAngle = getYaw();
-
 	while(enc.read() - startCount < (displacement/wheelCircunference) * encCountsPerRev){
 		driveVelocity(velocity);
 	}
@@ -121,4 +121,29 @@ int DriveTrain::getDistanceRight(){
 
 int DriveTrain::getDistanceBack(){
 	return backSharp.getDistance();
+}
+
+
+void DriveTrain::alignWithWall(RobotFace faceToAlign){
+	Button *right, *left;
+	double speed;
+	switch(faceToAlign){
+		case Back:
+			right = &backRLimitS;
+			left = &backLLimitS;
+			speed = -.5;
+		break;
+
+		case Front:
+			left = &frontLLimitS;
+			right = &frontRLimitS;
+			speed = .5;
+		break;
+	}
+
+	while(!right->getState() || !left->getState()){
+		driveVelocity(speed);
+	}
+	resetYaw();
+	driveVelocity(0);
 }

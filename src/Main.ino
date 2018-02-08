@@ -1,5 +1,3 @@
-#include <Encoder.h>
-#include <math.h>
 #include "subsystems/DriveTrain.h"
 
 DriveTrain *driveTrain;
@@ -11,5 +9,5 @@ void setup(){
 
 
 void loop(){
-	
+	Serial.println(driveTrain->getDistanceFront());
 }
