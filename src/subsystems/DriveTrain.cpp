@@ -1,6 +1,6 @@
 #include "DriveTrain.h"
-
-DriveTrain::DriveTrain() : topRight(1), topLeft(3), lowRight(2), lowLeft(4), frontSharp(8), backSharp(7), rightSharp(6), leftSharp(5){
+///Constructor
+DriveTrain::DriveTrain() : topRight(1), topLeft(3), lowRight(2), lowLeft(4),enc(19,18), frontSharp(8), backSharp(7), rightSharp(6), leftSharp(5){
 
 }
 
@@ -93,6 +93,18 @@ void DriveTrain::driveStraight(double velocity, int angle){
 		setLeftMotorsVelocity(velocity);
 		setRightMotorsVelocity(velocity);
 	}
+}
+
+void DriveTrain::driveDisplacement(double displacement, double velocity){
+
+	double startCount = enc.read();
+	int startAngle = getYaw();
+
+	while(enc.read() - startCount < (displacement/wheelCircunference) * encCountsPerRev){
+		driveVelocity(velocity);
+	}
+
+	driveVelocity(0);
 }
 
 int DriveTrain::getDistanceFront(){
