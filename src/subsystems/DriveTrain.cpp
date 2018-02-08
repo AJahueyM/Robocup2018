@@ -1,6 +1,6 @@
 #include "DriveTrain.h"
 
-DriveTrain::DriveTrain() : topRight(1), topLeft(3), lowRight(2), lowLeft(4){
+DriveTrain::DriveTrain() : topRight(1), topLeft(3), lowRight(2), lowLeft(4), frontSharp(8), backSharp(7), rightSharp(6), leftSharp(5){
 
 }
 
@@ -93,4 +93,20 @@ void DriveTrain::driveStraight(double velocity, int angle){
 		setLeftMotorsVelocity(velocity);
 		setRightMotorsVelocity(velocity);
 	}
+}
+
+int DriveTrain::getDistanceFront(){
+	return frontSharp.getDistance();
+}
+
+int DriveTrain::getDistanceLeft(){
+	return leftSharp.getDistance();
+}
+
+int DriveTrain::getDistanceRight(){
+	return rightSharp.getDistance();
+}
+
+int DriveTrain::getDistanceBack(){
+	return backSharp.getDistance();
 }
