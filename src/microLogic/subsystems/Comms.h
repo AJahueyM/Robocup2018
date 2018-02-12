@@ -11,9 +11,10 @@ class Comms{
 public:
 	Comms();
 	void sendMessage(Chip target, String message);
+	char receiveMessage();
 private:
-	void receiveMessage();
 	const uint8_t MEGA_SS_PIN = 53;
 	const uint8_t RASP_SS_PIN = 49;
+	char response;
 };
 #endif

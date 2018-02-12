@@ -25,3 +25,10 @@ void Comms::sendMessage(Chip target, String message){
 	}
 	digitalWrite(ss, HIGH);
 }
+
+char Comms::receiveMessage(){
+	SPI.transfer(0);
+	response = SPI.transfer(0);
+	delay(10);
+	return response;
+};

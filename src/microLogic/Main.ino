@@ -8,6 +8,9 @@ void setup (){
 
 
 void loop (){
-  comms->sendMessage(Mega, "Hello MOTO!");
-
+    comms->sendMessage(Mega, "Hello MOTO!");
+  if(comms->receiveMessage() == 'd'){
+    Serial.println("IT RESPONDED");    
+    comms->sendMessage(Mega, "Hello MOTO!");
+  }
 } 
