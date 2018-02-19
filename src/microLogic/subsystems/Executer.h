@@ -10,10 +10,15 @@ enum Command {
 
 class Executer {
 public:
-	Executer(Comms& comms);
+	static Executer &getInstance(Comms& comms) {
+		static Executer singletonInstance(comms);
+		return singletonInstance;
+	}
 	void runPath(Path path);
 	void runCommand(Command commands);
 private:
+	Executer(Comms& comms);
+	Executer &operator=(const Executer &);
 	Comms& comms;
 };
 

@@ -1,16 +1,13 @@
-#include "subsystems/Comms.h"
-
-Comms* comms;
+#include "subsystems/Requester.h"
 void setup (){
-  Serial.begin(9600);  
-  comms = new Comms();
+  	Serial.begin(9600); 
+	Requester& req = Requester::getInstance();
+  	Serial.println(req.requestSensorValue(DistanceRight));
+ 
 } 
 
 
 void loop (){
-    comms->sendMessage(Mega, "Hello MOTO!");
-  if(comms->receiveMessage() == 'd'){
-    Serial.println("IT RESPONDED");    
-    comms->sendMessage(Mega, "Hello MOTO!");
-  }
+	Requester& req = Requester::getInstance();
+  	Serial.println(req.requestSensorValue(DistanceRight));
 } 

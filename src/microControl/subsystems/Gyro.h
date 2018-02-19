@@ -12,7 +12,7 @@ private:
 	double yawOffSet, pitchOffSet, lastYaw;
 	int iTurnCounter, iPitchCounter, lastPitch;
 
-
+//Abiel w/h
 public:
 	Gyro();
 	int getYaw();

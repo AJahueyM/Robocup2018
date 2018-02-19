@@ -8,11 +8,16 @@
 
 class Cerebrum {
 public:
-	Cerebrum();
+	static Cerebrum &getInstance() {
+		static Cerebrum singletonInstance;
+		return singletonInstance;
+	}
 	void updateMap();
 	void makeDecision();
 	void executeDecision();
 private:
+	Cerebrum();
+	Cerebrum &operator=(const Cerebrum &);	
 	void updateCurrentTile();
 	void extendMap();
 };

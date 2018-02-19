@@ -2,14 +2,13 @@
 // Written by Nick Gammon
 // February 2011
 
-
 #include <SPI.h>
 
 char buf [100];
 volatile byte pos;
-volatile boolean process_it;
+volatile bool process_it;
 
-void setup (void)
+void setup ()
 {
   Serial.begin (115200);   // debugging
   
@@ -39,8 +38,10 @@ byte c = SPDR;  // grab byte from SPI Data Register
     buf [pos++] = c;
     
   // example: newline means time to process buffer
-  if (c == '\n')
-    process_it = true;
+  if (c == '\n'){
+        process_it = true;
+        SPDR = 'p';
+  }
       
 }  // end of interrupt routine SPI_STC_vect
 

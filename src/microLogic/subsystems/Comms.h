@@ -9,10 +9,15 @@ enum Chip {
 
 class Comms{
 public:
-	Comms();
-	void sendMessage(Chip target, String message);
-	char receiveMessage();
+	static Comms &getInstance() {
+		static Comms singletonInstance;
+		return singletonInstance;
+	}
+	char sendMessage(Chip target, String message);
+	char pullMessage(Chip target);
 private:
+	Comms();
+	Comms &operator=(const Comms &);
 	const uint8_t MEGA_SS_PIN = 53;
 	const uint8_t RASP_SS_PIN = 49;
 	char response;
