@@ -147,16 +147,3 @@ void DriveTrain::alignWithWall(RobotFace faceToAlign){
 	resetYaw();
 	driveVelocity(0);
 }
-
-
-
-
-
-
-
-DriveTrain driveTrain = new DriveTrain();
-
-
-DriveTrain& driveTrain = DriveTrain::getInstance();
-
-EctoMecanum& mencanum = EctoMecanum::getInstance();
