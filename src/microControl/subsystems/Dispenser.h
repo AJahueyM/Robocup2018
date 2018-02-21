@@ -1,8 +1,8 @@
 #include <Servo.h>
 
 enum DispenserDirection{
-right, left, center;
-}
+right, left, center
+};
 
 class Dispenser {
 private:
