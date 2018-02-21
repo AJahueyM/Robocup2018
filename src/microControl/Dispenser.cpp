@@ -1,5 +1,6 @@
 
 Dispenser::Dispenser(int pin){
+	servoDispenser.attach(pin);
 }
 Dispenser::Dispenser(int startAmount){
 	amountAvailable = startAmount;
