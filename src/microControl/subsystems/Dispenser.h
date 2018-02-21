@@ -15,5 +15,6 @@ public:
 	int getAmountAvailable();
 	int updateAmountAvailable(int drop);
 	void dispenseDirection(DispenserDirection direction, int amount);
-	bool kitsAvailable(int startAmount, int amountAvailable);
+	bool kitsAvailable();
 }; 
+

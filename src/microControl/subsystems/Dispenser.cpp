@@ -16,24 +16,19 @@ int Dispenser::updateAmountAvailable(){
 }
 
 void Dispenser::dispenseDirection(DispenserDirection direction, int amount){
-	if(direction == left){
+	if(direction == left && kitsAvailable()){
 		for(int i =0; i< amount; i++){
-			if(kitsAvailable()){
-				servoDispenserwrite(45);
-				delay(1000);
-				servoDispenser.write(90);
-				servoDispenser.updateAmountAvailable(1);
-			}
-			
+			servoDispenserwrite(45);
+			delay(1000);
+			servoDispenser.write(90);
+			servoDispenser.updateAmountAvailable(1);
 		}
-	}else if(direction == right){
+	}else if(direction == right && kitsAvailable()){
 		for(int i =0; i<amount; i++){
-			if(kitsAvailable()){
-				servoDispenser.write(135);
-				delay(1000);
-				servoDispenser.write(90);
-				servoDispenser.updateAmountAvailable(1);
-			}
+			servoDispenser.write(135);
+			delay(1000);
+			servoDispenser.write(90);
+			servoDispenser.updateAmountAvailable(1)
 		}
 	}else{
 		servoDispenser.write(90);
