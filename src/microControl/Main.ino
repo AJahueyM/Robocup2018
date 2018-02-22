@@ -1,16 +1,22 @@
 #include <Wire.h> 
 #include <Arduino.h>
-#include "subsystems/LCD.h"
+#include "subsystems/Dispenser.h"
 
-LCD* lcd;
+Dispenser*servoDispenser;
 
 void setup(){
-  lcd = new LCD();
+  servoDispenser = new Dispenser(11,12);
 }
 
 void loop(){
-  String texto = "FUNCIONAAA MUAHAHA";
-  lcd->display(texto);
+  servoDispenser->dispenseDirection(right,2);
+
+   delay(3000);
+
+   servoDispenser->dispenseDirection(left,2);
+
+   delay(3000);
+
 }
 
 // #include <i2cmaster.h>

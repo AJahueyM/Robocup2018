@@ -20,22 +20,24 @@ int Dispenser::updateAmountAvailable(int drop){
 
 void Dispenser::dispenseDirection(DispenserDirection direction, int amount){
 	if(direction == left){
-		for(int i =0; i< amount; i++){
+		for(int i =0; i < amount; i++){
 			if(kitsAvailable()){
 				servoDispenser.write(45);
-				delay(1000);
+				delay(500);
 				servoDispenser.write(90);
 				updateAmountAvailable(1);
+				delay(500);
 			}
 			
 		}
 	}else if(direction == right){
-		for(int i =0; i<amount; i++){
+		for(int i =0; i < amount; i++){
 			if(kitsAvailable()){
 				servoDispenser.write(135);
-				delay(1000);
+				delay(500);
 				servoDispenser.write(90);
 				updateAmountAvailable(1);
+				delay(500);
 			}
 		}
 	}else{
