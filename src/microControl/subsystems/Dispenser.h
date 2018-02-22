@@ -9,8 +9,7 @@ private:
 	int amountAvailable, startAmount = 12;
 	Servo servoDispenser;
 public:
-	Dispenser(int pin);
-	Dispenser(int startAmount);
+	Dispenser(int pin, int startAmount);
 	void setAmountAvailable(int iAmount);
 	int getAmountAvailable();
 	int updateAmountAvailable(int drop);

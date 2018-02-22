@@ -1,18 +1,20 @@
+#include "Dispenser.h"
+#include <Arduino.h>
 
-Dispenser::Dispenser(int pin){
+
+Dispenser::Dispenser(int pin, int startAmount){
 	servoDispenser.attach(pin);
-}
-Dispenser::Dispenser(int startAmount){
 	amountAvailable = startAmount;
 }
+
 void Dispenser::setAmountAvailable(int iAmount){
 	amountAvailable = iAmount;
 }
 int Dispenser::getAmountAvailable(){
 	return amountAvailable;
 }
-int Dispenser::updateAmountAvailable(){
-	amountAvailable--;
+int Dispenser::updateAmountAvailable(int drop){
+	amountAvailable -= drop;
 	return amountAvailable;
 }
 
@@ -20,10 +22,10 @@ void Dispenser::dispenseDirection(DispenserDirection direction, int amount){
 	if(direction == left){
 		for(int i =0; i< amount; i++){
 			if(kitsAvailable()){
-				servoDispenserwrite(45);
+				servoDispenser.write(45);
 				delay(1000);
 				servoDispenser.write(90);
-				servoDispenser.updateAmountAvailable(1);
+				updateAmountAvailable(1);
 			}
 			
 		}
@@ -33,7 +35,7 @@ void Dispenser::dispenseDirection(DispenserDirection direction, int amount){
 				servoDispenser.write(135);
 				delay(1000);
 				servoDispenser.write(90);
-				servoDispenser.updateAmountAvailable(1);
+				updateAmountAvailable(1);
 			}
 		}
 	}else{
