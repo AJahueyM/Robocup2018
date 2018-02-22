@@ -1,13 +1,26 @@
-#include "subsystems/Requester.h"
-void setup (){
-  	Serial.begin(9600); 
-	Requester& req = Requester::getInstance();
-  	Serial.println(req.requestSensorValue(DistanceRight));
- 
-} 
+#include <LiquidCrystal_I2C.h>
+#include <Wire.h> 
+#include <Arduino.h>
 
+// Set the LCD address to 0x3F for a 16 chars and 2 line display
+LiquidCrystal_I2C lcd(0x3F, 16, 2);
 
-void loop (){
-	Requester& req = Requester::getInstance();
-  	Serial.println(req.requestSensorValue(DistanceRight));
-} 
+void setup(){
+	// initialize the LCD
+	lcd.begin();
+	String message = "1ola2ola3ola4ola5ola6ola7ola8ola";
+	// Turn on the blacklight and print a message.
+	lcd.backlight();
+
+	if(message.length() > 16){
+		lcd.print(message.substring(0,16));
+		lcd.setCursor(0,1);
+		lcd.print(message.substring(16,32));
+    }else{
+    	lcd.print(message);
+    }
+}
+
+void loop(){
+	// Do nothing here...
+}
