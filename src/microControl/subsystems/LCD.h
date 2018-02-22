@@ -1,5 +1,5 @@
 #include <LiquidCrystal_I2C.h>
-
+#include <Arduino.h>
 
 class LCD{
 private:

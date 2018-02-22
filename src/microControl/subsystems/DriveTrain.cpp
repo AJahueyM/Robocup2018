@@ -1,15 +1,17 @@
 #include "DriveTrain.h"
 ///Constructor
-DriveTrain::DriveTrain() : topRight(1), topLeft(3), lowRight(2), lowLeft(4),enc(19,18), 
+DriveTrain::DriveTrain() : topRight(1), topLeft(2), lowRight(4), lowLeft(3),enc(19,18), 
 							frontSharp(8), backSharp(7), rightSharp(6), leftSharp(5),
 								frontRLimitS(0), frontLLimitS(1), backRLimitS(2), backLLimitS(3){
+	Serial.println("DriveTrain initializing...");
+	Serial.println("DriveTrain initialized");
 
 }
 
 ///	MOTORS
 void DriveTrain::setRightMotorsVelocity(double velocity){
 	topRight.driveVelocity(velocity);
-	lowRight.driveVelocity(velocity);
+	//lowRight.driveVelocity(velocity);
 }
 
 void DriveTrain::setLeftMotorsVelocity(double velocity){
@@ -47,7 +49,7 @@ void DriveTrain::resetAll(){
 
 void DriveTrain::turnToAngle(int angle){
 	int angleError = shortestAngleTurn(getYaw(), angle);
-    double outputMultiplier = mapD(abs(angleError), 0.0, 45, 0.0, 1.0);
+    double outputMultiplier = mapD(fabs(angleError), 0.0, 45.0, 0.0, 1.0);
 
 	if (outputMultiplier > 1.0) {
 		outputMultiplier = 1.0;
@@ -57,7 +59,7 @@ void DriveTrain::turnToAngle(int angle){
 
     while(angleError != 0){
     	angleError = shortestAngleTurn(getYaw(), angle);
-		outputMultiplier = mapD(abs(angleError), 0.0, 45, 0.0, 1.0);
+		outputMultiplier = mapD(fabs(angleError), 0.0, 45.0, 0.0, 1.0);
 
 		if (outputMultiplier > 1.0) {
 			outputMultiplier = 1.0;
@@ -76,7 +78,7 @@ void DriveTrain::turnToAngle(int angle){
 
 void DriveTrain::driveStraight(double velocity, int angle){
  	double angleError = shortestAngleTurn(getYaw(), angle);
-	double outputMultiplier = mapD(abs(angleError), 0.0, 15, 0.0, .8);
+	double outputMultiplier = mapD(abs(angleError), 0.0, 15.0, 0.0, .8);
 
 	if (outputMultiplier > .8) {
 		outputMultiplier = .8;

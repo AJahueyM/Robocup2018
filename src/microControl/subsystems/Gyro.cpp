@@ -1,14 +1,15 @@
 #include "Gyro.h"
 
 Gyro::Gyro(){
+	Serial.println("BNO Initializing...");
 	if(!bno.begin()){
-		Serial.print("NO BNO 055 DETECTED");
+		Serial.println("NO BNO 055 DETECTED");
 		while(1);
 		}
-
 	bno.setExtCrystalUse(true);
 	delay(5000);
 	resetAll();
+	Serial.println("BNO Initialized");
 }
 
 

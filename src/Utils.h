@@ -1,7 +1,10 @@
 #ifndef __UTILS_HEADER_
 #define __UTILS_HEADER_
 
-double mapD(double x, double in_min, double in_max, double out_min, double out_max);
+template<class T>
+T mapD(T x, T in_min, T in_max, T out_min, T out_max){
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
 
 template<class T>
 	T shortestAngleTurn(T currentAngle, T target) {

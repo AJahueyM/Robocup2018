@@ -2,11 +2,20 @@
 Adafruit_MotorShield Motor::AFMS = Adafruit_MotorShield();
 
 Motor::Motor(int port){
+
+	Serial.print("Initializing motor: ");
+	Serial.print(port);
+	Serial.println("...");
 	AFMS.begin();
+
 	if(port < 5 && port > 0)
 		myMotor = AFMS.getMotor(port);
 	else
 		myMotor = AFMS.getMotor(1);
+	Serial.print("Motor: ");
+	Serial.print(port);
+	Serial.println(" initialized");
+
 }
 
 void Motor::driveVelocity(double velocity){

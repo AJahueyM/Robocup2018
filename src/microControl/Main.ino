@@ -1,22 +1,14 @@
-#include <Wire.h> 
-#include <Arduino.h>
-#include "subsystems/Dispenser.h"
+#include "subsystems/DriveTrain.h"
 
-Dispenser*servoDispenser;
+DriveTrain* driveTrain;
 
 void setup(){
-  servoDispenser = new Dispenser(11,12);
+	Serial.begin(9600);
+	driveTrain = new DriveTrain();
 }
 
 void loop(){
-  servoDispenser->dispenseDirection(right,2);
-
-   delay(3000);
-
-   servoDispenser->dispenseDirection(left,2);
-
-   delay(3000);
-
+ 		driveTrain->driveVelocity(0);
 }
 
 // #include <i2cmaster.h>

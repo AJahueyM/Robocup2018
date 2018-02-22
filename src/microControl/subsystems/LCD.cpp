@@ -5,7 +5,7 @@ LCD::LCD(){
 }
 
 void LCD::display(String message){
-
+	Serial.println("LCD initializing...");
 	if(message.length() > 16){
 		lcd.print(message.substring(0,16));
 		lcd.setCursor(0,1);
@@ -15,6 +15,8 @@ void LCD::display(String message){
     }
 
     lcd.setCursor(0,0);
+
+    Serial.println("LCD initialized");
 }
 
 String LCD::getMessage(){
