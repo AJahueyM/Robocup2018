@@ -4,7 +4,7 @@
 #include "Requester.h"
 #include "Map.h"
 #include "Path.h"
-#include "Arduino.h"
+#include <Arduino.h>
 
 class Cerebrum {
 public:
@@ -15,11 +15,14 @@ public:
 	void updateMap();
 	void makeDecision();
 	void executeDecision();
+	
 private:
 	Cerebrum();
+	Map* map;
 	Cerebrum &operator=(const Cerebrum &);	
 	void updateCurrentTile();
 	void extendMap();
+	~Cerebrum();
 };
 
 #endif
