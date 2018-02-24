@@ -1,11 +1,14 @@
 #include "LCD.h"
 LCD::LCD(){
+	Serial.println("LCD initializing...");
+
 	lcd.begin();
 	lcd.backlight();	
+    Serial.println("LCD initialized");
+
 }
 
 void LCD::display(String message){
-	Serial.println("LCD initializing...");
 	if(message.length() > 16){
 		lcd.print(message.substring(0,16));
 		lcd.setCursor(0,1);
@@ -14,9 +17,8 @@ void LCD::display(String message){
     	lcd.print(message);
     }
 
-    lcd.setCursor(0,0);
+    lcd.home();
 
-    Serial.println("LCD initialized");
 }
 
 String LCD::getMessage(){

@@ -3,14 +3,13 @@
 
 #include <Adafruit_BNO055.h>
 #include <Adafruit_Sensor.h>
-
 using namespace std;
 
 class Gyro{
 private:
 	Adafruit_BNO055 bno = Adafruit_BNO055(55);
 	double yawOffSet, pitchOffSet, lastYaw;
-	int iTurnCounter, iPitchCounter, lastPitch;
+	int iTurnCounter = 0, iPitchCounter, lastPitch;
 
 //Abiel w/h
 public:

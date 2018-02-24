@@ -7,8 +7,12 @@ Gyro::Gyro(){
 		while(1);
 		}
 	bno.setExtCrystalUse(true);
-	delay(5000);
-	resetAll();
+	delay(1000);
+	double startTime = millis();
+	while(getYaw() != 0){
+		resetAll();
+
+	}
 	Serial.println("BNO Initialized");
 }
 
@@ -16,36 +20,29 @@ Gyro::Gyro(){
 int Gyro::getYaw(){
 	imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
 
-	double yaw = euler.x(); ///TODO= REVISAR ESTO, Primero fue 40, luego fue 160, no se que esta pasando
-     
-     if(yaw - lastYaw < -355 ){
-     	iTurnCounter++;
-     }else if(yaw - lastYaw > 355){
-     	iTurnCounter--;
-     }
-
-    int baseAngle = iTurnCounter * 360 + yaw - yawOffSet;
-
-  	int finalAngle = baseAngle;
- 	int vueltas  = baseAngle / 180;
-
-  	if(baseAngle > 180){
-      if(vueltas % 2 == 0){
-        finalAngle = (abs(baseAngle) % 180);
-      }else{
-        finalAngle = -180 + (abs(baseAngle) % 180);
-      }
-  	}else if(baseAngle < -180){
-    	if(vueltas % 2 == 0){
-	      	finalAngle = -1*(abs(baseAngle) % 180);  
-	    }else{
-	      finalAngle = 180 - (abs(baseAngle)%180);
-	    }
+	double yaw = euler.x() - yawOffSet; ///TODO= REVISAR ESTO, Primero fue 40, luego fue 160, no se que esta pasando
+	if(yaw > 180){
+		yaw -=360;
 	}
 
-    lastYaw = yaw;
+ //  	int finalAngle = baseAngle;
+ // 	int vueltas  = baseAngle / 180;
 
-	return finalAngle;
+ //  	if(baseAngle > 180){
+ //      if(vueltas % 2 == 0){
+ //        finalAngle = (abs(baseAngle) % 180);
+ //      }else{
+ //        finalAngle = -180 + (abs(baseAngle) % 180);
+ //      }
+ //  	}else if(baseAngle < -180){
+ //    	if(vueltas % 2 == 0){
+	//       	finalAngle = -1*(abs(baseAngle) % 180);  
+	//     }else{
+	//       finalAngle = 180 - (abs(baseAngle)%180);
+	//     }
+	// }
+
+	return yaw;
 }
 
 int Gyro::getPitch(){

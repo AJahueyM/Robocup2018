@@ -6,14 +6,15 @@ right, left, center
 
 class Dispenser {
 private:
-	int amountAvailable, startAmount = 12;
+	int amountAvailable, startAmount;
+	int outputCenter, outputLeft, outputRight;
 	Servo servoDispenser;
 public:
-	Dispenser(int pin, int startAmount);
+	Dispenser(int pin, int startAmount = 12);
 	void setAmountAvailable(int iAmount);
 	int getAmountAvailable();
 	int updateAmountAvailable(int drop);
-	void dispenseDirection(DispenserDirection direction, int amount);
+	void dispenseDirection(DispenserDirection direction, int amount = 1);
 	bool kitsAvailable();
 }; 
 

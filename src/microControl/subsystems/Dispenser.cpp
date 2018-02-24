@@ -5,6 +5,9 @@
 Dispenser::Dispenser(int pin, int startAmount){
 	servoDispenser.attach(pin);
 	amountAvailable = startAmount;
+	outputCenter = 46;
+	outputLeft = 84;
+	outputRight = 13;
 }
 
 void Dispenser::setAmountAvailable(int iAmount){
@@ -22,9 +25,11 @@ void Dispenser::dispenseDirection(DispenserDirection direction, int amount){
 	if(direction == left){
 		for(int i =0; i < amount; i++){
 			if(kitsAvailable()){
-				servoDispenser.write(45);
+				servoDispenser.write(outputCenter);
 				delay(500);
-				servoDispenser.write(90);
+				servoDispenser.write(outputLeft);
+				delay(500);
+				servoDispenser.write(outputCenter);
 				updateAmountAvailable(1);
 				delay(500);
 			}
@@ -33,9 +38,11 @@ void Dispenser::dispenseDirection(DispenserDirection direction, int amount){
 	}else if(direction == right){
 		for(int i =0; i < amount; i++){
 			if(kitsAvailable()){
-				servoDispenser.write(135);
+				servoDispenser.write(outputCenter);
 				delay(500);
-				servoDispenser.write(90);
+				servoDispenser.write(outputRight);
+				delay(500);
+				servoDispenser.write(outputCenter);
 				updateAmountAvailable(1);
 				delay(500);
 			}

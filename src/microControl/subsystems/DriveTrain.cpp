@@ -1,8 +1,8 @@
 #include "DriveTrain.h"
 ///Constructor
 DriveTrain::DriveTrain() : topRight(1), topLeft(2), lowRight(4), lowLeft(3),enc(19,18), 
-							frontSharp(8), backSharp(7), rightSharp(6), leftSharp(5),
-								frontRLimitS(0), frontLLimitS(1), backRLimitS(2), backLLimitS(3){
+							frontSharp(13), backSharp(7), rightSharp(12), leftSharp(14),
+								frontRLimitS(0), frontLLimitS(1), backRLimitS(31), backLLimitS(47){
 	Serial.println("DriveTrain initializing...");
 	Serial.println("DriveTrain initialized");
 
@@ -11,7 +11,7 @@ DriveTrain::DriveTrain() : topRight(1), topLeft(2), lowRight(4), lowLeft(3),enc(
 ///	MOTORS
 void DriveTrain::setRightMotorsVelocity(double velocity){
 	topRight.driveVelocity(velocity);
-	//lowRight.driveVelocity(velocity);
+	lowRight.driveVelocity(velocity);
 }
 
 void DriveTrain::setLeftMotorsVelocity(double velocity){
@@ -49,7 +49,7 @@ void DriveTrain::resetAll(){
 
 void DriveTrain::turnToAngle(int angle){
 	int angleError = shortestAngleTurn(getYaw(), angle);
-    double outputMultiplier = mapD(fabs(angleError), 0.0, 45.0, 0.0, 1.0);
+    double outputMultiplier = mapD(fabs(angleError), 0.0, 30.0, 0.0, 1.0);
 
 	if (outputMultiplier > 1.0) {
 		outputMultiplier = 1.0;
@@ -59,7 +59,7 @@ void DriveTrain::turnToAngle(int angle){
 
     while(angleError != 0){
     	angleError = shortestAngleTurn(getYaw(), angle);
-		outputMultiplier = mapD(fabs(angleError), 0.0, 45.0, 0.0, 1.0);
+		outputMultiplier = mapD(fabs(angleError), 0.0, 30.0, 0.1, 1.0);
 
 		if (outputMultiplier > 1.0) {
 			outputMultiplier = 1.0;
@@ -102,6 +102,7 @@ void DriveTrain::driveStraight(double velocity, int angle){
 void DriveTrain::driveDisplacement(double displacement, double velocity){
 
 	double startCount = enc.read();
+	double startAngle = getYaw();
 	while(enc.read() - startCount < (displacement/wheelCircunference) * encCountsPerRev){
 		driveVelocity(velocity);
 	}
@@ -133,18 +134,25 @@ void DriveTrain::alignWithWall(RobotFace faceToAlign){
 		case Back:
 			right = &backRLimitS;
 			left = &backLLimitS;
-			speed = -.5;
+			speed = -.75;
 		break;
 
 		case Front:
 			left = &frontLLimitS;
 			right = &frontRLimitS;
-			speed = .5;
+			speed = .75;
 		break;
 	}
 
 	while(!right->getState() || !left->getState()){
-		driveVelocity(speed);
+		if(!right->getState())
+			setRightMotorsVelocity(speed);
+		else
+			setRightMotorsVelocity(0);
+		if(!left->getState())
+			setLeftMotorsVelocity(speed);
+		else
+			setLeftMotorsVelocity(0);
 	}
 	resetYaw();
 	driveVelocity(0);
