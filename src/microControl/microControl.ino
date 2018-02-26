@@ -10,7 +10,7 @@ void setup() {
 }
 
 void loop() {
-  driveTrain->driveStraight(.25);
+  driveTrain->driveStraight(0, .5);
 }
 
 
