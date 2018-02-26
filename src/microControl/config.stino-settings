@@ -1,7 +1,0 @@
-{
-    "board@chipKIT": "chipKIT MAX32", 
-    "package": "chipKIT", 
-    "platform": "chipKIT", 
-    "programmer": "AVR ISP", 
-    "version": "1.4.3"
-}
