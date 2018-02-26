@@ -21,11 +21,14 @@ void DriveTrain::setLeftMotorsVelocity(double velocity) {
 }
 
 void DriveTrain::checkHeatDispense() {
-	if (mlxL.readObjectTempC() - mlxL.readAmbientTempC() > heatDiferenceVictim) {
-		dispenser.dispenseDirection(DispenserDirection::left);
-	}
-	if (mlxR.readObjectTempC() - mlxR.readAmbientTempC() > heatDiferenceVictim) {
-		dispenser.dispenseDirection(DispenserDirection::right);
+	if(millis() - lastHeatReading > heatReadRateMs){
+		if (mlxL.readObjectTempC() - mlxL.readAmbientTempC() > heatDiferenceVictim) {
+			dispenser.dispenseDirection(DispenserDirection::left);
+		}
+		if (mlxR.readObjectTempC() - mlxR.readAmbientTempC() > heatDiferenceVictim) {
+			dispenser.dispenseDirection(DispenserDirection::right);
+		}
+		lastHeatReading = millis();
 	}
 
 }

@@ -23,7 +23,7 @@ private:
 	Encoder enc;
 	Button backRLimitS, backLLimitS;
 	double wheelCircunference = 7.0 * M_PI, encCountsPerRev = 3630.0, heatDiferenceVictim = 5;
-	long lastEncoderReading = 0, encoderReadRateMs = 100;
+	long lastEncoderReading = 0, encoderReadRateMs = 100, lastHeatReading = 0, heatReadRateMs = 100;
 	Adafruit_MLX90614 mlxR = Adafruit_MLX90614(0x5A);
 	Adafruit_MLX90614 mlxL = Adafruit_MLX90614(0x55);
 	Dispenser dispenser = Dispenser(6);
