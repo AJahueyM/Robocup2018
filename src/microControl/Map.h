@@ -1,6 +1,9 @@
+#include <ArduinoSTL.h>
+#include <system_configuration.h>
+
 #ifndef __MAP_HEADER_
 #define __MAP_HEADER_
-#include <ArduinoSTL.h>
+
 #include "Tile.h"
 #include "Coord.h"
 #include "Path.h"

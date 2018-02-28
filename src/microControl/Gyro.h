@@ -1,7 +1,8 @@
+#include <Adafruit_BNO055.h>
+
 #ifndef __GYRO_HEADER_
 #define __GYRO_HEADER_
 
-#include <Adafruit_BNO055.h>
 #include <Adafruit_Sensor.h>
 using namespace std;
 

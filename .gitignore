@@ -32,3 +32,5 @@
 *.app
 
 *.hex
+src/microControl/microControl.ino
+src/microControl/microControl.ino
