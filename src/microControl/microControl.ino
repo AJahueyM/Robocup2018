@@ -1,9 +1,10 @@
 #include "DriveTrain.h"
 #include "Map.h"
+#include "LCD.h"
 
 DriveTrain* driveTrain;
 Map* maze;
-
+LCD* lcd;
 
 Tile senseTile(){
 
@@ -64,18 +65,20 @@ void setup() {
   Tile initialTile(initialConfig);
   maze = new Map(initialTile);
 
+  lcd = new LCD();
+
 }
 
 void loop() {
-	
-
-	while(maze->existentTileNotVisited()){
-		// CONFIGURAR LA CLASE Y EL CPP DEL SENSOR DE COLOR
-		// PONER AQUI EL CODIGO DE A*
-
-	}
+  String str;
+  str.concat("R:");
+  str.concat(driveTrain->getDistanceRight());
+  str.concat(" F:");
+  str.concat(driveTrain->getDistanceFront());
+  str.concat(" L:");
+  str.concat(driveTrain->getDistanceLeft());
+  lcd.display(str);
 }
-
 
 
 
