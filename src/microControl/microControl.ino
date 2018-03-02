@@ -37,13 +37,27 @@ LCD* lcd;
 //   return tile;
 // }
 
+bool ran = false;
+double speed = .5;
+int wallThreshold = 15;
+int angles[4];
+
+enum Dir{
+  shiftRight,
+  shiftLeft
+};
+
+void shiftAngle(Dir dir);
 
 void setup() {
+  angles[0] = 0;
+  angles[1] = 90;
+  angles[2] = 180;
+  angles[3] = -90;
+  //Serial.begin(9600);
+  //lcd = new LCD();
 
-  Serial.begin(9600);
-  lcd = new LCD();
-
-  lcd->display("Booting Up...");
+  //lcd->display("Booting Up...");
 
   driveTrain = new DriveTrain();
   // TileConfig initialConfig; 
@@ -71,15 +85,54 @@ void setup() {
 }
 
 void loop() {
-  String str;
-  // str.concat("R:");
-  // str.concat(driveTrain->getDistanceRight());
-  // str.concat(" F:");
-  // str.concat(driveTrain->getDistanceFront());
-  str.concat(" L:");
-  str.concat(driveTrain->getDistanceLeft());
-  lcd->display(str);
+  if(!ran){
+    driveTrain->alignWithWall(Back);
+    driveTrain->driveDisplacement(6.27,angles[0], speed);
+    ran = true;
+  }
+
+  if(driveTrain->getDistanceFront() > wallThreshold){
+    driveTrain->driveDisplacement(30,angles[0],speed);
+  }else if(driveTrain->getDistanceRight() > wallThreshold){
+    driveTrain->turnToAngle(angles[1]);
+    shiftAngle(shiftRight);
+  }else if(driveTrain->getDistanceLeft() > wallThreshold){
+    driveTrain->turnToAngle(angles[3]);
+    shiftAngle(shiftLeft);
+  }else{
+    while(driveTrain->getDistanceRight() < wallThreshold && driveTrain->getDistanceLeft() < wallThreshold){
+      driveTrain->driveDisplacement(30, angles[0], -speed);
+    }
+    if(driveTrain->getDistanceRight() > wallThreshold){
+      driveTrain->turnToAngle(angles[1]);
+      shiftAngle(shiftRight);
+
+    }else if(driveTrain->getDistanceLeft() > wallThreshold){
+      driveTrain->turnToAngle(angles[3]);
+      shiftAngle(shiftLeft);
+
+    }
+  }
 }
 
+void shiftAngle(Dir dir){
+  int first = angles[0]; 
+  int second = angles[1];
+  int third = angles[2];
+  int fourth = angles[3];
+  switch(dir){
+    case shiftRight:
+      angles[0] = second;
+      angles[1] = third;
+      angles[2] = fourth;
+      angles[3] = first;
+    break;
 
-
+    case shiftLeft:
+      angles[0] = fourth;
+      angles[1] = first;
+      angles[2] = second;
+      angles[3] = third;
+    break;
+  };
+}

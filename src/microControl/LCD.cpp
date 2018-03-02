@@ -4,7 +4,7 @@ LCD::LCD(){
 
 	lcd.begin();
 	lcd.backlight();	
-    Serial.println("LCD initialized");
+  Serial.println("LCD initialized");
 
 }
 

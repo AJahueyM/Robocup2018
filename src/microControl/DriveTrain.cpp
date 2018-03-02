@@ -131,7 +131,7 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 	long encCount = startCount;
 	lastEncoderReading  = millis();
 
-	while (abs(encCount - startCount)  < toMove ) {
+	while (abs(encCount - startCount)  < toMove && getDistanceFront() > 15 ) {
 		if (millis() - lastEncoderReading > encoderReadRateMs) {
 			encCount = enc.read();
 			encCount = abs(encCount);
