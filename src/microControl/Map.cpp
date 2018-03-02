@@ -1,7 +1,7 @@
 #include "Map.h"
 
 Map::Map(Tile initialTile){
-	tileMap.push_back();
+	tileMap.reserve(1);
 	tileMap[0].push_back(initialTile);
 	tileMap[0][0];
 }

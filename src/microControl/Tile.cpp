@@ -28,15 +28,6 @@ bool Tile::wallExists(Direction side){
     }
     return result != 0;
 }
-
-bool Tile::heatVictimExists(Direction side){
-
-}
-
-bool Tile::visionVictimExists(Direction side){
-
-}
-
 TileColor Tile::getColor(){
     if(identity & isBlackMask != 0){
         return Black;
@@ -49,5 +40,5 @@ TileColor Tile::getColor(){
 }
 
 double Tile::getBumpWeight(){
-	
+	return 0.0;
 }

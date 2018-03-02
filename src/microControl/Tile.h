@@ -2,7 +2,7 @@
 #define __TILE_HEADER_
 #include "TileWall.h"
 #include "TileBump.h"
-
+#include "Arduino.h"
 enum TileColor {
 	White,
 	Black,
@@ -32,7 +32,7 @@ public:
 	static const byte isRampMask = B00001000;
 	static const byte hasVictimMask = B00000100;
 	static const byte isBlackMask = B00000010;
-	static const byte isCheckpointMask = B0000001;
+	static const byte isCheckpointMask = B00000001;
 
 	Tile(TileConfig config);
 	bool isRamp();

@@ -7,7 +7,7 @@ class LCD{
 private:
 	String message;
 	LiquidCrystal_I2C lcd = LiquidCrystal_I2C(0x3F, 16, 2);
-  long updateTimeMs = 32, lastUpdate = 0;
+  long updateTimeMs = 64, lastUpdate = 0;
 public:
 	LCD();
 	void display(String message);
