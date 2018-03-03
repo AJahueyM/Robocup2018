@@ -9,7 +9,7 @@
 #include "Button.h"
 #include "Dispenser.h"
 #include <Adafruit_MLX90614.h>
-
+#include "LCD.h"
 enum RobotFace {
 	Back,
 	Front
@@ -27,7 +27,7 @@ private:
 	Adafruit_MLX90614 mlxR = Adafruit_MLX90614(0x5A);
 	Adafruit_MLX90614 mlxL = Adafruit_MLX90614(0x55);
 	Dispenser dispenser = Dispenser(6);
-
+	LCD& lcd = LCD::getInstance();
 public:
 	void setRightMotorsVelocity(double velocity);
 	void setLeftMotorsVelocity(double velocity);

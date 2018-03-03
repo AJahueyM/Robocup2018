@@ -7,9 +7,15 @@ class LCD{
 private:
 	String message;
 	LiquidCrystal_I2C lcd = LiquidCrystal_I2C(0x3F, 16, 2);
-  long updateTimeMs = 64, lastUpdate = 0;
+  	long updateTimeMs = 64, lastUpdate = 0;
+ 	LCD();
+    LCD &operator=(const LCD &);
 public:
-	LCD();
+	static LCD& getInstance(){
+		static LCD singletonInstance;
+		return singletonInstance;
+	};
+
 	void display(String message);
 	String getMessage();
 };

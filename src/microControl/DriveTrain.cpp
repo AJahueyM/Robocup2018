@@ -1,7 +1,7 @@
 #include "DriveTrain.h"
 ///Constructor
 DriveTrain::DriveTrain() : topRight(1), topLeft(2), lowRight(4), lowLeft(3), enc(19, 18),
-	frontSharp(13), rightSharp(12), leftSharp(14),
+	frontSharp(13), rightSharp(12), leftSharp(11),
 	backRLimitS(31), backLLimitS(47) {
 	Serial.println("DriveTrain initializing...");
 	Serial.println("DriveTrain initialized");
@@ -76,6 +76,8 @@ void DriveTrain::turnToAngle(int angle) {
 	double outputMultiplier = mapD(fabs(angleError), 0.0, 15.0, 0.0, 1.0);
 
 	while (abs(angleError) > 0) {
+		lcd.display(String(angleError));
+
 		checkHeatDispense();
 		angleError = shortestAngleTurn(getYaw(), angle);
 		outputMultiplier = mapD(fabs(angleError), 0.0, 15.0, 0.0, 1.0);
@@ -98,11 +100,13 @@ void DriveTrain::driveStraight(int angle, double velocity) {
 	checkHeatDispense();
 
 	double angleError = shortestAngleTurn(getYaw(), angle);
+	lcd.display(String(angleError));
 	double outputMultiplier = mapD(abs(angleError), 0.0, 15.0, 0.0, .8);
+	
 	if (outputMultiplier > .8) {
 		outputMultiplier = .8;
 	} else if (outputMultiplier < 0.0) {
-		outputMultiplier = 0.0;
+		outputMultiplier = 0.0; // RE ESTABLECIENDO EL VALOR DE OUTPUTMULTIPLIER CUANDO VELOCIDAD ES NEGATIVA
 	}
 
 	if (abs(angleError) > 0) {
@@ -131,7 +135,7 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 	long encCount = startCount;
 	lastEncoderReading  = millis();
 
-	while (abs(encCount - startCount)  < toMove && getDistanceFront() > 15 ) {
+	while (abs(encCount - startCount)  < toMove && getDistanceFront() > 9 ) {
 		if (millis() - lastEncoderReading > encoderReadRateMs) {
 			encCount = enc.read();
 			encCount = abs(encCount);

@@ -39,8 +39,9 @@ LCD* lcd;
 
 bool ran = false;
 double speed = .5;
-int wallThreshold = 15;
+int wallThreshold = 20;
 int angles[4];
+String str;
 
 enum Dir{
   shiftRight,
@@ -54,10 +55,10 @@ void setup() {
   angles[1] = 90;
   angles[2] = 180;
   angles[3] = -90;
-  //Serial.begin(9600);
-  //lcd = new LCD();
+  Serial.begin(9600);
+  lcd = &LCD::getInstance();
 
-  //lcd->display("Booting Up...");
+  lcd->display("Booting Up...");
 
   driveTrain = new DriveTrain();
   // TileConfig initialConfig; 
@@ -91,23 +92,37 @@ void loop() {
     ran = true;
   }
 
-  if(driveTrain->getDistanceFront() > wallThreshold){
-    driveTrain->driveDisplacement(30,angles[0],speed);
+  str = "";
+  if(driveTrain->getDistanceFront() > 10){
+    str.concat("No wall ");
+    str.concat(String(driveTrain->getDistanceFront()));
+    driveTrain->driveDisplacement(30, angles[0],speed);
+    lcd->display(str);
+
   }else if(driveTrain->getDistanceRight() > wallThreshold){
+    str.concat("Wall front, turn right ");
+    str.concat(String(angles[1]));
+    lcd->display(str);
     driveTrain->turnToAngle(angles[1]);
     shiftAngle(shiftRight);
   }else if(driveTrain->getDistanceLeft() > wallThreshold){
+    str.concat("Wall front, turn right ");
+    str.concat(String(angles[3]));
+    lcd->display(str);
     driveTrain->turnToAngle(angles[3]);
     shiftAngle(shiftLeft);
   }else{
+      lcd->display("Deadend");
     while(driveTrain->getDistanceRight() < wallThreshold && driveTrain->getDistanceLeft() < wallThreshold){
-      driveTrain->driveDisplacement(30, angles[0], -speed);
-    }
+      driveTrain->driveStraight(angles[0], -speed);
+   }
     if(driveTrain->getDistanceRight() > wallThreshold){
+      lcd->display(String(angles[1]));
       driveTrain->turnToAngle(angles[1]);
       shiftAngle(shiftRight);
 
     }else if(driveTrain->getDistanceLeft() > wallThreshold){
+      lcd->display(String(angles[3]));
       driveTrain->turnToAngle(angles[3]);
       shiftAngle(shiftLeft);
 
