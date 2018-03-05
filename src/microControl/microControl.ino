@@ -41,6 +41,7 @@ bool ran = false;
 double speed = .5;
 int wallThreshold = 20;
 int angles[4];
+int turnCounter = 0;
 String str;
 
 enum Dir{
@@ -86,14 +87,25 @@ void setup() {
 }
 
 void loop() {
-  if(!ran){
+  lcd->display("Starting program...");
+
+  // str = "R: ";
+  // str.concat(driveTrain->getDistanceRight());
+  // str.concat("L: ");
+  // str.concat(driveTrain->getDistanceLeft());
+  // str.concat("F: ");
+  // str.concat(driveTrain->getDistanceFront());
+  // lcd->display(str);
+  if(!ran || turnCounter > 5){
+    driveTrain->turnToAngle(angles[0]);
     driveTrain->alignWithWall(Back);
     driveTrain->driveDisplacement(6.27,angles[0], speed);
     ran = true;
+    turnCounter = 0;
   }
 
   str = "";
-  if(driveTrain->getDistanceFront() > 10){
+  if(driveTrain->getDistanceFront() > 7){
     str.concat("No wall ");
     str.concat(String(driveTrain->getDistanceFront()));
     driveTrain->driveDisplacement(30, angles[0],speed);
@@ -112,10 +124,9 @@ void loop() {
     driveTrain->turnToAngle(angles[3]);
     shiftAngle(shiftLeft);
   }else{
-      lcd->display("Deadend");
-    while(driveTrain->getDistanceRight() < wallThreshold && driveTrain->getDistanceLeft() < wallThreshold){
-      driveTrain->driveStraight(angles[0], -speed);
-   }
+    lcd->display("Deadend");
+    driveTrain->turnToAngle(angles[1]);
+    shiftAngle(shiftLeft);
     if(driveTrain->getDistanceRight() > wallThreshold){
       lcd->display(String(angles[1]));
       driveTrain->turnToAngle(angles[1]);
@@ -131,6 +142,7 @@ void loop() {
 }
 
 void shiftAngle(Dir dir){
+  turnCounter++;
   int first = angles[0]; 
   int second = angles[1];
   int third = angles[2];

@@ -1,7 +1,7 @@
 #include "DriveTrain.h"
 ///Constructor
 DriveTrain::DriveTrain() : topRight(1), topLeft(2), lowRight(4), lowLeft(3), enc(19, 18),
-	frontSharp(13), rightSharp(12), leftSharp(11),
+	frontSharp(13), rightSharp(12), leftSharp(8),
 	backRLimitS(31), backLLimitS(47) {
 	Serial.println("DriveTrain initializing...");
 	Serial.println("DriveTrain initialized");
@@ -73,14 +73,14 @@ void DriveTrain::turnToAngle(int angle) {
 		}  while (angle > 180);
 	}
 	double angleError = shortestAngleTurn(getYaw(), angle);
-	double outputMultiplier = mapD(fabs(angleError), 0.0, 15.0, 0.0, 1.0);
+	double outputMultiplier = mapD(fabs(angleError), 0.0, 45.0, 0.2, 1.0);
 
 	while (abs(angleError) > 0) {
-		lcd.display(String(angleError));
+		//lcd.display(String(angleError));
 
 		checkHeatDispense();
 		angleError = shortestAngleTurn(getYaw(), angle);
-		outputMultiplier = mapD(fabs(angleError), 0.0, 15.0, 0.0, 1.0);
+		outputMultiplier = mapD(fabs(angleError), 0.0, 45.0, 0.2, 1.0);
 		if (outputMultiplier > .8) {
 			outputMultiplier = 0.8;
 		} else if (outputMultiplier < 0.1) {
@@ -100,8 +100,8 @@ void DriveTrain::driveStraight(int angle, double velocity) {
 	checkHeatDispense();
 
 	double angleError = shortestAngleTurn(getYaw(), angle);
-	lcd.display(String(angleError));
-	double outputMultiplier = mapD(abs(angleError), 0.0, 15.0, 0.0, .8);
+	//lcd.display(String(angleError));
+	double outputMultiplier = mapD(abs(angleError), 0.0, 5.0, 0.0, .8);
 	
 	if (outputMultiplier > .8) {
 		outputMultiplier = .8;
@@ -135,12 +135,13 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 	long encCount = startCount;
 	lastEncoderReading  = millis();
 
-	while (abs(encCount - startCount)  < toMove && getDistanceFront() > 9 ) {
+	while (abs(encCount - startCount)  < toMove && getDistanceFront() > 7 ) {
 		if (millis() - lastEncoderReading > encoderReadRateMs) {
 			encCount = enc.read();
 			encCount = abs(encCount);
 			lastEncoderReading = millis();
 		}
+		Serial.println(abs(encCount - startCount));
 		driveStraight(angle, velocity);
 	}
 
