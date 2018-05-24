@@ -13,7 +13,6 @@ void Filter::setSource(float* source) {
 	previousEst = *source;
 }
 float Filter::kalmanFilter() {
-
 	double kGain = errEstimate / (errEstimate + errorMeasurement);
 	double estimate = previousEst + kGain * (*source - previousEst);
 	errEstimate = (1.0 - kGain) * errEstimate + fabs(previousEst - estimate)*variance;

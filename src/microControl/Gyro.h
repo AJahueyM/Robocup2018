@@ -21,6 +21,7 @@ public:
 	void resetYaw();
 	void resetPitch();
 	void resetAll();
-
+	void setYawOffset(int value);
+	int getYawOffset();
 };
 #endif

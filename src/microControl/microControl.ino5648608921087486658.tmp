@@ -1,0 +1,243 @@
+#include "DriveTrain.h"
+#include "Map.h"
+#include "LCD.h"
+#include "Utils.h"
+
+DriveTrain* driveTrain;
+Map* maze;
+LCD* lcd;
+
+bool ran = false;
+double speed = .5;
+int wallThreshold = 20;
+int angles[4];
+int turnCounter = 0;
+String str;
+Direction currentRobotDirection = Up;
+
+void shiftAngle(Direction dir);
+Tile getInitialTile();
+Tile getCurrentTile();
+
+vector<int> hi;
+void setup() {
+  angles[0] = 0;
+  angles[1] = 90;
+  angles[2] = 180;
+  angles[3] = -90;
+  Serial.begin(9600);
+  lcd = &LCD::getInstance();
+
+  lcd->display("Booting Up...");
+  driveTrain = new DriveTrain();
+  lcd->display("Running initial setup...");
+
+  driveTrain->alignWithWall(Back);
+  driveTrain->driveDisplacement(6.27,angles[0], speed);
+  maze = new Map(getInitialTile());
+  lcd->display("Done");
+
+}
+
+void loop() {
+  // if(turnCounter >= 5){
+  
+  //   driveTrain->turnToAngle(angles[0]);
+  //   driveTrain->alignWithWall(Back);
+  //   driveTrain->driveDisplacement(6.27,angles[0], speed);
+  //   turnCounter = 0;
+  // }
+
+  // Coord currentRobotCoord = maze->getRobotCoord();
+  // Tile currentTile = getCurrentTile();
+
+  // maze->setTileAt(currentRobotCoord, currentTile);
+  if(!ran){
+    }
+  lcd->display("Before expanding");
+  maze->expandMap();
+  String str;
+  str.concat("W: ");
+  str.concat(maze->getWidth());
+  str.concat("H: ");
+  str.concat(maze->getHeight());
+  lcd->display(str);
+  //MOVE TO TARGET TILE UPDATING ROBOT COORD
+  
+    //lcd->display(String(hi[0]));
+}
+
+void shiftAngle(Direction dir){
+  turnCounter++;
+  int first = angles[0]; 
+  int second = angles[1];
+  int third = angles[2];
+  int fourth = angles[3];
+  switch(dir){
+    case Right:
+      angles[0] = second;
+      angles[1] = third;
+      angles[2] = fourth;
+      angles[3] = first;
+    break;
+
+    case Left:
+      angles[0] = fourth;
+      angles[1] = first;
+      angles[2] = second;
+      angles[3] = third;
+    break;
+  };
+
+  first = angles[0]; 
+  second = angles[1];
+  third = angles[2];
+  fourth = angles[3];
+
+  if(first == 0)
+      currentRobotDirection = Up;
+  else if(second == 0)
+      currentRobotDirection = Right;
+  else if(third == 0)
+      currentRobotDirection = Down;
+  else if(fourth == 0)
+      currentRobotDirection = Left;
+}
+
+Tile getInitialTile(){
+  byte result = B00000000;
+
+  if(driveTrain->getDistanceFront() < wallThreshold){
+    result = result | Tile::wallUpMask;
+  }
+  
+  if(driveTrain->getDistanceLeft() < wallThreshold){
+    result = result | Tile::wallLeftMask;
+  }
+
+  if(driveTrain->getDistanceRight() < wallThreshold){
+    result = result | Tile::wallRightMask;
+  }
+  driveTrain->turnToAngle(90);
+
+  if(driveTrain->getDistanceRight() < wallThreshold){
+    result = result | Tile::wallDownMask;
+  }
+  driveTrain->turnToAngle(0);
+
+  Color sensedColor = Silver;//driveTrain->getTileColor();
+  switch (sensedColor) {
+      case White:
+        break;
+
+      case Black:
+        result = result | Tile::isBlackMask;
+        break;
+
+      case Silver:
+        result = result | Tile::isCheckpointMask;
+        break;
+
+      default:
+        break;
+  }
+  return Tile(result);
+}
+
+Tile getCurrentTile(){
+  byte result = B00000000;
+
+  if(driveTrain->getDistanceFront() < wallThreshold){
+    switch(currentRobotDirection){
+      case Up:
+        result = result | Tile::wallUpMask;
+        break;
+
+      case Down:
+        result = result | Tile::wallDownMask;
+        break;
+
+      case Right:
+        result = result | Tile::wallRightMask;
+
+        break;
+
+      case Left:
+        result = result | Tile::wallLeftMask;
+        break;
+
+      default:
+        break;
+    }
+  }
+  
+  if(driveTrain->getDistanceLeft() < wallThreshold){
+    switch(currentRobotDirection){
+      case Up:
+        result = result | Tile::wallLeftMask;
+        break;
+
+      case Down:
+        result = result | Tile::wallRightMask;
+        break;
+
+      case Right:
+        result = result | Tile::wallUpMask;
+
+        break;
+
+      case Left:
+        result = result | Tile::wallDownMask;
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  if(driveTrain->getDistanceRight() < wallThreshold){
+    switch(currentRobotDirection){
+      case Up:
+        result = result | Tile::wallRightMask;
+        break;
+
+      case Down:
+        result = result | Tile::wallLeftMask;
+        break;
+
+      case Right:
+        result = result | Tile::wallDownMask;
+
+        break;
+
+      case Left:
+        result = result | Tile::wallUpMask;
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  Color sensedColor = Black;//driveTrain->getTileColor();
+  switch (sensedColor) {
+      case White:
+        break;
+
+      case Black:
+        result = result | Tile::isBlackMask;
+        break;
+
+      case Silver:
+        result = result | Tile::isCheckpointMask;
+        break;
+
+      default:
+        break;
+  }
+
+  if(driveTrain->getPitch() > 20){
+    result = result | Tile::isRampMask;
+  }
+  return Tile(result);
+}

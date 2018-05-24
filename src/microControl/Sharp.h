@@ -9,8 +9,9 @@ public:
 	Sharp(int analogIn);
 	int getDistance();
 private:
-	Filter filter = Filter(1,3,10);
+	Filter filter = Filter(10,3,10);
 	float distance;
+	int readForFilter = 25;
 	int analogPort;
 };
 

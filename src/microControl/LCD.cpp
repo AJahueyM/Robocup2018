@@ -1,7 +1,7 @@
 #include "LCD.h"
 LCD::LCD(){
 	Serial.println("LCD initializing...");
-
+  Serial.println("HI");
 	lcd.begin();
 	lcd.backlight();	
   Serial.println("LCD initialized");

@@ -8,4 +8,4 @@ private:
 	//vector<uint> instructions; ///
 };
 
-#endif __PATH_HEADER_
+#endif

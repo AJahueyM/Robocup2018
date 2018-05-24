@@ -2,13 +2,13 @@
 #include <Arduino.h>
 
 
-Dispenser::Dispenser(int pin, int startAmount){
+Dispenser::Dispenser(){
 	servoDispenser.attach(pin);
-	amountAvailable = startAmount;
-	outputCenter = 96;
-	outputLeft = 135;
-	outputRight = 55;
- servoDispenser.write(outputCenter);
+	amountAvailable = 12;
+	outputCenter = 75;
+	outputLeft = 115;
+	outputRight = 40;
+ 	servoDispenser.write(outputCenter);
 }
 
 void Dispenser::setAmountAvailable(int iAmount){
@@ -49,7 +49,7 @@ void Dispenser::dispenseDirection(DispenserDirection direction, int amount){
 			}
 		}
 	}else{
-		servoDispenser.write(90);
+		servoDispenser.write(outputCenter);
 	}
 	
 }
