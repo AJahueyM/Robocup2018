@@ -45,7 +45,7 @@ Color ColorSensor::getColor(){
       if(calibrar)
         Serial.print(" WHITE ");
       return White;
-    }else if(((withinRange(redFrequency, 30)&& withinRange(greenFrequency, 35))&& withinRange(blueFrequency, 12)) ){
+    }else if(((withinRange(redFrequency, 20)&& withinRange(greenFrequency, 25))&& withinRange(blueFrequency, 12)) ){
       if(calibrar)
         Serial.print(" BLACK ");
       return Black;
