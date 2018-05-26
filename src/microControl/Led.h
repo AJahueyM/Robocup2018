@@ -19,7 +19,7 @@ public:
 private:
   void setupPins();
   void setPins(uint8_t value);
-  maxIntensity = 255, minIntensity = 0;
+  uint8_t maxIntensity = 255, minIntensity = 0;
   vector<uint8_t> pins;
   bool state;
 

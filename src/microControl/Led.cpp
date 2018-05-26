@@ -1,7 +1,7 @@
 #include "Led.h"
 
 Led::Led(uint8_t pin){
-	pins.emplace_back(pin);
+	pins.push_back(pin);
 	setupPins();
 }
 
@@ -12,11 +12,11 @@ Led::Led(vector<uint8_t> pins){
 
 void Led::blink(unsigned int times, bool fadeInOut, unsigned int periodMs){
 	if(fadeInOut){
-		int duration = periodMs * times
+		int duration = periodMs * times;
 		int multiplier = maxIntensity - minIntensity;
 		if(multiplier<=0){
-			multiplier = 255
-			minIntensity = 0
+			multiplier = 255;
+			minIntensity = 0;
 		}
 		long millisStart = millis();
 		long elapsed = 0;
@@ -26,7 +26,7 @@ void Led::blink(unsigned int times, bool fadeInOut, unsigned int periodMs){
 			setPins(output);
 		}
 	}else{
-		for(unsigned int i = 0, i < times, ++i){
+		for(unsigned int i = 0; i < times; ++i){
 			setPins(minIntensity);
 			delay(periodMs / 2);
 			setPins(maxIntensity);
@@ -69,7 +69,7 @@ void Led::setMinIntensity(uint8_t intensity){
 }
 
 void Led::addPin(uint8_t pin){
-	pins.emplace_back(pin);
+	pins.push_back(pin);
 }
 
 void Led::setupPins(){
