@@ -2,14 +2,11 @@
 ///Constructor
 DriveTrain::DriveTrain() : topRight(2), topLeft(3), lowRight(4), lowLeft(1), enc(19, 18),
 	frontSharp(12), rightSharp(11), leftSharp(13),
-	backRLimitS(51), backLLimitS(53) {
+	backRLimitS(51), backLLimitS(53), leds(led1Pin){
 	Serial.println("DriveTrain initializing...");
-	pinMode(led1Pin, OUTPUT);
-	pinMode(led2Pin, OUTPUT);
-	digitalWrite(led1Pin, LOW);
-	digitalWrite(led2Pin, LOW);
+	leds.addPin(led2Pin);
+	leds.setState(false);
   	enc.write(0);
-
 	Serial.println("DriveTrain initialized");
 
 }
@@ -28,23 +25,20 @@ void DriveTrain::setLeftMotorsVelocity(double velocity) {
 void DriveTrain::checkHeatDispense() {
 	if(millis() - lastHeatReading > heatReadRateMs && shouldDispense){
 		if (mlxL.readObjectTempC() - mlxL.readAmbientTempC() > heatDiferenceVictim) {
-			digitalWrite(led1Pin, HIGH);
-			digitalWrite(led2Pin, HIGH);
+			leds.blink(blinkTimesVictimDetected,true);
 			turn(0);
 			dispenser.dispenseDirection(DispenserDirection::left);
 			leftKit = true;
 		}
 		if (mlxR.readObjectTempC() - mlxR.readAmbientTempC() > heatDiferenceVictim) {
-			digitalWrite(led1Pin, HIGH);
-			digitalWrite(led2Pin, HIGH);
+			leds.blink(blinkTimesVictimDetected,true);
 			turn(0);
 			dispenser.dispenseDirection(DispenserDirection::right);
 			leftKit = true;
 		}
 		lastHeatReading = millis();
 	}
-	digitalWrite(led1Pin, LOW);
-	digitalWrite(led2Pin, LOW);
+	leds.setState(false);
 }
 void DriveTrain::driveVelocity(double velocity) {
 	setRightMotorsVelocity(velocity);

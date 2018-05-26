@@ -11,6 +11,7 @@
 #include "ColorSensor.h"
 #include <Adafruit_MLX90614.h>
 #include "LCD.h"
+#include "Led.h"
 
 enum RobotFace {
 	Back,
@@ -26,7 +27,8 @@ private:
 	Button backRLimitS, backLLimitS;
 	double wheelCircunference = 7.0 * M_PI, encCountsPerRev = 3400.0, heatDiferenceVictim = 4, lastDisplacement = 0;
 	long lastEncoderReading = 0, encoderReadRateMs = 16, lastHeatReading = 0, heatReadRateMs = 100;
-	int led1Pin = 37, led2Pin = 39;
+	int led1Pin = 37, led2Pin = 39, blinkTimesVictimDetected = 2;
+	Led leds;
 	Adafruit_MLX90614 mlxR = Adafruit_MLX90614(0x5A);
 	Adafruit_MLX90614 mlxL = Adafruit_MLX90614(0x55);
 	Dispenser dispenser = Dispenser::getInstance();
