@@ -11,7 +11,6 @@ DriveTrain::DriveTrain() : topRight(2), topLeft(3), lowRight(4), lowLeft(1), enc
 
 }
 
-///	MOTORS
 void DriveTrain::setRightMotorsVelocity(double velocity) {
 	topRight.driveVelocity(velocity);
 	lowRight.driveVelocity(velocity);
@@ -88,7 +87,6 @@ void DriveTrain::turnToAngle(int angle) {
 	double outputMultiplier = mapD(fabs(angleError), 0.0, 45.0, 0.1, 1.0);
 	long start = millis();
 	while (abs(angleError) > 0 && millis() - start < 2000) {
-		//lcd.display(String(angleError));
 		if(!leftKit && shouldDispense)
 			checkHeatDispense();
 		angleError = shortestAngleTurn(getYaw(), angle);
@@ -113,13 +111,12 @@ void DriveTrain::driveStraight(int angle, double velocity) {
 		checkHeatDispense();
 
 	double angleError = shortestAngleTurn(getYaw(), angle);
-	//lcd.display(String(angleError));
 	double outputMultiplier = mapD(abs(angleError), 0.0, 7.0, 0.0, 1);
 	
 	if (outputMultiplier > 1) {
 		outputMultiplier = 1;
 	} else if (outputMultiplier < 0.0) {
-		outputMultiplier = 0.0; // RE ESTABLECIENDO EL VALOR DE OUTPUTMULTIPLIER CUANDO VELOCIDAD ES NEGATIVA
+		outputMultiplier = 0.0;
 	}
 	if(getDistanceRight() < 8 || getDistanceLeft() < 8){
 		drivingWithDistance = true;
@@ -179,26 +176,6 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 		}
 		Serial.println(abs(encCount - startCount));
 		driveStraight(angle, velocity);
-
-
-		// if((abs(abs(getYaw()) - abs(angle)) > 10) && !drivingWithDistance){
-		// 	correctionCounter++;
-		// 	toMove -= abs(encCount - startCount);
-		// 	toMove *= 1.15;
-		// 	long start = millis();
-		// 	while(millis() - start < 500 && correctionCounter < 3){ // millis() - toMove < 500
-		// 		driveVelocity(-1);
-		// 	}
-		// 	if(correctionCounter >= 3){
-		// 		while(millis() - start < 1000){ // millis() - toMove < 500
-		// 			driveVelocity(1);
-		// 		}	
-		// 		correctionCounter = 0;		
-		// 	}
-		// 	turnToAngle(angle);
-		// 	enc.write(0);
-		// 	startCount = enc.read();
-		// }
 
 		if((abs(getPitch()) > 5 && abs(getPitch()) < 15 ) && !expandedMovement){
 			expandedMovement = true;
