@@ -20,6 +20,8 @@ enum RobotFace {
 
 class DriveTrain {
 private:
+	DriveTrain();
+    DriveTrain &operator=(const DriveTrain &);
 	Motor topRight, topLeft, lowRight, lowLeft;
 	Gyro gyro;
 	Sharp frontSharp, rightSharp, leftSharp;
@@ -37,11 +39,14 @@ private:
 	bool lastDisplacementCompleted = false, interruptedColor = false, leftKit = false, shouldDispense = false;
 	bool drivingWithDistance = false;
 public:
+	static DriveTrain& getInstance(){
+		static DriveTrain singletonInstance;
+		return singletonInstance;
+	};
 	void setRightMotorsVelocity(double velocity);
 	void setLeftMotorsVelocity(double velocity);
 	void checkHeatDispense();
 
-	DriveTrain();
 	void driveVelocity(double velocity);
 	void turn(double rotation);
 	int getYaw();
