@@ -36,7 +36,7 @@ private:
 	Dispenser dispenser = Dispenser::getInstance();
 	ColorSensor colorSensor = ColorSensor();
 	LCD& lcd = LCD::getInstance();
-	bool lastDisplacementCompleted = false, interruptedColor = false, leftKit = false, shouldDispense = false;
+	bool lastDisplacementCompleted = false, interruptedColor = false, leftKit = false, shouldDispense = true;
 	bool drivingWithDistance = false;
 public:
 	static DriveTrain& getInstance(){
