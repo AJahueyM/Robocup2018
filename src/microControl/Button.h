@@ -1,5 +1,5 @@
-#ifndef __BUTTON_HEADER_
-#define __BUTTON_HEADER_
+#ifndef __BUTTON_H_
+#define __BUTTON_H_
 #include "Arduino.h"
 
 class Button {
@@ -9,6 +9,4 @@ public:
 private:
 	int digitalPin;
 };
-
-
 #endif

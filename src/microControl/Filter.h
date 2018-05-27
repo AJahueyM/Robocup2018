@@ -1,5 +1,8 @@
+#ifndef __FILTER_H_
+#define __FILTER_H_
 #include <math.h>
 #include <Arduino.h>
+
 class Filter{
 public:
 	Filter(float errorMeasurement,float estUncertainty,float variance);
@@ -16,3 +19,4 @@ private:
 	float variance;
 	float errEstimate;
 };
+#endif

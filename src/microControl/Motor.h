@@ -1,9 +1,6 @@
+#ifndef __MOTOR_H_
+#define __MOTOR_H_
 #include <Adafruit_MotorShield.h>
-
-
-#ifndef __MOTOR_HEADER_
-#define __MOTOR_HEADER_
-
 #include <Arduino.h>
 #include "Utils.h"
 
@@ -20,5 +17,4 @@ public:
 	~Motor();
 	void driveVelocity(double velocity);
 };
-
 #endif

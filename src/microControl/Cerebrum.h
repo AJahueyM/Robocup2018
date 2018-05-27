@@ -1,5 +1,5 @@
-#ifndef __CEREBRUM_HEADER_
-#define __CEREBRUM_HEADER_
+#ifndef __CEREBRUM_H_
+#define __CEREBRUM_H_
 #include "Map.h"
 #include "LCD.h"
 #include "Utils.h"
@@ -41,5 +41,4 @@ private:
  	int distanceMoveTiles = 30, angles[4], turnCounter = 0, mazeFloor = 0, wallTolerance = 9, wallThreshold = 15;
  	bool hasStarted = false;
 };
-
 #endif

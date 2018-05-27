@@ -483,6 +483,7 @@ void Cerebrum::resetGyro(){
 	const double distanceMoveStart = 6, speedMoveStart = .5;
 	driveTrain.turnToAngle(0);
 	driveTrain.alignWithWall(Back);
+	driveTrain.resetAll();
 	driveTrain.driveDisplacement(distanceMoveStart,angles[0], speedMoveStart);
 }
 

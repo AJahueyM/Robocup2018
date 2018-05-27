@@ -1,5 +1,5 @@
-#ifndef __COORD_HEADER_
-#define __COORD_HEADER_
+#ifndef __COORD_H_
+#define __COORD_H_
 
 class Coord {
 public:
@@ -27,5 +27,4 @@ public:
 private:
 	uint8_t x, y;
 };
-
 #endif

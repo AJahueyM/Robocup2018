@@ -1,6 +1,5 @@
-
-#ifndef __SHARP_HEADER_
-#define __SHARD_HEADER_
+#ifndef __SHARP_H_
+#define __SHARD_H_
 #include <Arduino.h>
 #include "Filter.h"
 
@@ -14,6 +13,4 @@ private:
 	int readForFilter = 25;
 	int analogPort;
 };
-
-
 #endif

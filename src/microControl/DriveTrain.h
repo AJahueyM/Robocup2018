@@ -1,5 +1,5 @@
-#ifndef __DRIVETRAIN_HEADER_
-#define __DRIVETRAIN_HEADER_
+#ifndef __DRIVETRAIN_H_
+#define __DRIVETRAIN_H_
 #include <math.h>
 #include <Encoder.h>
 #include "Motor.h"

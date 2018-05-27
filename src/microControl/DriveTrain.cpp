@@ -217,6 +217,7 @@ void DriveTrain::alignWithWall(RobotFace faceToAlign) {
 		break;
 
 	case Front:
+	//TODO ADD FRONT LIMIT SWITCHES
 		speed = .75;
 		break;
 	}
@@ -234,7 +235,6 @@ void DriveTrain::alignWithWall(RobotFace faceToAlign) {
 		else
 			setLeftMotorsVelocity(0);
 	}
-	resetYaw();
 	driveVelocity(0);
 }
 

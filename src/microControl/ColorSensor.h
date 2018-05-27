@@ -3,7 +3,6 @@
 #include "Arduino.h"
 #include "Utils.h"
 
-
 class ColorSensor{
 private:
   int redFrequency = 0, blueFrequency = 0 , greenFrequency = 0;
@@ -22,5 +21,4 @@ public:
   Color getColor();
 
 };
-
 #endif

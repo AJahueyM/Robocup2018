@@ -1,3 +1,5 @@
+#ifndef __DISPENSER_H_
+#define __DISPENSER_H_
 #include <Servo.h>
 
 enum DispenserDirection{
@@ -23,4 +25,4 @@ public:
 	void dispenseDirection(DispenserDirection direction, int amount = 1);
 	bool kitsAvailable();
 }; 
-
+#endif

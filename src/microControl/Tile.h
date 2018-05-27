@@ -1,8 +1,7 @@
-#ifndef __TILE_HEADER_
-#define __TILE_HEADER_
+#ifndef __TILE_H_
+#define __TILE_H_
 #include "Arduino.h"
 #include "Utils.h"
-
 
 class Tile {
 public:
@@ -32,7 +31,6 @@ private:
 	byte identity = 0;
 	byte identity2 = 0;
 };
-
 #endif
 
 

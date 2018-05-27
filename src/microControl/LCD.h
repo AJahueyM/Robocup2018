@@ -1,5 +1,5 @@
-#ifndef __LCD_HEADER_
-#define __LCD_HEADER_
+#ifndef __LCD_H_
+#define __LCD_H_
 #include <LiquidCrystal_I2C.h>
 #include <Arduino.h>
 
@@ -19,6 +19,5 @@ public:
 	void display(String message);
 	String getMessage();
 };
-
 #endif
 

@@ -1,5 +1,5 @@
-#ifndef __PATH_HEADER_
-#define __PATH_HEADER_
+#ifndef __PATH_H_
+#define __PATH_H_
 
 class Path {
 public:
@@ -7,5 +7,4 @@ public:
 private:
 	//vector<uint> instructions; ///
 };
-
 #endif

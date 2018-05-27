@@ -1,13 +1,10 @@
-
-#ifndef __MAP_HEADER_
-#define __MAP_HEADER_
-
+#ifndef __MAP_H_
+#define __MAP_H_
 #include "Tile.h"
 #include "Coord.h"
 #include "Path.h"
 #include <ArduinoSTL.h>
 using namespace std;
-
 
 class Map{
 public:

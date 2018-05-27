@@ -1,5 +1,5 @@
-#ifndef __UTILS_HEADER_
-#define __UTILS_HEADER_
+#ifndef __UTILS_H_
+#define __UTILS_H_
 #include <Arduino.h>
 
 enum Direction {

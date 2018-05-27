@@ -1,5 +1,5 @@
-#ifndef __LED_HEADER_
-#define __LED_HEADER_
+#ifndef __LED_H_
+#define __LED_H_
 #include "Arduino.h"
 #include "Utils.h"
 #include <ArduinoSTL.h>
@@ -24,5 +24,4 @@ private:
   bool state;
 
 };
-
 #endif
