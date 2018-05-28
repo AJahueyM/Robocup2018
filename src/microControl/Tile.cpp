@@ -5,6 +5,10 @@ Tile::Tile(){
     identity2 = 0;
 }
 
+Tile::Tile(int x, int y) : Node(x, y){
+    
+}
+
 Tile::Tile(byte identity){
     this->identity = identity;
 }
@@ -41,7 +45,7 @@ bool Tile::wallExists(Direction side){
     return result != 0;
 }
 
-bool Tile::setWall(Direction side, bool value){
+void Tile::setWall(Direction side, bool value){
     switch(side){
         case Up:
             if(value)

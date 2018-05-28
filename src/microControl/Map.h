@@ -9,8 +9,6 @@ using namespace std;
 class Map{
 public:
 	Map(Tile initialTile);
-	void addColumn(Direction side);
-	void addRow(Direction side);
 	Tile& getTileAt(Coord coord);
 	void setTileAt(Coord coord, Tile newTile);
 	Coord getRobotCoord();
@@ -22,6 +20,8 @@ public:
 	int getNonVisitedTiles();
 private:
 	vector<vector<Tile>> tileMap;
+	void updateWalls();
+	void updateCoords();
 	void checkPockets();
 	Coord robotCoord;
 	byte mockIdentity = B11111101;

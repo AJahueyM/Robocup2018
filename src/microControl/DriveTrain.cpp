@@ -8,7 +8,6 @@ DriveTrain::DriveTrain() : topRight(2), topLeft(3), lowRight(4), lowLeft(1), enc
 	leds.setState(false);
   	enc.write(0);
 	Serial.println("DriveTrain initialized");
-
 }
 
 void DriveTrain::setRightMotorsVelocity(double velocity) {

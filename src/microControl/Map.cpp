@@ -6,14 +6,6 @@ Map::Map(Tile initialTile){
 	mockTile = Tile(mockIdentity, mockIdentity);
 }
 
-void Map::addColumn(Direction side){
-
-}
-
-void Map::addRow(Direction side){
-
-}
-
 Tile& Map::getTileAt(Coord coord){
 	if(coord.getY()> tileMap.size() - 1 || coord.getY() < 0){
 		return mockTile;
@@ -26,7 +18,7 @@ Tile& Map::getTileAt(Coord coord){
 
 void Map::setTileAt(Coord coord, Tile newTile){
 	tileMap[coord.getY()][coord.getX()] = newTile;
-
+	updateWalls();
 }
 
 Coord Map::getRobotCoord(){
@@ -80,7 +72,8 @@ void Map::expandMap(){
 			tileMap.push_back(newRow);
 		}
 	}
-
+	updateCoords();
+	updateWalls();
 	checkPockets();
 }
 
@@ -109,6 +102,32 @@ int Map::getNonVisitedTiles(){
 		}
 	}
 	return counter;
+}
+
+void Map::updateCoords(){
+	for(int y = 0; y < tileMap.size(); ++y){
+		for(int x = 0; x < tileMap[0].size(); ++x){
+			tileMap[y][x].setX(x);
+			tileMap[y][x].setX(y);
+		}
+	}	
+}
+
+void Map::updateWalls(){
+    for(int y = 0; y < tileMap.size(); ++y){
+        for(int x = 0; x < tileMap[0].size() ; ++x){
+            Tile &node = tileMap[y][x];
+
+            if(y - 1 >= 0 && node.wallExists(Up))
+                tileMap[y-1][x].setWall(Down, true);
+            if(y + 1 < tileMap.size() && node.wallExists(Down))
+                tileMap[y+1][x].setWall(Up, true);
+            if(x + 1 < tileMap[0].size() && node.wallExists(Right))
+                tileMap[y][x+1].setWall(Left, true);
+            if(x - 1 >= 0 && node.wallExists(Left))
+                tileMap[y][x-1].setWall(Right, true);
+        }
+    }
 }
 
 void Map::checkPockets(){

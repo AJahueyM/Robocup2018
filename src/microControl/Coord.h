@@ -8,23 +8,26 @@ public:
 		this->y = 0;
 	}
   
-	Coord(uint8_t x, uint8_t y){
+	Coord(int x, int y){
 		this->x = x;
 		this->y = y;
 	}
-	uint8_t getX(){
+	int getX() const{
 		return this->x;
 	}
-	uint8_t getY(){
+	int getY() const{
 		return this->y;
 	}
-	void setX(uint8_t x){
+	void setX(int x){
 		this->x = x;
 	}
-	void setY(uint8_t y){
+	void setY(int y){
 		this->y = y;
 	}
+	bool operator==(const Coord& c){
+		return this->x == c.getX() && this->y == c.getY();
+	}
 private:
-	uint8_t x, y;
+	int x, y;
 };
 #endif

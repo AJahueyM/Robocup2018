@@ -2,8 +2,9 @@
 #define __TILE_H_
 #include "Arduino.h"
 #include "Utils.h"
+#include "Node.h"
 
-class Tile {
+class Tile : public Node{
 public:
 	static const byte wallUpMask = B10000000;
 	static const byte wallRightMask = B01000000;
@@ -16,11 +17,12 @@ public:
 	static const byte maskVisited = B10000000;
 	static const byte hasBumpMask = B01000000;
 	Tile();
+	Tile(int x, int y);
 	Tile(byte identity);
 	Tile(byte identity, byte identity2);
 	bool isRamp();
-	bool wallExists(Direction side);
-	bool setWall(Direction side, bool value);
+	bool wallExists(Direction side) override;
+	void setWall(Direction side, bool value) override;
 	void setLeftKit(bool value);
 	bool getLeftKit();
 	bool wasVisited();
