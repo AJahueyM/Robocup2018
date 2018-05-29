@@ -176,8 +176,8 @@ void Map::updateNeighbors(){
 
 void Map::updateMap(){
 	updateCoords();
-	updateWalls();
 	checkPockets();
+	updateWalls();
 	updateNeighbors();
 }
 vector<vector<Tile>>& Map::getTileMap(){
