@@ -14,7 +14,7 @@ Coord Path::getCoordAt(int index){
     }
 }
 
-int Path::getLenght(){
+int Path::getLength(){
     return path.size();
 }
 

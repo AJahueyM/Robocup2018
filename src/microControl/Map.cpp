@@ -110,7 +110,7 @@ void Map::updateCoords(){
 	for(int y = 0; y < tileMap.size(); ++y){
 		for(int x = 0; x < tileMap[0].size(); ++x){
 			tileMap[y][x].setX(x);
-			tileMap[y][x].setX(y);
+			tileMap[y][x].setY(y);
 		}
 	}	
 }

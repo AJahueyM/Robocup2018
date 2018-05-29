@@ -9,7 +9,7 @@ public:
 	Path();
 	Path(vector<Coord> path);
 	Coord getCoordAt(int index);
-	int getLenght();
+	int getLength();
 	vector<Coord> getPath();
 private:
 	vector<Coord> path;
