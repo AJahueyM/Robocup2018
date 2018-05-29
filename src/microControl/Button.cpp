@@ -1,6 +1,6 @@
 #include "Button.h"
 
-Button::Button(int digitalPin){
+Button::Button(uint8_t digitalPin){
 	this->digitalPin = digitalPin;
 }
 

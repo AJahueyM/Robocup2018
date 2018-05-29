@@ -5,12 +5,12 @@
 
 class Sharp {
 public:
-	Sharp(int analogIn);
-	int getDistance();
+	Sharp(uint8_t analogIn);
+	uint8_t getDistance();
 private:
 	Filter filter = Filter(10,3,10);
 	float distance;
 	int readForFilter = 25;
-	int analogPort;
+	uint8_t analogPort;
 };
 #endif

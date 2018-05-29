@@ -8,6 +8,7 @@ using namespace std;
 
 class Map{
 public:
+	Map(vector<vector<Tile>>& tileMap);
 	Map(Tile initialTile);
 	Tile& getTileAt(Coord coord);
 	void setTileAt(Coord coord, Tile newTile);
@@ -18,14 +19,18 @@ public:
 	uint8_t getWidth();
 	uint8_t getHeight();
 	int getNonVisitedTiles();
+	vector<vector<Tile>>& getTileMap();
+	void setTileMap(vector<vector<Tile>> tileMap);
 private:
 	vector<vector<Tile>> tileMap;
 	void updateWalls();
 	void updateCoords();
 	void checkPockets();
+	void updateNeighbors();
+	void updateMap();
 	Coord robotCoord;
 	byte mockIdentity = B11111101;
-	Tile mockTile;
+	Tile mockTile = Tile(mockIdentity, mockIdentity);
 	Direction robotDirection;
 
 };

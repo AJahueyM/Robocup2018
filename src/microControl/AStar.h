@@ -4,6 +4,7 @@
 #include "Tile.h"
 #include "Utils.h"
 #include "Coord.h"
+#include <MemoryFree.h>
 
 class AStar{
 public:

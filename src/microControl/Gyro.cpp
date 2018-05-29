@@ -4,8 +4,8 @@ Gyro::Gyro(){
 	Serial.println("BNO Initializing...");
 	if(!bno.begin()){
 		Serial.println("NO BNO 055 DETECTED");
-		while(1);
-		}
+		//while(1);
+	}
 	bno.setExtCrystalUse(true);
 	delay(1000);
 	double startTime = millis();

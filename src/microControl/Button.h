@@ -4,9 +4,9 @@
 
 class Button {
 public:
-	Button(int digitalPin);
+	Button(uint8_t digitalPin);
 	bool getState();
 private:
-	int digitalPin;
+	uint8_t digitalPin;
 };
 #endif

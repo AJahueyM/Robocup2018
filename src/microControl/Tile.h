@@ -1,25 +1,15 @@
 #ifndef __TILE_H_
 #define __TILE_H_
-#include "Arduino.h"
 #include "Utils.h"
+#include "TileMasks.h"
 #include "Node.h"
 
 class Tile : public Node{
 public:
-	static const byte wallUpMask = B10000000;
-	static const byte wallRightMask = B01000000;
-	static const byte wallDownMask = B00100000;
-	static const byte wallLeftMask = B00010000;
-	static const byte isRampMask = B00001000;
-	static const byte leftKitMask = B00000100;
-	static const byte isBlackMask = B00000010;
-	static const byte isCheckpointMask = B00000001;
-	static const byte maskVisited = B10000000;
-	static const byte hasBumpMask = B01000000;
 	Tile();
-	Tile(int x, int y);
-	Tile(byte identity);
-	Tile(byte identity, byte identity2);
+	explicit Tile(int x, int y);
+	explicit Tile(byte identity);
+	explicit Tile(byte identity, byte identity2);
 	bool isRamp();
 	bool wallExists(Direction side) override;
 	void setWall(Direction side, bool value) override;

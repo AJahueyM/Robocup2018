@@ -14,22 +14,23 @@ public:
     void setX(int x);
     void setY(int y);
     void setPrevious(Node* previous);
-    virtual void setWall(Direction dir, bool wall);
+    virtual void setWall(Direction dir, bool wall) = 0;
     int getF() const;
     int getH() const;
     int getG() const;
     int getX() const;
     int getY() const;
-    virtual bool wallExists(Direction dir);
+    virtual bool wallExists(Direction dir) = 0;
     Node* getPrevious();
     void addNeighbor(Node* neighbor);
-    vector<Node*>& getNeighbors();
+    Node* getNeighbors(int index);
+    int getCurrentNeighbors();
 
 private:
     int f, h, g;
     int x, y;
-    vector<Node*> neighbors;
+    int currentNeighbors = 0;
+    Node* neighbors[4];
     Node* previous = nullptr;
-    bool isWallU = false, isWallL = false, isWallD = false, isWallR = false;
 };
 #endif

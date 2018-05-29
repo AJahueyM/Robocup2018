@@ -11,7 +11,7 @@ Cerebrum::Cerebrum(DriveTrain& driveTrain) : driveTrain(driveTrain), lcd(LCD::ge
 
 void Cerebrum::start(){
 	resetGyro();
-	maze.push_back(new Map(getInitialTile()));
+	maze[mazeFloor] = (new Map(getInitialTile()));
 }
 
 void Cerebrum::prepareForMove(){
@@ -33,8 +33,9 @@ void Cerebrum::prepareForMove(){
 			driveTrain.driveStraight(angles[0], rampMovementSpeed);
 		}
 		driveTrain.driveDisplacement(8, angles[0], movementSpeed);
-		mazeFloor++;
-		maze.push_back(new Map(getCurrentTile()));
+		if(mazeFloor < 3)
+			mazeFloor++;
+		maze[mazeFloor] = (new Map(getCurrentTile()));
 		maze[mazeFloor]->expandMap();
 		currentRobotCoord = maze[mazeFloor]->getRobotCoord();
 	}
@@ -177,8 +178,8 @@ void Cerebrum::driveForward(){
 		}
 
 		byte identity = B00000000, identity2 = B00000000;
-		identity = identity | Tile::isBlackMask;
-		identity2 = identity2 | Tile::maskVisited;
+		identity = identity | isBlackMask;
+		identity2 = identity2 | maskVisited;
 
 		Tile blackTile(identity, identity2);
 		maze[mazeFloor]->setTileAt(updateColorTile, blackTile);
@@ -246,17 +247,17 @@ Tile Cerebrum::getInitialTile(){
 
 	if(driveTrain.getDistanceFront() < wallThreshold){
 		Serial.print("F");
-		result = result | Tile::wallUpMask;
+		result = result | wallUpMask;
 	}
 
 	if(driveTrain.getDistanceLeft() < wallThreshold){
 		Serial.print("L");
-		result = result | Tile::wallLeftMask;
+		result = result | wallLeftMask;
 	}
 
 	if(driveTrain.getDistanceRight() < wallThreshold){
 		Serial.print("R");
-		result = result | Tile::wallRightMask;
+		result = result | wallRightMask;
 	}
 
 	driveTrain.turnToAngle(90);
@@ -264,7 +265,7 @@ Tile Cerebrum::getInitialTile(){
 	if(driveTrain.getDistanceRight() < wallThreshold){
 		Serial.print("B");
 
-		result = result | Tile::wallDownMask;
+		result = result | wallDownMask;
 	}
 	Serial.println();
 
@@ -276,17 +277,17 @@ Tile Cerebrum::getInitialTile(){
 		break;
 
 		case Black:
-			result = result | Tile::isBlackMask;
+			result = result | isBlackMask;
 		break;
 
 		case Silver:
-			result = result | Tile::isCheckpointMask;
+			result = result | isCheckpointMask;
 		break;
 
 		default:
 		break;
 	}
-	result2 = result2 | Tile::maskVisited;
+	result2 = result2 | maskVisited;
 	return Tile(result, result2);
 }
 
@@ -297,20 +298,20 @@ Tile Cerebrum::getCurrentTile(){
 		//Serial.print("F");
 		switch(currentRobotDirection){
 			case Up:
-				result = result | Tile::wallUpMask;
+				result = result | wallUpMask;
 			break;
 
 			case Down:
-				result = result | Tile::wallDownMask;
+				result = result | wallDownMask;
 			break;
 
 			case Right:
-				result = result | Tile::wallRightMask;
+				result = result | wallRightMask;
 
 			break;
 
 			case Left:
-				result = result | Tile::wallLeftMask;
+				result = result | wallLeftMask;
 			break;
 
 			default:
@@ -323,19 +324,19 @@ Tile Cerebrum::getCurrentTile(){
 
 		switch(currentRobotDirection){
 			case Up:
-				result = result | Tile::wallLeftMask;
+				result = result | wallLeftMask;
 			break;
 
 			case Down:
-				result = result | Tile::wallRightMask;
+				result = result | wallRightMask;
 			break;
 
 			case Right:
-				result = result | Tile::wallUpMask;
+				result = result | wallUpMask;
 			break;
 
 			case Left:
-				result = result | Tile::wallDownMask;
+				result = result | wallDownMask;
 			break;
 
 			default:
@@ -348,20 +349,20 @@ Tile Cerebrum::getCurrentTile(){
 
 		switch(currentRobotDirection){
 			case Up:
-				result = result | Tile::wallRightMask;
+				result = result | wallRightMask;
 			break;
 
 			case Down:
-				result = result | Tile::wallLeftMask;
+				result = result | wallLeftMask;
 			break;
 
 			case Right:
-				result = result | Tile::wallDownMask;
+				result = result | wallDownMask;
 
 			break;
 
 			case Left:
-				result = result | Tile::wallUpMask;
+				result = result | wallUpMask;
 			break;
 
 			default:
@@ -374,11 +375,11 @@ Tile Cerebrum::getCurrentTile(){
 		break;
 
 		case Black:
-			result = result | Tile::isBlackMask;
+			result = result | isBlackMask;
 		break;
 
 		case Silver:
-			result = result | Tile::isCheckpointMask;
+			result = result | isCheckpointMask;
 		break;
 
 		default:
@@ -388,11 +389,11 @@ Tile Cerebrum::getCurrentTile(){
 
 	if(driveTrain.getPitch() > 0 ){
 		if(driveTrain.getPitch() > 20)
-			result = result | Tile::isRampMask;
+			result = result | isRampMask;
 	}else if(driveTrain.getPitch() > 5 && driveTrain.getPitch() < 20){
-		result2 = result2 | Tile::hasBumpMask; // 
+		result2 = result2 | hasBumpMask; // 
 	}
-	result2 = result2 | Tile::maskVisited;
+	result2 = result2 | maskVisited;
 	return Tile(result, result2);
 }
 

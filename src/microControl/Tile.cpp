@@ -5,7 +5,7 @@ Tile::Tile(){
     identity2 = 0;
 }
 
-Tile::Tile(int x, int y) : Node(x, y){
+Tile::Tile( int x, int y) : Node(x, y){
     
 }
 

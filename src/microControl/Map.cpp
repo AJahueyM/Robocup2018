@@ -1,9 +1,13 @@
 #include "Map.h"
 
+Map::Map(vector<vector<Tile>>& tileMap){
+	this->tileMap = tileMap;
+	updateMap();
+}
+
 Map::Map(Tile initialTile){
 	tileMap.push_back(vector<Tile>());
 	tileMap[0].push_back(initialTile);
-	mockTile = Tile(mockIdentity, mockIdentity);
 }
 
 Tile& Map::getTileAt(Coord coord){
@@ -18,7 +22,7 @@ Tile& Map::getTileAt(Coord coord){
 
 void Map::setTileAt(Coord coord, Tile newTile){
 	tileMap[coord.getY()][coord.getX()] = newTile;
-	updateWalls();
+	updateMap();
 }
 
 Coord Map::getRobotCoord(){
@@ -72,9 +76,7 @@ void Map::expandMap(){
 			tileMap.push_back(newRow);
 		}
 	}
-	updateCoords();
-	updateWalls();
-	checkPockets();
+	updateMap();
 }
 
 void Map::setRobotCoord(Coord coord){
@@ -152,4 +154,37 @@ void Map::checkPockets(){
 			}
 		}
 	}
+}
+
+void Map::updateNeighbors(){
+	for(vector<Tile>& row : tileMap){
+		for(Tile& node : row){
+			int x = node.getX();
+			int y = node.getY();
+
+			if(y - 1 >= 0 && !node.wallExists(Up))
+				node.addNeighbor(&tileMap[y-1][x]);
+			if(y + 1 < tileMap.size() && !node.wallExists(Down))
+				node.addNeighbor(&tileMap[y+1][x]);
+			if(x + 1 < tileMap[0].size() && !node.wallExists(Right))
+				node.addNeighbor(&tileMap[y][x+1]);
+			if(x - 1 >= 0 && !node.wallExists(Left))
+				node.addNeighbor(&tileMap[y][x-1]);
+		}
+	}
+}
+
+void Map::updateMap(){
+	updateCoords();
+	updateWalls();
+	checkPockets();
+	updateNeighbors();
+}
+vector<vector<Tile>>& Map::getTileMap(){
+	return this->tileMap;
+}
+
+void Map::setTileMap(vector<vector<Tile>> tileMap){
+	this->tileMap = tileMap;
+	updateMap();
 }

@@ -4,6 +4,7 @@
 #include "LCD.h"
 #include "Utils.h"
 #include "ArduinoSTL.h"
+#include "TileMasks.h"
 #include "DriveTrain.h"
 
 class Cerebrum{
@@ -34,11 +35,12 @@ private:
     Direction currentRobotDirection = Up;
    	Direction robotRight, robotLeft, robotUp, robotDown;
     Coord currentRobotCoord;
-    vector<Map*> maze;
+    Map* maze[3];
     LCD& lcd;
 
     double movementSpeed = .75, preciseMovementSpeed = -.25, rampMovementSpeed = .5;
- 	int distanceMoveTiles = 30, angles[4], turnCounter = 0, mazeFloor = 0, wallTolerance = 9, wallThreshold = 15;
+ 	uint8_t distanceMoveTiles = 30, turnCounter = 0, mazeFloor = 0, wallTolerance = 9, wallThreshold = 15;
+	int  angles[4];
  	bool hasStarted = false;
 };
 #endif

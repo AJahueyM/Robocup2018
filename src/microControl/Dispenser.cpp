@@ -11,18 +11,18 @@ Dispenser::Dispenser(){
  	servoDispenser.write(outputCenter);
 }
 
-void Dispenser::setAmountAvailable(int iAmount){
+void Dispenser::setAmountAvailable(uint8_t iAmount){
 	amountAvailable = iAmount;
 }
-int Dispenser::getAmountAvailable(){
+uint8_t Dispenser::getAmountAvailable(){
 	return amountAvailable;
 }
-int Dispenser::updateAmountAvailable(int drop){
+uint8_t Dispenser::updateAmountAvailable(uint8_t drop){
 	amountAvailable -= drop;
 	return amountAvailable;
 }
 
-void Dispenser::dispenseDirection(DispenserDirection direction, int amount){
+void Dispenser::dispenseDirection(DispenserDirection direction, uint8_t amount){
 	if(direction == left){
 		for(int i =0; i < amount; i++){
 			if(kitsAvailable()){

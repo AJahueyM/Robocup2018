@@ -1,11 +1,11 @@
 #include "Sharp.h"
 
-Sharp::Sharp(int analogPort){
+Sharp::Sharp(uint8_t analogPort){
 	this->analogPort = analogPort;
 	filter.setSource(&distance);
 }
 
-int Sharp::getDistance(){
+uint8_t Sharp::getDistance(){
 	int average = 0;
 	for(int i = 0; i < readForFilter; ++i){
 		double volts = analogRead(analogPort)  * 0.0048828125;

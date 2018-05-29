@@ -5,14 +5,14 @@
 
 class ColorSensor{
 private:
-  int redFrequency = 0, blueFrequency = 0 , greenFrequency = 0;
+  uint8_t redFrequency = 0, blueFrequency = 0 , greenFrequency = 0;
   double range = .4, timeoutReads = 60;
   long lastReadTime = 0;
-  const int S0 = 33;
-  const int S1 =  30;
-  const int  S2 = 27;
-  const int  S3 = 29;
-  const int sensorOut =  25;
+  const uint8_t S0 = 33;
+  const uint8_t S1 =  30;
+  const uint8_t  S2 = 27;
+  const uint8_t  S3 = 29;
+  const uint8_t sensorOut =  25;
   bool calibrar = true;
   bool withinRange(int input, int value);
 
