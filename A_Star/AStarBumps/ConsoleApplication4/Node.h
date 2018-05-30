@@ -50,6 +50,25 @@ public:
 	void setWasVisited(bool wasVisited) { this->wasVisited = wasVisited; }
 	bool getWasVisited() { return this->wasVisited; }
 
+	int getCost(){
+		int tempG;
+		switch (this->getBumpLevel()) {
+		case Small:
+			tempG = 5;
+			break;
+		case Medium:
+			tempG =  10;
+			break;
+		case Max:
+			tempG = 100;
+			break;
+		case None:
+			tempG =  1;
+		}
+		return tempG;
+
+	}
+
 private:
 	int x, y, f, g, h;
 	bool hasWallUp, hasWallDown, hasWallLeft, hasWallRigth, wasVisited; 
