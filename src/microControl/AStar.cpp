@@ -73,14 +73,17 @@ Path AStar::getPath(Coord startCoord, Coord endCoord, vector<vector<Tile>>& maze
 
         for(int i = 0; i < amountNeighbors; ++i){
             Node* neighbor = neighbors[i];
-            bool update = false;
             if(countsOnVector(closedSet, neighbor) == 0){
-                int tempG = current->getG() + 1;
-                update = true;
+                
+                int tempG = current->getG() + current->getCost();
+
+                bool update = false;
 
                 if(countsOnVector(openSet, neighbor)>= 1){
                     if(tempG < neighbor->getG()){
                         neighbor->setG(tempG);
+                        update = true;
+
                     }
                 }else{
                     neighbor->setG(tempG);

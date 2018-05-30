@@ -24,6 +24,7 @@ public:
     void addNeighbor(Node* neighbor);
     Node* getNeighbors(int index);
     int getCurrentNeighbors();
+    virtual int getCost() = 0;
 
 private:
     int f, h, g;

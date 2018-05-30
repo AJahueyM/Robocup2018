@@ -391,7 +391,7 @@ Tile Cerebrum::getCurrentTile(){
 		if(driveTrain.getPitch() > 20)
 			result = result | isRampMask;
 	}else if(driveTrain.getPitch() > 5 && driveTrain.getPitch() < 20){
-		result2 = result2 | hasBumpMask; // 
+	//	result2 = result2 | hasBumpMask; // 
 	}
 	result2 = result2 | maskVisited;
 	return Tile(result, result2);

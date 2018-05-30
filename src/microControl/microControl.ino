@@ -8,7 +8,7 @@ Cerebrum* cerebrum;
 
 vector<vector<Tile>> tileMap;
 
-uint8_t rows = 7, cols = 5;
+uint8_t rows = 5, cols = 4;
 
 void setup() {
   Serial.begin(9600);
@@ -24,13 +24,29 @@ void setup() {
     }
   }
   
-  tileMap[0][1].setWall(Left, true);
-  tileMap[0][1].setWall(Down, true);
+  tileMap[1][0].setWall(Right, true);
+  tileMap[2][1].setWall(Up, true);
+  tileMap[2][1].setWall(Right, true);
 
+  tileMap[1][2].setWall(Right, true);
+  tileMap[2][2].setWall(Right,true);
+  tileMap[3][2].setWall(Right, true);
+
+  tileMap[2][1].setBumpLevel(Max);
+  tileMap[1][3].setBumpLevel(Max);
+  tileMap[2][2].setBumpLevel(Max);
+
+  tileMap[2][0].setBumpLevel(Small);
+  tileMap[4][0].setBumpLevel(Medium);
+  tileMap[4][1].setBumpLevel(Medium);
+  tileMap[4][2].setBumpLevel(Medium);
+  tileMap[3][3].setBumpLevel(Small);
+
+  cout << tileMap[2][0].getCost() << " " << tileMap[4][0].getCost() << " " << tileMap[2][1].getCost() << endl;
   Map tMap(tileMap);
   
-  Coord start(1,0);
-  Coord end(0,0);
+  Coord start(0,0);
+  Coord end(3,2);
   Path path = AStar::getPath(start, end, tMap.getTileMap());
   cout << "StartX= " <<  start.getX() << " StartY= " << start.getY() << " EndX= " << end.getX() << " EndY= " << end.getY() << endl;
   for(int i = 0; i < path.getLength(); ++i){

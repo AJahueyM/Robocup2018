@@ -19,6 +19,9 @@ public:
 	bool hasBump();
 	void visited(bool value);
 	Color getColor();
+	BumpLevel getBumpLevel() ;
+	void setBumpLevel(BumpLevel bumpType);
+	int getCost() override;
 private:
 	byte identity = 0;
 	byte identity2 = 0;

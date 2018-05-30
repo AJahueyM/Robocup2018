@@ -94,11 +94,6 @@ bool Tile::wasVisited() {
     return result != 0;
 }
 
-bool Tile::hasBump(){
-    byte result = identity2 & hasBumpMask;
-    return result != 0;
-}
-
 void Tile::visited(bool value){
     if(value){
         identity2 = identity2 | maskVisited;
@@ -120,4 +115,63 @@ Color Tile::getColor(){
         return Silver;
     }
     return White;
+}
+
+BumpLevel Tile::getBumpLevel(){
+    byte result = B00000000;
+
+    result = identity2 & smallBumpMask;
+
+    if(result != 0){
+        return Small;
+    }
+
+    result = identity2 & mediumBumpMask;
+
+    if(result != 0){
+        return Medium;
+    }
+
+    result = identity2 & maxBumpMask;
+
+    if(result != 0){
+        return Max;
+    }
+
+    return None;
+
+}
+
+void Tile::setBumpLevel(BumpLevel bumpType){
+    byte result;
+    switch(bumpType){
+        case Small:
+            result = identity2 | smallBumpMask;
+            break;
+        case Medium:
+            result = identity2 | mediumBumpMask;
+            break;
+        case Max:
+            result = identity2 | maxBumpMask;
+            break;
+    }
+
+    identity2 = result;
+
+}
+
+int Tile::getCost(){
+    if(this->getBumpLevel() == Small){
+        return 5;
+    }
+
+    if(this->getBumpLevel() == Medium){
+        return 10;
+    }
+
+    if(this->getBumpLevel() == Max){
+        return 100;
+    }
+
+    return 1;
 }

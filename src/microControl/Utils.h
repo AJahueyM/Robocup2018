@@ -16,6 +16,14 @@ enum Color {
   Black,
   Silver
 };
+
+enum BumpLevel {
+  Small,
+  Medium,
+  Max,
+  None
+};
+
 float mapD(float x, float in_min, float in_max, float out_min, float out_max);
 
 float shortestAngleTurn(float currentAngle, float target);
