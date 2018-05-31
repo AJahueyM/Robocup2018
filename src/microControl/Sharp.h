@@ -1,5 +1,5 @@
 #ifndef __SHARP_H_
-#define __SHARD_H_
+#define __SHARP_H_
 #include <Arduino.h>
 #include "Filter.h"
 

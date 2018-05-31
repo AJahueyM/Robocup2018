@@ -26,6 +26,8 @@ public:
     uint8_t getCurrentNeighbors();
     virtual uint8_t getCost() = 0;
 
+    void clear();
+
 private:
     uint8_t f, h, g;
     uint8_t currentNeighbors = 0;

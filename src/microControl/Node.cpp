@@ -61,4 +61,9 @@ uint8_t Node::getCurrentNeighbors(){
     return currentNeighbors;
 }
 
-
+void Node::clear(){
+    setF(0);
+    setH(0);
+    setG(0);
+    setPrevious(nullptr);
+}

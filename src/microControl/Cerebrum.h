@@ -4,6 +4,7 @@
 #include "LCD.h"
 #include "Utils.h"
 #include "ArduinoSTL.h"
+#include "AStar.h"
 #include "TileMasks.h"
 #include "DriveTrain.h"
 
@@ -27,11 +28,7 @@ private:
 	void resetGyro();
 	void updateRobotOrientations();
 
-	void prepareForMove();
-	void move();
-	void updateAfterMove();
-
-	vector<Tile*> getCandidates();
+	vector<Coord> getCandidates();
 	Tile tile;
     DriveTrain& driveTrain;
     Direction currentRobotDirection = Up;

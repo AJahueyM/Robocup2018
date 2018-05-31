@@ -8,146 +8,27 @@ Cerebrum::Cerebrum(DriveTrain& driveTrain) : driveTrain(driveTrain), lcd(LCD::ge
 	
 
 }
-
-void Cerebrum::start(){
-	resetGyro();
-	maze[mazeFloor] = (new Map(getInitialTile()));
-}
-
-void Cerebrum::prepareForMove(){
-///	Pre-movement checks and setup
-	currentRobotCoord = maze[mazeFloor]->getRobotCoord();
-	maze[mazeFloor]->expandMap();
-
-	if(hasStarted){
-		tile = getCurrentTile();
-	}else{
-		hasStarted = true;
-		tile = maze[mazeFloor]->getTileAt(currentRobotCoord);
-	}
-
-	updateRobotOrientations();
-
-	if(tile.isRamp()){
-		while(driveTrain.getPitch() > 10){
-			driveTrain.driveStraight(angles[0], rampMovementSpeed);
-		}
-		driveTrain.driveDisplacement(8, angles[0], movementSpeed);
-		if(mazeFloor < 3)
-			mazeFloor++;
-		maze[mazeFloor] = (new Map(getCurrentTile()));
-		maze[mazeFloor]->expandMap();
-		currentRobotCoord = maze[mazeFloor]->getRobotCoord();
-	}
-
-	if(turnCounter >= 5 && tile.wallExists(Down)){
-		double lastAngle = angles[0];
-		resetGyro();
-		driveTrain.turnToAngle(lastAngle);
-		turnCounter = 0;
-	}
-
-	if(tile.wallExists(robotUp)){
-		while(driveTrain.getDistanceFront() != wallTolerance){
-			if(driveTrain.getDistanceFront() > wallTolerance)
-				driveTrain.driveStraight(angles[0], preciseMovementSpeed);
-			else if(driveTrain.getDistanceFront() < wallTolerance)
-				driveTrain.driveStraight(angles[0], preciseMovementSpeed * -1);
-		}
-		driveTrain.driveVelocity(0);
-	}
-}
-
-void Cerebrum::move(){
-///	Decide where to move
-	if(!tile.wallExists(robotUp) && getRobotTile(Up).getColor() != Black){
-		if(!getRobotTile(Up).wasVisited()){
-		}else if((!tile.wallExists(robotRight) && getRobotTile(Right).wasVisited()) || (!tile.wallExists(robotLeft) && getRobotTile(Left).wasVisited())) {
-			int rand = random(100);
-			if(rand > 49){
-				if(!tile.wallExists(robotRight)){
-					turnRobot(Right);
-				}else{
-					turnRobot(Left);
-				}
-			}
-		}else{
-			if(!getRobotTile(Right).wasVisited() || !getRobotTile(Left).wasVisited()){
-				if(!getRobotTile(Right).wasVisited() && !tile.wallExists(robotRight)){
-					turnRobot(Right);
-				}else if(!tile.wallExists(robotLeft)){
-					turnRobot(Left);
-				}
-			}else{
-				if(!tile.wallExists(robotRight) && getRobotTile(Right).getColor() != Black){
-					turnRobot(Right);
-				}else if(!tile.wallExists(robotLeft) && getRobotTile(Left).getColor() != Black){
-					turnRobot(Left);
-				}
-			}
-		}
-		driveForward();
-	}else if(!tile.wallExists(robotRight) || !tile.wallExists(robotLeft)){
-		if(!getRobotTile(Right).wasVisited() || !getRobotTile(Left).wasVisited()){
-			if(!getRobotTile(Right).wasVisited() && !tile.wallExists(robotRight)){
-				turnRobot(Right);
-			}else if(!tile.wallExists(robotLeft)){
-				turnRobot(Left);
-			}
-		}else{
-			int rand = random(100);
-			if(rand > 49){
-				if(!tile.wallExists(robotRight)){
-					turnRobot(Right);
-				}else{
-					turnRobot(Left);
-				}
-			}else{
-				if(!tile.wallExists(robotLeft)){
-					turnRobot(Left);
-				}else{
-					turnRobot(Right);
-				}
-			}
-		}
-		driveForward();
-	}else{
-		while(driveTrain.getDistanceFront() < wallThreshold){
-			turnRobot(Right);
-		}
-		driveForward();
-	}
-
-}
-
-void Cerebrum::updateAfterMove(){
-///	After-movement checks and setup
-	if(driveTrain.leftKitLastMovement()){
-		Tile oldTile = maze[mazeFloor]->getTileAt(currentRobotCoord);
-		oldTile.setLeftKit(true);
-		maze[mazeFloor]->setTileAt(currentRobotCoord, oldTile);
-	}
-	driveTrain.setLeftKit(false);	
-
-}
-
-vector<Tile*> Cerebrum::getCandidates(){
-	vector <Tile*> vec;
-	Map* maze = this->maze[mazeFloor];
-	for (int y = 0; y < maze->size(); ++y) {
-		for (int x = 0; x < maze[0]->size(); ++x) {
-			if (maze[y][x]->getWasVisited()) {
+vector<Coord> Cerebrum::getCandidates(){
+	vector <Coord> vec;
+	Map* tileMap = this->maze[mazeFloor];
+	Absis<Absis<Tile>> &maze = tileMap->getTileMap();
+	for (int y = 0; y < maze.size(); ++y) {
+		for (int x = 0; x < maze[0].size(); ++x) {
+			if (maze[y][x].wasVisited()) {
 
 				//cout << "LA TILE VISITADA ES (" << x << "," << y << ")" << endl;
-				vector <Node*> neighbors = maze[y][x]->getNeighbors();
+				vector <Tile*> neighbors;
+				for(int i = 0; i < maze[y][x].getCurrentNeighbors(); ++i){
+					neighbors.push_back(maze[y][x].getNeighbors(i));
+				}
 
 				//cout << "SUS VECINOS NO VISITADOS SON : ";
 
 				for (int i = neighbors.size() - 1; i >= 0; --i) {
-					if (!neighbors[i]->getWasVisited()) {
-						Node* elem = neighbors[i];
-						if (!isInVector(vec, elem)) {
-							vec.emplace_back(neighbors[i]);
+					if (!neighbors[i]->wasVisited()) {
+						Coord elem = (Coord) *neighbors[i];
+						if (countsOnVector(vec, elem) == 0) {
+							vec.push_back(elem);
 							//cout << "(" << neighbors[i]->getX() << "," << neighbors[i]->getY() << ")  ";
 						}
 					}
@@ -160,28 +41,105 @@ vector<Tile*> Cerebrum::getCandidates(){
 	return vec;	
 }
 
+void Cerebrum::start(){
+	//resetGyro();
+	// maze[mazeFloor] = (new Map(getInitialTile()));
+
+	Absis<Absis<Tile>> tileMap;
+	const uint8_t rows = 7, cols = 5;
+
+	for(int y = 0; y < rows; ++y){
+		Absis<Tile> row;
+		tileMap.emplace_back(row);
+
+		for(int x = 0; x < cols; ++x){
+			tileMap[y].emplace_back(Tile(x, y));
+		}
+	}
+	tileMap[0][0].visited(true);
+
+	tileMap[1][0].setWall(Down, true);
+	tileMap[3][0].setWall(Down, true);
+	tileMap[0][1].setWall(Down, true);
+	tileMap[2][1].setWall(Down, true);
+	tileMap[3][1].setWall(Left, true);
+	tileMap[4][1].setWall(Left, true);
+	tileMap[4][1].setWall(Down, true);
+	tileMap[5][1].setWall(Left, true);
+	tileMap[5][1].setWall(Down, true);
+	tileMap[0][2].setWall(Down, true);
+	tileMap[4][2].setWall(Down, true);
+	tileMap[0][3].setWall(Down, true);
+	tileMap[3][3].setWall(Down, true);
+	tileMap[1][4].setWall(Left, true);
+	tileMap[2][4].setWall(Down, true);
+	tileMap[4][4].setWall(Left, true);
+	tileMap[5][4].setWall(Left, true);
+	tileMap[6][4].setWall(Left, true);
+
+	tileMap[2][0].setBumpLevel(Small);
+	tileMap[5][0].setBumpLevel(Small);
+	tileMap[3][1].setBumpLevel(Medium);
+	tileMap[4][1].setBumpLevel(Max);
+	tileMap[5][1].setBumpLevel(Max);
+	tileMap[0][2].setBumpLevel(Small);
+	tileMap[2][2].setBumpLevel(Small);
+	tileMap[5][3].setBumpLevel(Medium);
+	tileMap[2][4].setBumpLevel(Small);
+	tileMap[5][4].setBumpLevel(Small);
+
+
+  //cout <<  (int) tileMap[2][0].getCost() << " " <<  (int) tileMap[4][0].getCost() << " " <<  (int) tileMap[2][1].getCost() << endl;
+  	//Map tMap(tileMap);
+	maze[mazeFloor] = new Map(tileMap);
+
+}
+
+
 void Cerebrum::update(){
-	vector<Tile*> candidates = getCandidates();
-	Tile* start = &maze[0][0];
+	vector<Coord> candidates = getCandidates();
+	Map* mazeCurrent = maze[mazeFloor];
+	Coord start = mazeCurrent->getTileMap()[0][0];
 
-	Tile* returnTo = start;
+	Coord returnTo = start;
+	Coord target;
 	while(candidates.size() > 0){
-		Tile* target = getClosestFrom(candidates, start);
-		cout << "StartX: " << start->getX() << " StartY: " << start->getY() << endl;
-		cout << "EndX: " << target->getX() << " EndY: " << target->getY() << endl;
 
-		Path pathToFollow = AStar::getPath(maze, *start, *end);
+		vector<Coord> targets = getClosestFrom(candidates, start);
+		Path bestPath;
+		uint8_t minorCost = 254;
+
+		for(Coord end  : targets){
+			Path candidatePath = AStar::getPath(start, end, mazeCurrent->getTileMap());
+			uint8_t cost = candidatePath.getCost();
+			cout << "CANDIDATE COST= " << (int) cost <<"\tx: " <<(int)  end.getX() << "\ty: " <<(int)  end.getY() << endl;
+			if( cost < minorCost){
+				minorCost = candidatePath.getCost();
+				bestPath = candidatePath;
+				target = end;
+			}
+		}
+
+
+		cout << "StartX: " << (int) start.getX() << " StartY: " << (int)start.getY() << endl;
+		cout << "EndX: " << (int)target.getX() << " EndY: " <<(int) target.getY() << endl;
+		bestPath.print();
+		cout << "free= " << freeMemory() << endl;
+
+
 		//TODO FOLLOW PATH
 		
-		target->setWasVisited(true);
-		start = target;
-		candidates = getCandidates(maze);
 
+		mazeCurrent->getTileMap()[target.getY()][target.getX()].visited(true);
+		start = target;
+		candidates = getCandidates();
+		char c;
+		cin >> c;
 	}
 
-	// prepareForMove();
-	// move();
-	// updateAfterMove();
+	Path returnPath = AStar::getPath(target, returnTo, mazeCurrent->getTileMap());
+	cout << "REGRESANDO" << endl;
+	returnPath.print();
 }
 
 void Cerebrum::driveForward(){

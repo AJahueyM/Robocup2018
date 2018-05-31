@@ -8,26 +8,34 @@ Path AStar::getPath(Coord startCoord, Coord endCoord, Absis<Absis<Tile>>& maze){
 
     int sizeX = maze[0].size();
     int sizeY = maze.size();
-
+    Path pathFinal;
+    pathFinal.setCost(254);
 
     if(startCoord.getX() < 0 || startCoord.getX() >= sizeX){
-        return Path();
+        return pathFinal;
     }
 
     if(startCoord.getY() < 0 || startCoord.getY() >= sizeY){
-        return Path();
+        return pathFinal;
     }
 
     if(endCoord.getX() < 0 || endCoord.getX() >= sizeX){
-        return Path();
+        return pathFinal;
     }
 
     if(endCoord.getY() < 0 || endCoord.getY() >= sizeY){
-        return Path();
+        return pathFinal;
     }
 
     if(startCoord == endCoord){
-        return Path();
+        return pathFinal;
+    }
+    
+    for(int y = 0; y < sizeY; ++y){
+        for(int x = 0; x < sizeX; ++x ){
+            maze[y][x].clear();
+
+        }
     }
 
     vector<Tile*> openSet, closedSet;
@@ -52,8 +60,9 @@ Path AStar::getPath(Coord startCoord, Coord endCoord, Absis<Absis<Tile>>& maze){
         if(current == end){
           
             vector<Coord> temp, path;
-
+            uint8_t cost = 0;
             while(current->getPrevious() != nullptr){
+                cost += current->getCost();
                 temp.push_back(Coord(current->getX(), current->getY()));
                 current = current->getPrevious();
             }
@@ -61,7 +70,10 @@ Path AStar::getPath(Coord startCoord, Coord endCoord, Absis<Absis<Tile>>& maze){
             for(int i = temp.size()-1; i >= 0; --i){
                 path.push_back(temp[i]);
             }
-            return Path(path);
+
+            pathFinal = Path(path);
+            pathFinal.setCost(cost);
+            return pathFinal;
         }
 
         //cout << "Before= " << openSet.size() << endl;
@@ -79,7 +91,7 @@ Path AStar::getPath(Coord startCoord, Coord endCoord, Absis<Absis<Tile>>& maze){
 
         for(int i = 0; i < amountNeighbors; ++i){
             Tile* neighbor = neighbors[i];
-            if((neighbor->wasVisited() || countsOnVector(endNeighbors, neighbor)) || neighbor == end){
+            if(neighbor->wasVisited() || neighbor == end){
             ///MODIFIED ASTAR TO BE USED ON ROBOCUP
                 if(countsOnVector(closedSet, neighbor) == 0){
                     
@@ -108,5 +120,5 @@ Path AStar::getPath(Coord startCoord, Coord endCoord, Absis<Absis<Tile>>& maze){
         }
     }
     cout << "No solution" << endl;
-    return Path();
+    return pathFinal;
 }
