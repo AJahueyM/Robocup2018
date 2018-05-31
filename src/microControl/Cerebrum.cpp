@@ -126,13 +126,15 @@ void Cerebrum::run(){
 		bestPath.print();
 		cout << "free= " << freeMemory() << endl;
 
-
-		//TODO FOLLOW PATH
+	/*
+		// FOLLOW PATH
 		//followPath(bestPath);
 		///READ TILE AND SET ON MAP
+		mazeCurrent->setTileAt(target, getCurrentTile());
 
 
-		mazeCurrent->getTileMap()[target.getY()][target.getX()].visited(true);
+	*/
+		mazeCurrent->getTileMap()[target.getY()][target.getX()].visited(true);		/// COMENT THIS WHEN TESTING WITH ROBOT
 		start = target;
 		candidates = getCandidates();
 		char c;
