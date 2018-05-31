@@ -96,12 +96,12 @@ void Cerebrum::start(){
 }
 
 
-void Cerebrum::update(){
+void Cerebrum::run(){
 	vector<Coord> candidates = getCandidates();
 	Map* mazeCurrent = maze[mazeFloor];
+	Tile* startTile = &mazeCurrent->getTileMap()[0][0];
 	Coord start = mazeCurrent->getTileMap()[0][0];
 
-	Coord returnTo = start;
 	Coord target;
 	while(candidates.size() > 0){
 
@@ -128,7 +128,9 @@ void Cerebrum::update(){
 
 
 		//TODO FOLLOW PATH
-		
+		//followPath(bestPath);
+		///READ TILE AND SET ON MAP
+
 
 		mazeCurrent->getTileMap()[target.getY()][target.getX()].visited(true);
 		start = target;
@@ -136,10 +138,60 @@ void Cerebrum::update(){
 		char c;
 		cin >> c;
 	}
-
+	Coord returnTo = *startTile;
 	Path returnPath = AStar::getPath(target, returnTo, mazeCurrent->getTileMap());
 	cout << "REGRESANDO" << endl;
 	returnPath.print();
+}
+
+void Cerebrum::followPath(Path& path){
+	for(Coord coord : path.getPath()){
+		int deltaX = coord.getX() - currentRobotCoord.getX();
+		int deltaY = coord.getY() - currentRobotCoord.getY();
+
+		if(deltaX > 0){
+			if(currentRobotDirection == Up){
+				turnRobot(Right);
+			}else if(currentRobotDirection == Down){
+				turnRobot(Left);
+			}else if(currentRobotDirection == Left){
+				turnRobot(Right);
+				turnRobot(Right);
+			}
+			driveForward();
+		}else if(deltaX < 0){
+			if(currentRobotDirection == Right){
+				turnRobot(Left);
+				turnRobot(Left);
+			}else if(currentRobotDirection == Up){
+				turnRobot(Left);
+			}else if(currentRobotDirection == Down){
+				turnRobot(Right);
+			}
+			driveForward();
+			
+		}else if(deltaY > 0){
+			if(currentRobotDirection == Right){
+				turnRobot(Right);
+			}else if(currentRobotDirection == Up){
+				turnRobot(Left);
+				turnRobot(Left);
+			}else if(currentRobotDirection == Left){
+				turnRobot(Left);
+			}
+			driveForward();
+		}else if(deltaY < 0){
+			if(currentRobotDirection == Right){
+				turnRobot(Left);
+			}else if(currentRobotDirection == Left){
+				turnRobot(Right);
+			}else if(currentRobotDirection == Down){
+				turnRobot(Right);
+				turnRobot(Right);
+			}
+			driveForward();
+		}
+	}
 }
 
 void Cerebrum::driveForward(){

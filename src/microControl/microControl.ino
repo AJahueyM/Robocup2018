@@ -14,7 +14,7 @@ void setup() {
 
   cerebrum->start();
 
-  cerebrum->update();
+  cerebrum->run();
 
 }
 

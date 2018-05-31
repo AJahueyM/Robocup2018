@@ -15,10 +15,11 @@ public:
 		return singletonInstance;
 	}
 	void start();
-	void update();
+	void run();
 private:
 	Cerebrum(DriveTrain& driveTrain);
     Cerebrum &operator=(const Cerebrum &);
+	void followPath(Path& path);
     void driveForward();
     void turnRobot(Direction dir);
     void shiftAngle(Direction dir);
