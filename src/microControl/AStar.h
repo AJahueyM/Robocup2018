@@ -11,6 +11,6 @@ class AStar{
 public:
     static Path getPath(Coord start, Coord end, Absis<Absis<Tile>>& maze);
 private:
-    static int heuristic(Node* start, Node* end);
+    static int heuristic(Coord start, Coord end);
 };
 #endif

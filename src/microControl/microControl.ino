@@ -18,13 +18,13 @@ void setup() {
   Serial.begin(115200);
  
   Absis<Absis<Tile>> tileMap;
-  cout << "Hi" << endl;
   for(int y = 0; y < rows; ++y){
     tileMap.emplace_back(Absis<Tile>());
     for(int x = 0; x < cols; ++x){
       tileMap[y].emplace_back(Tile(x, y));
     }
   }
+  tileMap[0][0].visited(true);
 
   tileMap[1][0].setWall(Right, true);
   tileMap[2][1].setWall(Up, true);
@@ -44,11 +44,11 @@ void setup() {
   tileMap[4][2].setBumpLevel(Medium);
   tileMap[3][3].setBumpLevel(Small);
 
-  cout <<  (int) tileMap[2][0].getCost() << " " <<  (int) tileMap[4][0].getCost() << " " <<  (int) tileMap[2][1].getCost() << endl;
+  //cout <<  (int) tileMap[2][0].getCost() << " " <<  (int) tileMap[4][0].getCost() << " " <<  (int) tileMap[2][1].getCost() << endl;
   Map tMap(tileMap);
   
   Coord start(0,0);
-  Coord end(5,7);
+  Coord end(1,0);
  Path path = AStar::getPath(start, end, tMap.getTileMap());
   cout << "StartX= " <<  (int)start.getX() << " StartY= " << (int)start.getY() << " EndX= " << (int)end.getX() << " EndY= " << (int)end.getY() << endl;
   for(int i = 0; i < path.getLength(); ++i){
@@ -60,6 +60,6 @@ void setup() {
 }
 
 void loop() {
-  //cout << (int) sharp->getDistance() << endl;
+  //cout << 0 << endl;
   //cerebrum->update();
 }

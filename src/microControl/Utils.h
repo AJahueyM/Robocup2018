@@ -1,6 +1,7 @@
 #ifndef __UTILS_H_
 #define __UTILS_H_
 #include <Arduino.h>
+#include "Coord.h"
 #include <ArduinoSTL.h>
 using namespace std;
 
@@ -47,5 +48,25 @@ int countsOnVector(vector<T> & vector, T element){
 
     return counter;
 }
+int calculateDistance(Coord a, Coord b) {
+	int dx = abs(a.getX() - b.getX());
+	int dy = abs(a.getY() - b.getY()); 
+	return (dx + dy); 
+}
 
+Coord getClosestFrom(vector <Coord>& vec, Coord start) {
+	Coord end;
+	int distance = 0, minorDistance = 100;
+	for (int i = 0; i < vec.size(); ++i) {
+		Coord candidate = vec[i];
+		distance = calculateDistance(start, candidate);
+		if(minorDistance > distance) {
+			minorDistance = distance;
+			end = candidate;
+		}
+	}
+
+	//cout << "LA TILE NO VISITADA MAS CERCANA (PROVENIENTE DE UNA TILE VISITADA) ES : " << end->getX() << " " << end->getY() << endl;
+	return end;
+}
 #endif

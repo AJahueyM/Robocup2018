@@ -131,10 +131,63 @@ void Cerebrum::updateAfterMove(){
 
 }
 
+vector<Tile*> Cerebrum::getCandidates(){
+	vector <Tile*> vec;
+	Map* maze = this->maze[mazeFloor];
+	for (int y = 0; y < maze->size(); ++y) {
+		for (int x = 0; x < maze[0]->size(); ++x) {
+			if (maze[y][x]->getWasVisited()) {
+
+				//cout << "LA TILE VISITADA ES (" << x << "," << y << ")" << endl;
+				vector <Node*> neighbors = maze[y][x]->getNeighbors();
+
+				//cout << "SUS VECINOS NO VISITADOS SON : ";
+
+				for (int i = neighbors.size() - 1; i >= 0; --i) {
+					if (!neighbors[i]->getWasVisited()) {
+						Node* elem = neighbors[i];
+						if (!isInVector(vec, elem)) {
+							vec.emplace_back(neighbors[i]);
+							//cout << "(" << neighbors[i]->getX() << "," << neighbors[i]->getY() << ")  ";
+						}
+					}
+				}
+
+				//cout << endl;
+			}
+		}
+	}
+	return vec;	
+}
+
 void Cerebrum::update(){
-	prepareForMove();
-	move();
-	updateAfterMove();
+	vector<Tile*> candidates = getCandidates();
+	Tile* start = &maze[0][0];
+
+	Tile* returnTo = start;
+	while(){
+		Tile* target = getClosestFrom(candidates, start);
+		cout << "StartX: " << start->getX() << " StartY: " << start->getY() << endl;
+		cout << "EndX: " << target->getX() << " EndY: " << target->getY() << endl;
+
+		if (target != nullptr) {
+			Path pathToFollow = AStar::getPath(maze, *start, *end);
+			//TODO FOLLOW PATH
+			
+			target->setWasVisited(true);
+			start = target;
+			candidates = getCandidates(maze);
+
+		}
+		else {
+			cout << "Nothing to do" << endl;
+
+		}
+	}
+
+	// prepareForMove();
+	// move();
+	// updateAfterMove();
 }
 
 void Cerebrum::driveForward(){

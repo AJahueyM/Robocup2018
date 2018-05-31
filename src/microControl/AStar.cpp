@@ -1,13 +1,15 @@
 #include "AStar.h"
 
-int AStar::heuristic(Node* start, Node* end){
-    return abs(start->getX() - start->getX()) + abs(end->getY() - end->getY());
+int AStar::heuristic(Coord start, Coord end){
+    return abs(start.getX() - start.getX()) + abs(end.getY() - end.getY());
 }
 
 Path AStar::getPath(Coord startCoord, Coord endCoord, Absis<Absis<Tile>>& maze){
 
     int sizeX = maze[0].size();
     int sizeY = maze.size();
+
+
     if(startCoord.getX() < 0 || startCoord.getX() >= sizeX){
         return Path();
     }
@@ -28,10 +30,14 @@ Path AStar::getPath(Coord startCoord, Coord endCoord, Absis<Absis<Tile>>& maze){
         return Path();
     }
 
-    vector<Node*> openSet, closedSet;
+    vector<Tile*> openSet, closedSet;
 
-    Node *start = &maze[startCoord.getY()][startCoord.getX()], *end = &maze[endCoord.getY()][endCoord.getX()];
+    Tile *start = &maze[startCoord.getY()][startCoord.getX()], *end = &maze[endCoord.getY()][endCoord.getX()];
 
+    vector<Tile*> endNeighbors;
+    for(int i = 0; i < end->getCurrentNeighbors(); ++i){
+        endNeighbors.push_back(end->getNeighbors(i));
+    }
     openSet.push_back(start);
 
     while(openSet.size() > 0){
@@ -42,7 +48,7 @@ Path AStar::getPath(Coord startCoord, Coord endCoord, Absis<Absis<Tile>>& maze){
             }
         }
 
-        Node *current = openSet[lowestIndex];
+        Tile *current = openSet[lowestIndex];
         if(current == end){
           
             vector<Coord> temp, path;
@@ -65,35 +71,38 @@ Path AStar::getPath(Coord startCoord, Coord endCoord, Absis<Absis<Tile>>& maze){
         removeFromVector(openSet, current);
         //cout << "After= " << openSet.size() << endl;
 
-       Node* neighbors[4];
+       Tile* neighbors[4];
         int amountNeighbors = current->getCurrentNeighbors();
          for(int i = 0; i < amountNeighbors;++i){
             neighbors[i] = (current->getNeighbors(i));
         }
 
         for(int i = 0; i < amountNeighbors; ++i){
-            Node* neighbor = neighbors[i];
-            if(countsOnVector(closedSet, neighbor) == 0){
-                
-                int tempG = current->getG() + current->getCost();
+            Tile* neighbor = neighbors[i];
+            if((neighbor->wasVisited() || countsOnVector(endNeighbors, neighbor)) || neighbor == end){
+            ///MODIFIED ASTAR TO BE USED ON ROBOCUP
+                if(countsOnVector(closedSet, neighbor) == 0){
+                    
+                    int tempG = current->getG() + current->getCost();
 
-                bool update = false;
+                    bool update = false;
 
-                if(countsOnVector(openSet, neighbor)>= 1){
-                    if(tempG < neighbor->getG()){
+                    if(countsOnVector(openSet, neighbor)>= 1){
+                        if(tempG < neighbor->getG()){
+                            neighbor->setG(tempG);
+                            update = true;
+
+                        }
+                    }else{
                         neighbor->setG(tempG);
+                        openSet.push_back(neighbor);
                         update = true;
-
                     }
-                }else{
-                    neighbor->setG(tempG);
-                    openSet.push_back(neighbor);
-                    update = true;
-                }
-                if(update){
-                    neighbor->setH(heuristic(neighbor, end));
-                    neighbor->setF( neighbor->getG() + neighbor->getH());
-                    neighbor->setPrevious(current);
+                    if(update){
+                        neighbor->setH(heuristic(*neighbor, *end));
+                        neighbor->setF( neighbor->getG() + neighbor->getH());
+                        neighbor->setPrevious(current);
+                    }
                 }
             }
         }

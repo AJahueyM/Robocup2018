@@ -30,6 +30,8 @@ private:
 	void prepareForMove();
 	void move();
 	void updateAfterMove();
+
+	vector<Tile*> getCandidates();
 	Tile tile;
     DriveTrain& driveTrain;
     Direction currentRobotDirection = Up;

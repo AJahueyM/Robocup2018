@@ -16,16 +16,10 @@ public:
             newArray[i] = array[i];
         }
         newArray[currentSize] = t;
-        cout << "HI3" << endl;
         delete [] array;
         array = newArray;
 
-        cout << "HI4" << endl;
         currentSize++;
-
-        cout << currentSize << endl;
-
-
     }
 
     void emplace_back(T t){
