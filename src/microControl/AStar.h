@@ -3,12 +3,13 @@
 #include "Path.h"
 #include "Tile.h"
 #include "Utils.h"
+#include "Absis.h"
 #include "Coord.h"
 #include <MemoryFree.h>
 
 class AStar{
 public:
-    static Path getPath(Coord start, Coord end, vector<vector<Tile>>& maze);
+    static Path getPath(Coord start, Coord end, Absis<Absis<Tile>>& maze);
 private:
     static int heuristic(Node* start, Node* end);
 };

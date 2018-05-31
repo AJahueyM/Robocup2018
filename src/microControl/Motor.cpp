@@ -1,7 +1,7 @@
 #include "Motor.h"
 Adafruit_MotorShield Motor::AFMS = Adafruit_MotorShield();
 
-Motor::Motor(int port){
+Motor::Motor(uint8_t port){
 
 	Serial.print("Initializing motor: ");
 	Serial.print(port);

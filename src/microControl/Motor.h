@@ -12,7 +12,7 @@ private:
 
 
 public:
-	Motor(int port);
+	Motor(uint8_t port);
 	~Motor();
 	void driveVelocity(double velocity);
 };

@@ -21,7 +21,7 @@ public:
 	Color getColor();
 	BumpLevel getBumpLevel() ;
 	void setBumpLevel(BumpLevel bumpType);
-	int getCost() override;
+	uint8_t getCost() override;
 private:
 	byte identity = 0;
 	byte identity2 = 0;

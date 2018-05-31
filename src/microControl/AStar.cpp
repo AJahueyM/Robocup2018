@@ -4,7 +4,7 @@ int AStar::heuristic(Node* start, Node* end){
     return abs(start->getX() - start->getX()) + abs(end->getY() - end->getY());
 }
 
-Path AStar::getPath(Coord startCoord, Coord endCoord, vector<vector<Tile>>& maze){
+Path AStar::getPath(Coord startCoord, Coord endCoord, Absis<Absis<Tile>>& maze){
 
     int sizeX = maze[0].size();
     int sizeY = maze.size();

@@ -1,12 +1,12 @@
 #include "Map.h"
 
-Map::Map(vector<vector<Tile>>& tileMap){
+Map::Map(Absis<Absis<Tile>>& tileMap){
 	this->tileMap = tileMap;
 	updateMap();
 }
 
 Map::Map(Tile initialTile){
-	tileMap.push_back(vector<Tile>());
+	tileMap.push_back(Absis<Tile>());
 	tileMap[0].push_back(initialTile);
 }
 
@@ -46,7 +46,7 @@ void Map::expandMap(){
 	if(getRobotCoord().getX() == 0){
 		if(!getTileAt(getRobotCoord()).wallExists(Left)){
 			for(int i = 0; i < tileMap.size(); ++i){
-				tileMap[i].insert(tileMap[i].begin(),Tile());
+				tileMap[i].addStart(Tile());
 			}
 			Coord newRobotCoord = getRobotCoord();
 			newRobotCoord.setX(1);
@@ -56,11 +56,11 @@ void Map::expandMap(){
 
 	if(getRobotCoord().getY() == 0){
 		if(!getTileAt(getRobotCoord()).wallExists(Down)){
-			vector<Tile> newRow;
+			Absis<Tile> newRow;
 			for(int i = 0; i < tileMap[0].size(); ++i){
 				newRow.push_back(Tile());
 			}
-     		tileMap.insert(tileMap.begin(), newRow);
+     		tileMap.addStart( newRow);
 			Coord newRobotCoord = getRobotCoord();
 			newRobotCoord.setY(1);
 			setRobotCoord(newRobotCoord);
@@ -69,7 +69,7 @@ void Map::expandMap(){
 
 	if(getRobotCoord().getY() == getHeight() - 1){
 		if(!getTileAt(getRobotCoord()).wallExists(Up)){
-			vector<Tile> newRow;
+			Absis<Tile> newRow;
 			for(int i = 0; i < tileMap[0].size(); ++i){
 				newRow.push_back(Tile());
 			}
@@ -97,9 +97,10 @@ uint8_t Map::getHeight(){
 
 int Map::getNonVisitedTiles(){
 	int counter = 0;
-	for(vector<Tile> row : tileMap){
-		for(Tile t : row){
-			if(!t.wasVisited())
+
+	for(int y = 0; y < tileMap.size(); ++y){
+		for(int x = 0; x < tileMap[0].size();++x){
+			if(!tileMap[y][x].wasVisited())
 				counter++;
 		}
 	}
@@ -157,10 +158,10 @@ void Map::checkPockets(){
 }
 
 void Map::updateNeighbors(){
-	for(vector<Tile>& row : tileMap){
-		for(Tile& node : row){
-			int x = node.getX();
-			int y = node.getY();
+	for(int y = 0; y < tileMap.size(); ++y){
+		Absis<Tile>& row = tileMap[y];
+		for(int x = 0; x < tileMap[0].size(); ++x){
+			Tile& node = row[x];
 
 			if(y - 1 >= 0 && !node.wallExists(Up))
 				node.addNeighbor(&tileMap[y-1][x]);
@@ -180,11 +181,11 @@ void Map::updateMap(){
 	updateWalls();
 	updateNeighbors();
 }
-vector<vector<Tile>>& Map::getTileMap(){
+Absis<Absis<Tile>>& Map::getTileMap(){
 	return this->tileMap;
 }
 
-void Map::setTileMap(vector<vector<Tile>> tileMap){
+void Map::setTileMap(Absis<Absis<Tile>> tileMap){
 	this->tileMap = tileMap;
 	updateMap();
 }

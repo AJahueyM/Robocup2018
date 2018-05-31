@@ -8,27 +8,27 @@ using namespace std;
 class Node : public Coord{
 public:
     Node();
-    explicit Node(int x, int y);
-    void setF(int f);
-    void setH(int h);
-    void setG(int g);
+    explicit Node(uint8_t x, uint8_t y);
+    void setF(uint8_t f);
+    void setH(uint8_t h);
+    void setG(uint8_t g);
 
     void setPrevious(Node* previous);
     virtual void setWall(Direction dir, bool wall) = 0;
-    int getF() const;
-    int getH() const;
-    int getG() const;
+    uint8_t getF() const;
+    uint8_t getH() const;
+    uint8_t getG() const;
 
     virtual bool wallExists(Direction dir) = 0;
     Node* getPrevious();
     void addNeighbor(Node* neighbor);
-    Node* getNeighbors(int index);
-    int getCurrentNeighbors();
-    virtual int getCost() = 0;
+    Node* getNeighbors(uint8_t index);
+    uint8_t getCurrentNeighbors();
+    virtual uint8_t getCost() = 0;
 
 private:
-    int f, h, g;
-    int currentNeighbors = 0;
+    uint8_t f, h, g;
+    uint8_t currentNeighbors = 0;
     Node* neighbors[4];
     Node* previous = nullptr;
 };

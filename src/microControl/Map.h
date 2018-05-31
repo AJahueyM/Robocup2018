@@ -3,12 +3,13 @@
 #include "Tile.h"
 #include "Coord.h"
 #include "Path.h"
+#include "Absis.h"
 #include <ArduinoSTL.h>
 using namespace std;
 
 class Map{
 public:
-	Map(vector<vector<Tile>>& tileMap);
+	Map(Absis<Absis<Tile>>& tileMap);
 	Map(Tile initialTile);
 	Tile& getTileAt(Coord coord);
 	void setTileAt(Coord coord, Tile newTile);
@@ -19,10 +20,10 @@ public:
 	uint8_t getWidth();
 	uint8_t getHeight();
 	int getNonVisitedTiles();
-	vector<vector<Tile>>& getTileMap();
-	void setTileMap(vector<vector<Tile>> tileMap);
+	Absis<Absis<Tile>>& getTileMap();
+	void setTileMap(Absis<Absis<Tile>> tileMap); 
 private:
-	vector<vector<Tile>> tileMap;
+	Absis<Absis<Tile>> tileMap;
 	void updateWalls();
 	void updateCoords();
 	void checkPockets();
