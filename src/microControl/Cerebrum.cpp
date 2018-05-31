@@ -165,24 +165,18 @@ void Cerebrum::update(){
 	Tile* start = &maze[0][0];
 
 	Tile* returnTo = start;
-	while(){
+	while(candidates.size() > 0){
 		Tile* target = getClosestFrom(candidates, start);
 		cout << "StartX: " << start->getX() << " StartY: " << start->getY() << endl;
 		cout << "EndX: " << target->getX() << " EndY: " << target->getY() << endl;
 
-		if (target != nullptr) {
-			Path pathToFollow = AStar::getPath(maze, *start, *end);
-			//TODO FOLLOW PATH
-			
-			target->setWasVisited(true);
-			start = target;
-			candidates = getCandidates(maze);
+		Path pathToFollow = AStar::getPath(maze, *start, *end);
+		//TODO FOLLOW PATH
+		
+		target->setWasVisited(true);
+		start = target;
+		candidates = getCandidates(maze);
 
-		}
-		else {
-			cout << "Nothing to do" << endl;
-
-		}
 	}
 
 	// prepareForMove();
