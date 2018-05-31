@@ -209,6 +209,7 @@ void Cerebrum::turnRobot(Direction dir){
 		default:
 		break;
 	}
+	updateRobotOrientations();
 }
 
 void Cerebrum::shiftAngle(Direction dir){
