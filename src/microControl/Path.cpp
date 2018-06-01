@@ -26,6 +26,14 @@ uint8_t Path::setCost(uint8_t cost){
     this->cost  = cost;
 }
 
+void Path::setValid(bool valid){
+    this->valid = valid;
+}
+
+bool Path::getValid(){
+    return valid;
+}
+
 vector<Coord> Path::getPath(){
     return path;
 }

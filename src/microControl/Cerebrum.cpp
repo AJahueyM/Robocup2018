@@ -71,6 +71,7 @@ void Cerebrum::start(){
 	tileMap[4][2].setWall(Down, true);
 	tileMap[0][3].setWall(Down, true);
 	tileMap[3][3].setWall(Down, true);
+	tileMap[3][3].setWall(Right, true);
 	tileMap[1][4].setWall(Left, true);
 	tileMap[2][4].setWall(Down, true);
 	tileMap[4][4].setWall(Left, true);
@@ -113,29 +114,33 @@ void Cerebrum::run(){
 			Path candidatePath = AStar::getPath(start, end, mazeCurrent->getTileMap());
 			uint8_t cost = candidatePath.getCost();
 			cout << "CANDIDATE COST= " << (int) cost <<"\tx: " <<(int)  end.getX() << "\ty: " <<(int)  end.getY() << endl;
-			if( cost < minorCost){
+			if(!candidatePath.getValid()){
+				mazeCurrent->getTileMap()[end.getY()][end.getX()].visited(true);
+			}
+			if( cost < minorCost && candidatePath.getValid()){
 				minorCost = candidatePath.getCost();
 				bestPath = candidatePath;
 				target = end;
 			}
 		}
 
+		if(bestPath.getValid()){
+			cout << "StartX: " << (int) start.getX() << " StartY: " << (int)start.getY() << endl;
+			cout << "EndX: " << (int)target.getX() << " EndY: " <<(int) target.getY() << endl;
+			bestPath.print();
+			cout << "free= " << freeMemory() << endl;
 
-		cout << "StartX: " << (int) start.getX() << " StartY: " << (int)start.getY() << endl;
-		cout << "EndX: " << (int)target.getX() << " EndY: " <<(int) target.getY() << endl;
-		bestPath.print();
-		cout << "free= " << freeMemory() << endl;
-
-	/*
-		// FOLLOW PATH
-		//followPath(bestPath);
-		///READ TILE AND SET ON MAP
-		mazeCurrent->setTileAt(target, getCurrentTile());
+		/*
+			// FOLLOW PATH
+			//followPath(bestPath);
+			///READ TILE AND SET ON MAP
+			mazeCurrent->setTileAt(target, getCurrentTile());
 
 
-	*/
-		mazeCurrent->getTileMap()[target.getY()][target.getX()].visited(true);		/// COMENT THIS WHEN TESTING WITH ROBOT
-		start = target;
+		*/
+			mazeCurrent->getTileMap()[target.getY()][target.getX()].visited(true);		/// COMENT THIS WHEN TESTING WITH ROBOT
+			start = target;
+		}
 		candidates = getCandidates();
 		char c;
 		cin >> c;

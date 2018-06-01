@@ -10,7 +10,8 @@ Path AStar::getPath(Coord startCoord, Coord endCoord, Absis<Absis<Tile>>& maze){
     int sizeY = maze.size();
     Path pathFinal;
     pathFinal.setCost(254);
-
+    pathFinal.setValid(false);
+    
     if(startCoord.getX() < 0 || startCoord.getX() >= sizeX){
         return pathFinal;
     }
