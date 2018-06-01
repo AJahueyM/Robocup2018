@@ -238,6 +238,11 @@ void Cerebrum::driveForward(){
 
 		byte identity = B00000000, identity2 = B00000000;
 		identity = identity | isBlackMask;
+		identity = identity | wallUpMask;
+		identity = identity | wallRightMask;
+		identity = identity | wallDownMask;
+		identity = identity | wallLeftMask;
+
 		identity2 = identity2 | maskVisited;
 
 		Tile blackTile(identity, identity2);
