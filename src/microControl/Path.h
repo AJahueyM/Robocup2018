@@ -18,7 +18,7 @@ public:
 	void print();
 private:
 	vector<Coord> path;
-	uint8_t cost = 0;
-	bool valid;
+	uint8_t cost = 254;
+	bool valid = false;
 };
 #endif

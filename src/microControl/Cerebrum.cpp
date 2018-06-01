@@ -71,7 +71,7 @@ void Cerebrum::start(){
 	tileMap[4][2].setWall(Down, true);
 	tileMap[0][3].setWall(Down, true);
 	tileMap[3][3].setWall(Down, true);
-	tileMap[3][3].setWall(Right, true);
+	//tileMap[3][3].setWall(Right, true);
 	tileMap[1][4].setWall(Left, true);
 	tileMap[2][4].setWall(Down, true);
 	tileMap[4][4].setWall(Left, true);
@@ -98,6 +98,10 @@ void Cerebrum::start(){
 
 
 void Cerebrum::run(){
+	completeLevel();
+}
+
+void Cerebrum::completeLevel(){
 	vector<Coord> candidates = getCandidates();
 	Map* mazeCurrent = maze[mazeFloor];
 	Tile* startTile = &mazeCurrent->getTileMap()[0][0];

@@ -19,6 +19,7 @@ public:
 private:
 	Cerebrum(DriveTrain& driveTrain);
     Cerebrum &operator=(const Cerebrum &);
+	void completeLevel();
 	void followPath(Path& path);
     void driveForward();
     void turnRobot(Direction dir);
