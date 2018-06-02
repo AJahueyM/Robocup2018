@@ -23,7 +23,7 @@ private:
 	DriveTrain();
     DriveTrain &operator=(const DriveTrain &);
 	Motor topRight, topLeft, lowRight, lowLeft;
-	Gyro gyro;
+	Gyro gyro = Gyro::getInstance();
 	Sharp frontSharp, rightSharp, leftSharp;
 	Encoder enc;
 	Button backRLimitS, backLLimitS;

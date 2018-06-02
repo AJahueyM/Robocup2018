@@ -6,6 +6,9 @@ using namespace std;
 
 class Gyro{
 private:
+	Gyro();
+    Gyro &operator=(const Gyro &);
+
 	Adafruit_BNO055 bno = Adafruit_BNO055(55);
 	int yawOffSet, pitchOffSet, yaw;
 	uint8_t iTurnCounter = 0, iPitchCounter, lastPitch ,readRateMs = 100;
@@ -13,7 +16,11 @@ private:
 
 //Abiel w/h
 public:
-	Gyro();
+	static Gyro& getInstance(){
+		static Gyro singletonInstance;
+		return singletonInstance;
+	};
+
 	int getYaw();
 	int getPitch();
 	void resetYaw();
