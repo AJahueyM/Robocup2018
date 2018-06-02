@@ -1,0 +1,20 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(387,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (ConsoleApplication4.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  Navegacion.cpp
+c:\users\yulis\source\repos\astarbumps\consoleapplication4\path.h(6): warning C4018: '<': signed/unsigned mismatch
+c:\users\yulis\source\repos\astarbumps\consoleapplication4\navegacion.cpp(83): warning C4018: '<': signed/unsigned mismatch
+c:\users\yulis\source\repos\astarbumps\consoleapplication4\navegacion.cpp(84): warning C4018: '<': signed/unsigned mismatch
+c:\users\yulis\source\repos\astarbumps\consoleapplication4\navegacion.cpp(118): warning C4018: '<': signed/unsigned mismatch
+c:\users\yulis\source\repos\astarbumps\consoleapplication4\navegacion.cpp(120): warning C4018: '<': signed/unsigned mismatch
+c:\users\yulis\source\repos\astarbumps\consoleapplication4\navegacion.cpp(178): warning C4018: '<': signed/unsigned mismatch
+c:\users\yulis\source\repos\astarbumps\consoleapplication4\navegacion.cpp(179): warning C4018: '<': signed/unsigned mismatch
+c:\users\yulis\source\repos\astarbumps\consoleapplication4\navegacion.cpp(208): warning C4018: '<': signed/unsigned mismatch
+c:\users\yulis\source\repos\astarbumps\consoleapplication4\navegacion.cpp(249): warning C4018: '<': signed/unsigned mismatch
+c:\users\yulis\source\repos\astarbumps\consoleapplication4\navegacion.cpp(343): warning C4018: '<': signed/unsigned mismatch
+c:\users\yulis\source\repos\astarbumps\consoleapplication4\navegacion.cpp(344): warning C4018: '<': signed/unsigned mismatch
+c:\users\yulis\source\repos\astarbumps\consoleapplication4\navegacion.cpp(358): warning C4018: '<': signed/unsigned mismatch
+c:\users\yulis\source\repos\astarbumps\consoleapplication4\navegacion.cpp(402): warning C4018: '<': signed/unsigned mismatch
+c:\users\yulis\source\repos\astarbumps\consoleapplication4\navegacion.cpp(422): warning C4018: '<': signed/unsigned mismatch
+c:\users\yulis\source\repos\astarbumps\consoleapplication4\navegacion.cpp(423): warning C4018: '<': signed/unsigned mismatch
+c:\users\yulis\source\repos\astarbumps\consoleapplication4\navegacion.cpp(430): warning C4018: '<': signed/unsigned mismatch
+c:\users\yulis\source\repos\astarbumps\consoleapplication4\navegacion.cpp(541): warning C4018: '<': signed/unsigned mismatch
+  Navegacion.vcxproj -> C:\Users\yulis\source\repos\AStarBumps\ConsoleApplication4\Debug\Navegacion.exe
