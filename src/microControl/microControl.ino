@@ -1,65 +1,63 @@
 // #include "Cerebrum.h"
 #include <MemoryFree.h>
-#include "Sharp.h"
-#include "Absis.h"
-#include <ArduinoSTL.h>
-using namespace std;
-#include "Tile.h"
-#include "AStar.h"
-#include "Map.h"
+//#include "Cerebrum.h"
+#include "Adafruit_VL53L0X.h"
 // DriveTrain* driveTrain;
 // Cerebrum* cerebrum;
 
+// Button *button1, *button2, *button3, *button4;
+// Led *led1, *led2;
+//Sharp* sharp1, *sharp2, *sharp3, *sharp4;
+using namespace std;
+Adafruit_VL53L0X lox = Adafruit_VL53L0X();
 
-const uint8_t rows = 15, cols = 15;
-//Tile tileMap [rows] [cols];
-//Sharp* sharp;
 void setup() {
-  Serial.begin(115200);
- 
-  Absis<Absis<Tile>> tileMap;
-  for(int y = 0; y < rows; ++y){
-    tileMap.emplace_back(Absis<Tile>());
-    for(int x = 0; x < cols; ++x){
-      tileMap[y].emplace_back(Tile(x, y));
-    }
+  Serial.begin(9600);
+  // sharp1 = new Sharp(10);
+  // sharp2 = new Sharp(11);
+  // sharp3 = new Sharp(12);
+  // sharp4 = new Sharp(13);
+
+   if (!lox.begin()) {
+    Serial.println(F("Failed to boot VL53L0X"));
+    while(1);
   }
-  tileMap[0][0].visited(true);
+  // led1 = new Led(35);
+  // led2 = new Led(37);
 
-  tileMap[1][0].setWall(Right, true);
-  tileMap[2][1].setWall(Up, true);
-  tileMap[2][1].setWall(Right, true);
+  // pinMode(30, OUTPUT);
+  // pinMode(32, OUTPUT);
 
-  tileMap[1][2].setWall(Right, true);
-  tileMap[2][2].setWall(Right,true);
-  tileMap[3][2].setWall(Right, true);
+  // driveTrain = &DriveTrain::getInstance();
+  // cerebrum = &Cerebrum::getInstance(*driveTrain);
 
-  tileMap[2][1].setBumpLevel(Max);
-  tileMap[1][3].setBumpLevel(Max);
-  tileMap[2][2].setBumpLevel(Max);
+  // cerebrum->start();
 
-  tileMap[2][0].setBumpLevel(Small);
-  tileMap[4][0].setBumpLevel(Medium);
-  tileMap[4][1].setBumpLevel(Medium);
-  tileMap[4][2].setBumpLevel(Medium);
-  tileMap[3][3].setBumpLevel(Small);
-
-  //cout <<  (int) tileMap[2][0].getCost() << " " <<  (int) tileMap[4][0].getCost() << " " <<  (int) tileMap[2][1].getCost() << endl;
-  Map tMap(tileMap);
-  
-  Coord start(0,0);
-  Coord end(1,0);
- Path path = AStar::getPath(start, end, tMap.getTileMap());
-  cout << "StartX= " <<  (int)start.getX() << " StartY= " << (int)start.getY() << " EndX= " << (int)end.getX() << " EndY= " << (int)end.getY() << endl;
-  for(int i = 0; i < path.getLength(); ++i){
-   cout << "X= " << (int) path.getCoordAt(i).getX() << " Y= " << (int) path.getCoordAt(i).getY() << endl;
-  }
-
-  cout << freeMemory() << endl;
-
+  // cerebrum->run();
+  // String str("ITZEL DELTA");
+  // LCD::getInstance().display(str);
+  // button1 = new Button(43);
+  // button2 = new Button(45);
+  // button3 = new Button(3);
+  // button4 = new Button(4);
 }
 
 void loop() {
-  //cout << 0 << endl;
-  //cerebrum->update();
+  VL53L0X_RangingMeasurementData_t measure;
+    
+  //Serial.print("Reading a measurement... ");
+  lox.rangingTest(&measure, false); // pass in 'true' to get debug data printout!
+
+  if (measure.RangeStatus != 4) {  // phase failures have incorrect data
+    ///Serial.print("Distance (mm): "); 
+    Serial.println(measure.RangeMilliMeter);
+  } else {
+    Serial.println(" out of range ");
+  }
+  // led1->blink(5);
+  // led2->blink(5);
+  // digitalWrite(32, HIGH);
+  // digitalWrite(30, HIGH);
+
+ //cout <<(int) sharp1->getDistance() << "," <<  (int) sharp2->getDistance()  << "," << (int) sharp3->getDistance() << "," << (int) sharp4->getDistance() << endl;
 }

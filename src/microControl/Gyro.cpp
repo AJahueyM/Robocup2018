@@ -2,7 +2,7 @@
 
 Gyro::Gyro(){
 	Serial.println("BNO Initializing...");
-	if(!bno.begin()){
+	if(!bno.begin(bno.OPERATION_MODE_IMUPLUS)){
 		Serial.println("NO BNO 055 DETECTED");
 		//while(1);
 	}

@@ -161,6 +161,8 @@ void Tile::setBumpLevel(BumpLevel bumpType){
 }
 
 uint8_t Tile::getCost(){
+    if(!wasVisited())
+        return 1;
     if(this->getBumpLevel() == Small){
         return 5;
     }
