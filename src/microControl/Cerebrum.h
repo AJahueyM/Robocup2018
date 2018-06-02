@@ -7,6 +7,7 @@
 #include "AStar.h"
 #include "TileMasks.h"
 #include "DriveTrain.h"
+#include "Button.h"
 
 class Cerebrum{
 public:
@@ -38,7 +39,7 @@ private:
     Coord currentRobotCoord;
     Map* maze[3];
     LCD& lcd;
-
+	Button *button1, *button2;
     double movementSpeed = .75, preciseMovementSpeed = -.25, rampMovementSpeed = .5;
  	uint8_t distanceMoveTiles = 30, turnCounter = 0, mazeFloor = 0, wallTolerance = 9, wallThreshold = 15;
 	short int  angles[4];

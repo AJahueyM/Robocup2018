@@ -5,8 +5,9 @@ Cerebrum::Cerebrum(DriveTrain& driveTrain) : driveTrain(driveTrain), lcd(LCD::ge
 	angles[1] = 90;
 	angles[2] = 180;
 	angles[3] = -90;
-	
 
+	button1 = new Button(30);
+	button2 = new Button(28);
 }
 vector<Coord> Cerebrum::getCandidates(){
 	vector <Coord> vec;
