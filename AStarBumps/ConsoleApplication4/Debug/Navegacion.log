@@ -16,5 +16,5 @@ c:\users\yulis\source\repos\astarbumps\consoleapplication4\navegacion.cpp(402): 
 c:\users\yulis\source\repos\astarbumps\consoleapplication4\navegacion.cpp(422): warning C4018: '<': signed/unsigned mismatch
 c:\users\yulis\source\repos\astarbumps\consoleapplication4\navegacion.cpp(423): warning C4018: '<': signed/unsigned mismatch
 c:\users\yulis\source\repos\astarbumps\consoleapplication4\navegacion.cpp(430): warning C4018: '<': signed/unsigned mismatch
-c:\users\yulis\source\repos\astarbumps\consoleapplication4\navegacion.cpp(541): warning C4018: '<': signed/unsigned mismatch
+c:\users\yulis\source\repos\astarbumps\consoleapplication4\navegacion.cpp(532): warning C4018: '<': signed/unsigned mismatch
   Navegacion.vcxproj -> C:\Users\yulis\source\repos\AStarBumps\ConsoleApplication4\Debug\Navegacion.exe
