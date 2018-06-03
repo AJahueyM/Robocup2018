@@ -1,16 +1,16 @@
 #include "TOF.h"
-const uint8_t TOF::validPin[2] = {42, 49};
+const uint8_t TOF::validPin[] = {42, 49};
 bool TOF::vlxSetup = false;
-
+const uint8_t TOF::sensorNumber = 2;
 TOF::TOF(const uint8_t pinShut, const uint8_t address){
     if(TOF::vlxSetup){
-        for(int i = 0; i < 2;++i){
+        for(int i = 0; i < TOF::sensorNumber;++i){
             uint8_t pin =  TOF::validPin[i];
             pinMode(pin, OUTPUT);
             digitalWrite(pin, LOW);        
         }
         delay(10);
-        for(int i = 0; i < 2;++i){
+        for(int i = 0; i < TOF::sensorNumber;++i){
             uint8_t pin =  TOF::validPin[i];           
             digitalWrite(pin, HIGH);        
         }   
@@ -18,7 +18,7 @@ TOF::TOF(const uint8_t pinShut, const uint8_t address){
     }
     bool validPin  = false;
 
-    for(int i = 0; i < 2;++i){
+    for(int i = 0; i < TOF::sensorNumber;++i){
         uint8_t pin = TOF::validPin[i];
         if(pin != pinShut){
             digitalWrite(pin, HIGH);
