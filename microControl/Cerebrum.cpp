@@ -57,6 +57,7 @@ void Cerebrum::start(){
 			tileMap[y].emplace_back(Tile(x, y));
 		}
 	}
+	
 	tileMap[0][0].visited(true);
 
 	tileMap[1][0].setWall(Down, true);
