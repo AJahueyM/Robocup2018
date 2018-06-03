@@ -5,7 +5,7 @@
 
 class Board {
 public:
-	Board() { ramps; map; hasRamp = false; origin = nullptr;};
+	Board() { ramps; map; hasRamp = false; origin = nullptr; wasMapCompleted = false; };
 	
 	void setHasRamp(bool hasRamp) { this->hasRamp = hasRamp; }
 	bool getHasRamp() { return this->hasRamp; }
@@ -27,6 +27,7 @@ public:
 		}
 		return nullptr;
 	}
+	
 	bool hasNotUsedRamps() {
 		for (Ramp& ramp : ramps) {
 			if (!ramp.getUsed()) {
@@ -36,11 +37,15 @@ public:
 		return false;
 	}
 
+	void setWasMapCompleted(bool mapCompleted) { this->wasMapCompleted = mapCompleted; }
+	bool getWasMapCompleted() { return this->wasMapCompleted; }
+
 
 private:
 	vector <vector<Node>> map;
 	vector <Ramp> ramps;
 	bool hasRamp;
 	Node* origin;
+	bool wasMapCompleted;
 
 }; 
