@@ -335,8 +335,8 @@ void Cerebrum::followPath(Path& path){
 			driveForward();
 		}
 	}
-	Tile* currentTile = maze[mazeFloor]->getTileAt(currentRobotCoord);
-	while(currentTile->wallExists(robotUp) &&  driveTrain.getDistanceFront() != driveTrain.getDesiredWallDistance()){
+	Tile currentTile = maze[mazeFloor]->getTileAt(currentRobotCoord);
+	while(currentTile.wallExists(robotUp) &&  driveTrain.getDistanceFront() != driveTrain.getDesiredWallDistance()){
 		if(driveTrain.getDistanceFront() > driveTrain.getDesiredWallDistance()){
 			driveTrain.driveStraight(angles[0], movementSpeed);
 		}else{

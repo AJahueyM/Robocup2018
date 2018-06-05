@@ -29,20 +29,22 @@ void DriveTrain::blinkLeds(uint8_t times){
 }
 
 void DriveTrain::checkHeatDispense() {
-	if(millis() - lastHeatReading > heatReadRateMs && shouldDispense){
-		if (mlxL.readObjectTempC() - mlxL.readAmbientTempC() > heatDiferenceVictim) {
-			blinkLeds(blinkTimesVictimDetected);
-			turn(0);
-			dispenser.dispenseDirection(DispenserDirection::left);
-			leftKit = true;
+	if(!leftKit){
+		if(millis() - lastHeatReading > heatReadRateMs){
+			if (mlxL.readObjectTempC() - mlxL.readAmbientTempC() > heatDiferenceVictim) {
+				blinkLeds(blinkTimesVictimDetected);
+				turn(0);
+				dispenser.dispenseDirection(DispenserDirection::left);
+				leftKit = true;
+			}
+			if (mlxR.readObjectTempC() - mlxR.readAmbientTempC() > heatDiferenceVictim) {
+				blinkLeds(blinkTimesVictimDetected);
+				turn(0);
+				dispenser.dispenseDirection(DispenserDirection::right);
+				leftKit = true;
+			}
+			lastHeatReading = millis();
 		}
-		if (mlxR.readObjectTempC() - mlxR.readAmbientTempC() > heatDiferenceVictim) {
-			blinkLeds(blinkTimesVictimDetected);
-			turn(0);
-			dispenser.dispenseDirection(DispenserDirection::right);
-			leftKit = true;
-		}
-		lastHeatReading = millis();
 	}
 }
 void DriveTrain::driveVelocity(double velocity) {
@@ -98,8 +100,7 @@ void DriveTrain::turnToAngle(int angle) {
 	long startTime = millis();
 
 	while(error != 0 && millis() - startTime < turnTimeOut) {
-		if(!leftKit && shouldDispense)
-			checkHeatDispense();
+		checkHeatDispense();
 		error = shortestAngleTurn(getYaw(), angle);
 		double output = error * kConstantTurn;
 		if(output > 1){
@@ -123,8 +124,7 @@ void DriveTrain::turnToAngle(int angle) {
 }
 
 void DriveTrain::driveStraight(int angle, double velocity) {
-	if(!leftKit && shouldDispense)
-		checkHeatDispense();
+	checkHeatDispense();
 	double multiplier;
 	bool rightDistanceValid = (getDistanceRightFront() < wallDistanceSidesThresh) && (getDistanceRightBack() < wallDistanceSidesThresh);
 	bool leftDistanceValid = (getDistanceLeftFront() < wallDistanceSidesThresh) && (getDistanceLeftBack() < wallDistanceSidesThresh);
