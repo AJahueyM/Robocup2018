@@ -473,9 +473,8 @@ Tile Cerebrum::getInitialTile(){
 		result = result | wallRightMask;
 	}
 
-	driveTrain.turnToAngle(90);
 
-	if(driveTrain.getDistanceRightFront() < wallThreshold){
+	if(driveTrain.getDistanceBack() < wallThreshold){
 		Serial.print("B");
 
 		result = result | wallDownMask;

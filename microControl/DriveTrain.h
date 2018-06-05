@@ -30,7 +30,7 @@ private:
 	TOF frontTof, backTof;
 	Encoder encR, encL;
 	Button backRLimitS, backLLimitS, frontRLimitS, frontLLimitS;
-	double wheelCircunference = 6.5 * M_PI, encCountsPerRev = 3400.0, heatDiferenceVictim = 4, lastDisplacement = 0, cmsPitchRecord = 2;
+	double wheelCircunference = 6.5 * M_PI, encCountsPerRev = 3400.0, encCountsPerCm , heatDiferenceVictim = 4, lastDisplacement = 0, cmsPitchRecord = 2;
 	double kConstantDriveGyro = 1, kConstantDriveDistance = 1, kConstantTurn = 1;
 	long turnTimeOut = 5000, delayTurnCorrection = 500, delayCourseCorrection = 1000, encCountsPitchRecord;
 	short int angleCourseCorrection = 30;

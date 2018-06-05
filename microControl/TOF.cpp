@@ -31,7 +31,10 @@ int TOF::getDistance(){
     if(millis() - lastReadTime > readRateMs){
         VL53L0X_RangingMeasurementData_t measure;
         lox.rangingTest(&measure, false); 
-        distance = measure.RangeMilliMeter / 10;
+        if(measure.RangeStatus != 4)
+            distance = measure.RangeMilliMeter / 10;
+        else
+            distance = 0;
         lastReadTime = millis();
     }
     return distance;

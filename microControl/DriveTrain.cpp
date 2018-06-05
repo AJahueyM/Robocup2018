@@ -9,7 +9,8 @@ DriveTrain::DriveTrain() : topRight(2), topLeft(3), lowRight(4), lowLeft(1), enc
   	encR.write(0);
 	encL.write(0);
 	Serial.println("DriveTrain initialized");
-	encCountsPitchRecord = cmsPitchRecord * encCountsPerRev / wheelCircunference;
+	encCountsPerCm =	encCountsPerRev /  wheelCircunference; 
+	encCountsPitchRecord = cmsPitchRecord * encCountsPerCm;
 }
 
 void DriveTrain::setRightMotorsVelocity(double velocity) {
@@ -182,10 +183,11 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 	long encCountR = startCountR;
 	long encCountL = startCountL;
 	long averageMovement = 0;
-	long toMove = (abs(displacement) / wheelCircunference) * encCountsPerRev;
+	long toMove = displacement * encCountsPerCm;
 	Color tileColor = White;
 	Absis<int> pitchLog;
 	long pitchRecordTarget = encCountsPitchRecord;
+	int startDistance = getDistanceFront();
 	while(abs(averageMovement) < toMove && tileColor != Black){
 
 		if(velocity > 0 ){
@@ -211,6 +213,10 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 			encCountL = encL.read();
 			lastEncoderReading = millis();
 			averageMovement = (encCountL + encCountR) / 2;
+			if(getPitch() > - 2 && getPitch() < startDistance != 0){
+				int newDistance = getDistanceFront() - startDistance;
+				averageMovement = (averageMovement + (newDistance * encCountsPerCm)) / 2;
+			}
 		}
 		driveStraight(angle, velocity);
 		if(frontLLimitS.getState() || frontRLimitS.getState()){
