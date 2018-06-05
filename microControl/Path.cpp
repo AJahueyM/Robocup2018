@@ -40,6 +40,6 @@ vector<Coord> Path::getPath(){
 
 void Path::print(){
     for(Coord coord : path){
-        cout << "x: " << (int) coord.getX() << "\ty: " << (int) coord.getY() << endl;
+        cout << endl <<"x: " << (int) coord.getX() << "\ty: " << (int) coord.getY() << endl;
     }
 }

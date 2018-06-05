@@ -1,12 +1,13 @@
 #include "DriveTrain.h"
 ///Constructor
-DriveTrain::DriveTrain() : topRight(2), topLeft(3), lowRight(4), lowLeft(1), enc(19, 18),
-	frontSharp(12), rightSharp(11), leftSharp(13),
-	backRLimitS(51), backLLimitS(53), leds(led1Pin){
+DriveTrain::DriveTrain() : topRight(2), topLeft(3), lowRight(4), lowLeft(1), encR(19, 18),encL(16,17), 
+	frontTof(42), backTof(49, 0x30), rightSharpFront(13), rightSharpBack(12),leftSharpFront(11), leftSharpBack(10),
+	backRLimitS(43), backLLimitS(45),  frontRLimitS (4) , frontLLimitS(4), leds(led1Pin){
 	Serial.println("DriveTrain initializing...");
 	leds.addPin(led2Pin);
 	leds.setState(false);
-  	enc.write(0);
+  	encR.write(0);
+	encL.write(0);
 	Serial.println("DriveTrain initialized");
 }
 
@@ -20,23 +21,27 @@ void DriveTrain::setLeftMotorsVelocity(double velocity) {
 	lowLeft.driveVelocity(velocity);
 }
 
+void DriveTrain::blinkLeds(uint8_t times){
+	leds.blink(times);
+	leds.setState(false);
+}
+
 void DriveTrain::checkHeatDispense() {
 	if(millis() - lastHeatReading > heatReadRateMs && shouldDispense){
 		if (mlxL.readObjectTempC() - mlxL.readAmbientTempC() > heatDiferenceVictim) {
-			leds.blink(blinkTimesVictimDetected,true);
+			blinkLeds(blinkTimesVictimDetected);
 			turn(0);
 			dispenser.dispenseDirection(DispenserDirection::left);
 			leftKit = true;
 		}
 		if (mlxR.readObjectTempC() - mlxR.readAmbientTempC() > heatDiferenceVictim) {
-			leds.blink(blinkTimesVictimDetected,true);
+			blinkLeds(blinkTimesVictimDetected);
 			turn(0);
 			dispenser.dispenseDirection(DispenserDirection::right);
 			leftKit = true;
 		}
 		lastHeatReading = millis();
 	}
-	leds.setState(false);
 }
 void DriveTrain::driveVelocity(double velocity) {
 	setRightMotorsVelocity(velocity);
@@ -76,134 +81,142 @@ void DriveTrain::turnToAngle(int angle) {
 			angle += 180;
 		} while (angle < -180);
 	}
-
 	if (angle > 180) {
 		do {
 			angle -= 180;
 		}  while (angle > 180);
 	}
-	double angleError = shortestAngleTurn(getYaw(), angle);
-	double outputMultiplier = mapD(fabs(angleError), 0.0, 45.0, 0.1, 1.0);
-	long start = millis();
-	while (abs(angleError) > 0 && millis() - start < 2000) {
+
+	short int error = shortestAngleTurn(getYaw(), angle);
+	long startTime = millis();
+
+	while(error != 0 && millis() - startTime < turnTimeOut) {
 		if(!leftKit && shouldDispense)
 			checkHeatDispense();
-		angleError = shortestAngleTurn(getYaw(), angle);
-		outputMultiplier = mapD(fabs(angleError), 0.0, 45.0, 0.1, 1.0);
-		if (outputMultiplier > .8) {
-			outputMultiplier = 0.8;
-		} else if (outputMultiplier < 0.1) {
-			outputMultiplier = 0.1;
+		error = shortestAngleTurn(getYaw(), angle);
+		double output = error * kConstantTurn;
+		if(output > 1){
+			output = 1;
+		}else if(output < -1){
+			output = -1;
 		}
-
-		if (angleError > 0.0) {
-			turn(outputMultiplier);
-		} else if (angleError < 0.0) {
-			turn(-outputMultiplier);
-		}
+		turn(output);
 	}
 	turn(0);
+	if(error != 0){
+		if(error < 0){
+			turn(0.75);
+		}else if(error > 0){
+			turn(-0.75);
+		}
+		delay(delayTurnCorrection);
+		turnToAngle(angle);
+	}
+
 }
 
 void DriveTrain::driveStraight(int angle, double velocity) {
 	if(!leftKit && shouldDispense)
 		checkHeatDispense();
-
-	double angleError = shortestAngleTurn(getYaw(), angle);
-	double outputMultiplier = mapD(abs(angleError), 0.0, 7.0, 0.0, 1);
-	
-	if (outputMultiplier > 1) {
-		outputMultiplier = 1;
-	} else if (outputMultiplier < 0.0) {
-		outputMultiplier = 0.0;
-	}
-	if(getDistanceRight() < 8 || getDistanceLeft() < 8){
+	double multiplier;
+	bool rightDistanceValid = (getDistanceRightFront() < wallDistanceSidesThresh) && (getDistanceRightBack() < wallDistanceSidesThresh);
+	bool leftDistanceValid = (getDistanceLeftFront() < wallDistanceSidesThresh) && (getDistanceLeftBack() < wallDistanceSidesThresh);
+	bool correctWithDistance = rightDistanceValid || leftDistanceValid;
+	short int error = 0;
+	if(correctWithDistance){
 		drivingWithDistance = true;
-		if(getDistanceRight() < 8){
-			setLeftMotorsVelocity(velocity * .8);
-			setRightMotorsVelocity(velocity);
+		short int distanceError = 0;
+		if(rightDistanceValid){
+			error = getDistanceRightBack() - getDistanceRightFront();
 		}else{
-			setLeftMotorsVelocity(velocity);
-			setRightMotorsVelocity(velocity * .8);
+			error = getDistanceLeftBack() - getDistanceLeftFront();
 		}
-	}else if (abs(angleError) > 0) {
+		multiplier = error * kConstantDriveDistance;
+	}else{
 		drivingWithDistance = false;
-		if (angleError > 0.0) {
-			if(velocity > 0){
-				setLeftMotorsVelocity(velocity);
-				setRightMotorsVelocity(velocity - (velocity * outputMultiplier));				
-			}else{
-				setLeftMotorsVelocity(velocity - (velocity * outputMultiplier));
-				setRightMotorsVelocity(velocity);		
-			}
-		} else if (angleError < 0.0) {
-			if(velocity > 0){
-				setLeftMotorsVelocity(velocity - (velocity * outputMultiplier));
-				setRightMotorsVelocity(velocity);
-			}else{
-				setLeftMotorsVelocity(velocity);
-				setRightMotorsVelocity(velocity  - (velocity * outputMultiplier));
-			}
-		}
-	} else {
-		setLeftMotorsVelocity(velocity);
-		setRightMotorsVelocity(velocity);
+		error = shortestAngleTurn(getYaw(), angle);
+		multiplier = error * kConstantDriveGyro;
+	}
 
+	if(error < 0){
+		setRightMotorsVelocity(velocity);
+		setLeftMotorsVelocity(velocity * multiplier);
+	}else if (error > 0){
+		setRightMotorsVelocity(velocity * multiplier);
+		setLeftMotorsVelocity(velocity);
+	}else{
+		setRightMotorsVelocity(velocity);
+		setLeftMotorsVelocity(velocity);
 	}
 }
 
 void DriveTrain::driveDisplacement(double displacement, int angle, double velocity, bool ignoreColorSensor) {
-	lastDisplacement = displacement;
-	enc.write(0);
-	long startCount = enc.read();
-	startCount = abs(startCount);
-	long toMove = (abs(displacement) / wheelCircunference) * encCountsPerRev;
-	long encCount = startCount;
-	lastEncoderReading  = millis();
 	interruptedColor = false;
-	Color tileColor = White;
 	lastDisplacementCompleted = false;
-	int correctionCounter = 0;
-	bool expandedMovement = false;
-	while ((abs(encCount - startCount)  < toMove && getDistanceFront() > 7 )  && tileColor != Black) {
+	encR.write(0);
+	encL.write(0);
+	long startCountR = encR.read();
+	long startCountL = encL.read();
+	long encCountR = startCountR;
+	long encCountL = startCountL;
+	long averageMovement = 0;
+	long toMove = (abs(displacement) / wheelCircunference) * encCountsPerRev;
+	Color tileColor = White;
+
+	while(averageMovement < toMove && tileColor != Black){
 		if(!ignoreColorSensor)
 			tileColor = getTileColor();
-		if (millis() - lastEncoderReading > encoderReadRateMs) {
-			encCount = enc.read();
-			encCount = abs(encCount);
-			lastEncoderReading = millis();
-		}
-		Serial.println(abs(encCount - startCount));
-		driveStraight(angle, velocity);
 
-		if((abs(getPitch()) > 5 && abs(getPitch()) < 15 ) && !expandedMovement){
-			expandedMovement = true;
-			toMove *= 1.1;
-			velocity *= 1.25;
+		if(millis() - lastEncoderReading > encoderReadRateMs){
+			encCountR = encR.read();
+			encCountL = encL.read();
+			lastEncoderReading = millis();
+			averageMovement = (encCountL + encCountR) / 2;
 		}
-	}
-	if((abs(encCount - startCount)  >= toMove * 0.75) && tileColor != Black ) {
-		lastDisplacementCompleted = true;
+		driveStraight(angle, velocity);
+		if(frontLLimitS.getState() || frontRLimitS.getState()){
+				if(frontRLimitS.getState()){
+					turnToAngle(30);
+				}else{
+					turnToAngle(-30);
+				}
+				driveVelocity(-.5);
+				delay(delayCourseCorrection);
+				turnToAngle(0);
+		}
 	}
 
 	if(tileColor == Black){
 		interruptedColor = true;
+	}else{
+		lastDisplacementCompleted = true;
 	}
 	driveVelocity(0);
 }
 
 int DriveTrain::getDistanceFront() {
-	return frontSharp.getDistance();
+	return frontTof.getDistance();
 }
 
-int DriveTrain::getDistanceLeft() {
-	return leftSharp.getDistance();
+int DriveTrain::getDistanceLeftFront() {
+	return leftSharpFront.getDistance();
 }
 
-int DriveTrain::getDistanceRight() {
-	return rightSharp.getDistance();
+int DriveTrain::getDistanceLeftBack(){
+	return leftSharpBack.getDistance();
 }
 
+int DriveTrain::getDistanceRightFront() {
+	return rightSharpFront.getDistance();
+}
+
+int DriveTrain::getDistanceRightBack(){
+	return rightSharpBack.getDistance();
+}
+
+int DriveTrain::getDistanceBack(){
+	return backTof.getDistance();
+}
 
 void DriveTrain::alignWithWall(RobotFace faceToAlign) {
 	Button *right, *left;
@@ -216,7 +229,8 @@ void DriveTrain::alignWithWall(RobotFace faceToAlign) {
 		break;
 
 	case Front:
-	//TODO ADD FRONT LIMIT SWITCHES
+		right = &frontRLimitS;
+		left = &frontLLimitS;
 		speed = .75;
 		break;
 	}

@@ -1,8 +1,18 @@
 #ifndef __UTILS_H_
 #define __UTILS_H_
+#ifdef ARDUINO
 #include <Arduino.h>
-#include "Coord.h"
 #include <ArduinoSTL.h>
+#else
+
+
+#include <vector>
+#include <math.h>
+#endif
+
+#include "Coord.h"
+
+
 using namespace std;
 
 enum Direction {
@@ -29,9 +39,8 @@ float mapD(float x, float in_min, float in_max, float out_min, float out_max);
 
 float shortestAngleTurn(float currentAngle, float target);
 
-int calculateDistance(Coord a, Coord b);
-
 vector<Coord> getClosestFrom(vector <Coord>& vec, Coord start);
+
 template<class T>
 void removeFromVector(vector<T> &vector, T element){
     for(int j = vector.size() - 1; j >= 0; --j){

@@ -5,7 +5,6 @@
 class Button {
 public:
 	Button(uint8_t digitalPin);
-	Button(int digitalPin);
 	bool getState();
 private:
 	uint8_t digitalPin;

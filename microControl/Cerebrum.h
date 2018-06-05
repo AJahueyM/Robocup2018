@@ -8,6 +8,18 @@
 #include "TileMasks.h"
 #include "DriveTrain.h"
 #include "Button.h"
+#include <MemoryFree.h>
+
+enum StopReason {
+	Completed,
+	NoCandidates,
+	RampReached
+};
+
+struct NavigationResult {
+	Coord endCoord;
+	StopReason endReason;
+};
 
 class Cerebrum{
 public:
@@ -20,7 +32,9 @@ public:
 private:
 	Cerebrum(DriveTrain& driveTrain);
     Cerebrum &operator=(const Cerebrum &);
-	void completeLevel();
+	Path getPathLowerCost(Coord start, vector<Coord> targets, Map* map);
+	bool Cerebrum::roundCompleted(Absis<Map*> maps);
+	NavigationResult Cerebrum::navigateLevel(Map* mapCurrent, Coord startCoord);
 	void followPath(Path& path);
     void driveForward();
     void turnRobot(Direction dir);
@@ -37,7 +51,7 @@ private:
     Direction currentRobotDirection = Up;
    	Direction robotRight, robotLeft, robotUp, robotDown;
     Coord currentRobotCoord;
-    Map* maze[3];
+    Absis<Map*> maze;
     LCD& lcd;
 	Button *button1, *button2;
     double movementSpeed = .75, preciseMovementSpeed = -.25, rampMovementSpeed = .5;

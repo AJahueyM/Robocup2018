@@ -244,6 +244,14 @@ Ramp* Map::getRampAt(Coord coord){
 	return nullptr;
 }
 
+vector<Coord> Map::getRampsCoords(){
+	vector<Coord> coords;
+	for(int i = 0; i < ramps.size(); ++i){
+		coords.emplace_back(ramps[i].getOrigin());
+	}
+	return coords;
+}
+
 Absis<Ramp>& Map::getRamps(){
 	return ramps;
 }

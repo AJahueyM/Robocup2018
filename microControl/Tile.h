@@ -11,6 +11,7 @@ public:
 	explicit Tile(byte identity);
 	explicit Tile(byte identity, byte identity2);
 	bool isRamp();
+	void setRamp(bool isRamp);
 	bool wallExists(Direction side) override;
 	void setWall(Direction side, bool value) override;
 	void setLeftKit(bool value);

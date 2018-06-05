@@ -4,13 +4,19 @@
 #include "Coord.h"
 #include "Path.h"
 #include "Absis.h"
+#include "Ramp.h"
+#ifdef ARDUINO
 #include <ArduinoSTL.h>
+#else
+#include <iostream>
+#endif
 using namespace std;
 
 class Map{
 public:
-	Map(Absis<Absis<Tile>>& tileMap);
-	Map(Tile initialTile);
+	Map(Absis<Absis<Tile>>& tileMap, const uint8_t levelNum);
+	Map(Tile initialTile, const uint8_t levelNum);
+	uint8_t getLevelNum();
 	Tile& getTileAt(Coord coord);
 	void setTileAt(Coord coord, Tile newTile);
 	Coord getRobotCoord();
@@ -20,10 +26,19 @@ public:
 	uint8_t getWidth();
 	uint8_t getHeight();
 	int getNonVisitedTiles();
+	vector<Coord> getCandidates();
 	Absis<Absis<Tile>>& getTileMap();
 	void setTileMap(Absis<Absis<Tile>> tileMap); 
+	void addRamp(Ramp ramp);
+	Ramp* getRampAt(Coord coord);
+	vector<Coord> getRampsCoords();
+	Absis<Ramp>& getRamps();
+	bool usedAllRamps();
+	bool wasCompleted();
+	static void createRamp(Map* startMap, Tile* start, Map* endMap, Tile* end);
 private:
 	Absis<Absis<Tile>> tileMap;
+	Absis<Ramp> ramps;
 	void updateWalls();
 	void updateCoords();
 	void checkPockets();
@@ -33,7 +48,7 @@ private:
 	byte mockIdentity = B11111101;
 	Tile mockTile = Tile(mockIdentity, mockIdentity);
 	Direction robotDirection;
-
+	uint8_t levelNum; 
 };
 #endif
 

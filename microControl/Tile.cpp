@@ -23,6 +23,13 @@ bool Tile::isRamp(){
     return result != 0;
 }
 
+void Tile::setRamp(bool isRamp){
+    if(isRamp)
+        identity = identity | isRampMask;
+    else 
+        identity = identity & ~isRampMask;
+}
+
 bool Tile::wallExists(Direction side){
     byte result;
     switch(side){

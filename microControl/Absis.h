@@ -1,6 +1,5 @@
 #ifndef __ABSIS_H_
 #define __ABSIS_H_
-#include <ArduinoSTL.h>
 using namespace std;
 
 template<class T>

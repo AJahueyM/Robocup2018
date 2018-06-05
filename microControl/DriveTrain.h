@@ -6,6 +6,7 @@
 #include "Gyro.h"
 #include "Utils.h"
 #include "Sharp.h"
+#include "TOF.h"
 #include "Button.h"
 #include "Dispenser.h"
 #include "ColorSensor.h"
@@ -24,12 +25,16 @@ private:
     DriveTrain &operator=(const DriveTrain &);
 	Motor topRight, topLeft, lowRight, lowLeft;
 	Gyro gyro = Gyro::getInstance();
-	Sharp frontSharp, rightSharp, leftSharp;
-	Encoder enc;
-	Button backRLimitS, backLLimitS;
+	Sharp  rightSharpFront, rightSharpBack, leftSharpFront, leftSharpBack;
+	TOF frontTof, backTof;
+	Encoder encR, encL;
+	Button backRLimitS, backLLimitS, frontRLimitS, frontLLimitS;
 	double wheelCircunference = 7.0 * M_PI, encCountsPerRev = 3400.0, heatDiferenceVictim = 4, lastDisplacement = 0;
+	double kConstantDriveGyro = 1, kConstantDriveDistance = 1, kConstantTurn = 1;
+	long turnTimeOut = 5000, delayTurnCorrection = 500, delayCourseCorrection = 1000;
+	uint8_t wallDistanceSidesThresh = 15;
 	uint8_t lastEncoderReading = 0, encoderReadRateMs = 16, lastHeatReading = 0, heatReadRateMs = 100;
-	uint8_t led1Pin = 37, led2Pin = 39, blinkTimesVictimDetected = 2;
+	uint8_t led1Pin = 35, led2Pin = 37, blinkTimesVictimDetected = 2;
 	Led leds;
 	Adafruit_MLX90614 mlxR = Adafruit_MLX90614(0x5A);
 	Adafruit_MLX90614 mlxL = Adafruit_MLX90614(0x55);
@@ -46,7 +51,7 @@ public:
 	void setRightMotorsVelocity(double velocity);
 	void setLeftMotorsVelocity(double velocity);
 	void checkHeatDispense();
-
+	void blinkLeds(uint8_t times = 5);
 	void driveVelocity(double velocity);
 	void turn(double rotation);
 	int getYaw();
@@ -58,8 +63,10 @@ public:
 	void turnToAngle(int angle);
 	void driveStraight(int angle, double velocity);
 	int getDistanceFront();
-	int getDistanceLeft();
-	int getDistanceRight();
+	int getDistanceLeftFront();
+	int getDistanceLeftBack();
+	int getDistanceRightFront();
+	int getDistanceRightBack();
 	int getDistanceBack();
 	void driveDisplacement(double displacement, int angle, double velocity, bool ignoreColorSensor = false);
 	void alignWithWall(RobotFace faceToAlign);

@@ -1,6 +1,5 @@
 #ifndef __NODE_H_
 #define __NODE_H_
-#include <ArduinoSTL.h>
 #include "Utils.h"
 #include "Coord.h"
 using namespace std;

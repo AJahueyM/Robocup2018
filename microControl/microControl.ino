@@ -6,7 +6,7 @@
 DriveTrain* driveTrain;
 Cerebrum* cerebrum;
 
-
+//Button limit1(43), limit2(45), limit3(3), limit4(4), button1(28), button2(30);
 using namespace std;
 
 void setup() {
@@ -14,10 +14,17 @@ void setup() {
   driveTrain = &DriveTrain::getInstance();
   cerebrum = &Cerebrum::getInstance(*driveTrain);
 
-  TOF tof(TOF::validPin[0]);
-  tof.getDistance();
+
+  driveTrain->blinkLeds(10);
+  // TOF tof(TOF::validPin[0]);
+  // tof.getDistance();
+  // cerebrum->start();
+  // cerebrum->run();
 }
 
 void loop() {
-
+ // cout << driveTrain->getTileColor() << endl;
+ // driveTrain->driveVelocity(.5);
+  // driveTrain->blinkLeds();
+  // delay(500);
 }

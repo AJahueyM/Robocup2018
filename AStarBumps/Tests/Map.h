@@ -31,6 +31,7 @@ public:
 	void setTileMap(Absis<Absis<Tile>> tileMap); 
 	void addRamp(Ramp ramp);
 	Ramp* getRampAt(Coord coord);
+	vector<Coord> getRampsCoords();
 	Absis<Ramp>& getRamps();
 	bool usedAllRamps();
 	bool wasCompleted();

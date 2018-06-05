@@ -5,7 +5,14 @@
 #include "Utils.h"
 #include "Absis.h"
 #include "Coord.h"
-#include <MemoryFree.h>
+
+#ifdef ARDUINO
+#include <ArduinoSTL.h>
+#else
+#include <vector>
+#include <math.h>
+#include <iostream>
+#endif
 
 class AStar{
 public:

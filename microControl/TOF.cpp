@@ -10,10 +10,6 @@ TOF::TOF(const uint8_t pinShut, const uint8_t address){
             digitalWrite(pin, LOW);        
         }
         delay(10);
-        for(int i = 0; i < TOF::sensorNumber;++i){
-            uint8_t pin =  TOF::validPin[i];           
-            digitalWrite(pin, HIGH);        
-        }   
         TOF::vlxSetup = true;
     }
     bool validPin  = false;
@@ -24,18 +20,18 @@ TOF::TOF(const uint8_t pinShut, const uint8_t address){
             digitalWrite(pin, HIGH);
         }
     }
-
+    delay(100);
     if(address != VL53L0X_I2C_ADDR)
         lox.begin(address);
     else
         lox.begin();
 }
 
-uint8_t TOF::getDistance(){
+int TOF::getDistance(){
     if(millis() - lastReadTime > readRateMs){
         VL53L0X_RangingMeasurementData_t measure;
         lox.rangingTest(&measure, false); 
-        distance = measure.RangeMilliMeter / 1000;
+        distance = measure.RangeMilliMeter / 10;
         lastReadTime = millis();
     }
     return distance;

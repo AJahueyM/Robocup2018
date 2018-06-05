@@ -1,7 +1,13 @@
 #ifndef __PATH_H_
 #define __PATH_H_
 #include "Coord.h"
+#ifdef ARDUINO
 #include <ArduinoSTL.h>
+#else
+#include <vector>
+#include <iostream>
+#endif
+
 using namespace std;
 
 class Path {
