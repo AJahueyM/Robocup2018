@@ -213,7 +213,7 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 			encCountL = encL.read();
 			lastEncoderReading = millis();
 			averageMovement = (encCountL + encCountR) / 2;
-			if(getPitch() > - 2 && getPitch() < startDistance != 0){
+			if(abs(getPitch()) < 2 && getPitch() < startDistance != 0){
 				int newDistance = getDistanceFront() - startDistance;
 				averageMovement = (averageMovement + (newDistance * encCountsPerCm)) / 2;
 			}
