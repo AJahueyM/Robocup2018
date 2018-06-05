@@ -28,7 +28,7 @@ void DriveTrain::blinkLeds(uint8_t times){
 	leds.setState(false);
 }
 
-void DriveTrain::checkHeatDispense() {
+void DriveTrain::checkDispense() {
 	if(!leftKit && shouldDispense){
 		if(millis() - lastHeatReading > heatReadRateMs){
 			if (mlxL.readObjectTempC() - mlxL.readAmbientTempC() > heatDiferenceVictim) {
@@ -44,6 +44,31 @@ void DriveTrain::checkHeatDispense() {
 				leftKit = true;
 			}
 			lastHeatReading = millis();
+		}
+
+		VisionResponse visionResponse = visionSensor.getStatus();
+		Direction dir = visionResponse.dir;
+		if(visionResponse.victim != None){
+			leftKit = true;
+			blinkLeds(blinkTimesVictimDetected);
+			switch(visionResponse.victim){
+				case Harmed:{
+					dispenser.dispenseDirection(dir, 2);
+				}
+				break;
+				case Stable:{
+					dispenser.dispenseDirection(dir);
+				}
+				break;
+				case Unharmed:{
+
+				}
+				break;
+				case default: {
+				}
+				break;
+			}
+
 		}
 	}
 }
@@ -100,7 +125,7 @@ void DriveTrain::turnToAngle(int angle) {
 	long startTime = millis();
 
 	while(error != 0 && millis() - startTime < turnTimeOut) {
-		checkHeatDispense();
+		checkDispense();
 		error = shortestAngleTurn(getYaw(), angle);
 		double output = error * kConstantTurn;
 		if(output > 1){
@@ -124,7 +149,7 @@ void DriveTrain::turnToAngle(int angle) {
 }
 
 void DriveTrain::driveStraight(int angle, double velocity) {
-	checkHeatDispense();
+	checkDispense();
 	double multiplier;
 	bool rightDistanceValid = (getDistanceRightFront() < wallDistanceSidesThresh) && (getDistanceRightBack() < wallDistanceSidesThresh);
 	bool leftDistanceValid = (getDistanceLeftFront() < wallDistanceSidesThresh) && (getDistanceLeftBack() < wallDistanceSidesThresh);
