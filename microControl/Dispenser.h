@@ -1,10 +1,7 @@
 #ifndef __DISPENSER_H_
 #define __DISPENSER_H_
 #include <Servo.h>
-
-enum DispenserDirection{
-right, left, center
-};
+#include "Utils.h"
 
 class Dispenser {
 private:
@@ -22,7 +19,7 @@ public:
 	void setAmountAvailable(uint8_t iAmount);
 	uint8_t getAmountAvailable();
 	uint8_t updateAmountAvailable(uint8_t drop);
-	void dispenseDirection(DispenserDirection direction, uint8_t amount = 1);
+	void dispenseDirection(Direction direction, uint8_t amount = 1);
 	bool kitsAvailable();
 }; 
 #endif

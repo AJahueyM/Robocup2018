@@ -25,7 +25,7 @@ public:
 private:
     VisionSensor();
     VisionSensor &operator=(const VisionSensor &);
-    uint8_t sLetterPin, hLetterPin, uLetterPin, directionLetterPin;
+    uint8_t sLetterPin = 10, hLetterPin = 11, uLetterPin = 12, directionLetterPin = 13;
 
 };
 #endif

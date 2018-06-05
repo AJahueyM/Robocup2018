@@ -9,7 +9,7 @@ VisionSensor::VisionSensor(){
 
 VisionResponse VisionSensor::getStatus(){
     VisionResponse response;
-    if(digitalRead(hLetterPin){
+    if(digitalRead(hLetterPin)){
         response.victim = Harmed;
     }else if(digitalRead(sLetterPin)){
         response.victim = Stable;

@@ -619,6 +619,7 @@ Tile Cerebrum::getCurrentTile(){
 		}
 	}
 	int angleDiff = abs(highestAngle - lowestAngle);
+	tile.setBumpLevel(Flat);
 	if(angleDiff > lowBumpAngleDiff){
 		tile.setBumpLevel(Small);
 	}

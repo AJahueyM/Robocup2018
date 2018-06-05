@@ -145,7 +145,7 @@ BumpLevel Tile::getBumpLevel(){
         return Max;
     }
 
-    return None;
+    return Flat;
 
 }
 

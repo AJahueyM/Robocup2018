@@ -23,16 +23,16 @@ enum Direction {
 };
 
 enum Color {
-  White,
-  Black,
-  Silver
+    White,
+    Black,
+    Silver
 };
 
 enum BumpLevel {
-  Small,
-  Medium,
-  Max,
-  None
+    Flat,
+    Small,
+    Medium,
+    Max
 };
 
 float mapD(float x, float in_min, float in_max, float out_min, float out_max);

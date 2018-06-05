@@ -22,8 +22,8 @@ uint8_t Dispenser::updateAmountAvailable(uint8_t drop){
 	return amountAvailable;
 }
 
-void Dispenser::dispenseDirection(DispenserDirection direction, uint8_t amount){
-	if(direction == left){
+void Dispenser::dispenseDirection(Direction direction, uint8_t amount){
+	if(direction == Left){
 		for(int i =0; i < amount; i++){
 			if(kitsAvailable()){
 				servoDispenser.write(outputCenter);
@@ -36,7 +36,7 @@ void Dispenser::dispenseDirection(DispenserDirection direction, uint8_t amount){
 			}
 			
 		}
-	}else if(direction == right){
+	}else if(direction == Left){
 		for(int i =0; i < amount; i++){
 			if(kitsAvailable()){
 				servoDispenser.write(outputCenter);

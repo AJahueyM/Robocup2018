@@ -34,13 +34,13 @@ void DriveTrain::checkDispense() {
 			if (mlxL.readObjectTempC() - mlxL.readAmbientTempC() > heatDiferenceVictim) {
 				blinkLeds(blinkTimesVictimDetected);
 				turn(0);
-				dispenser.dispenseDirection(DispenserDirection::left);
+				dispenser.dispenseDirection(Left);
 				leftKit = true;
 			}
 			if (mlxR.readObjectTempC() - mlxR.readAmbientTempC() > heatDiferenceVictim) {
 				blinkLeds(blinkTimesVictimDetected);
 				turn(0);
-				dispenser.dispenseDirection(DispenserDirection::right);
+				dispenser.dispenseDirection(Right);
 				leftKit = true;
 			}
 			lastHeatReading = millis();
@@ -64,7 +64,7 @@ void DriveTrain::checkDispense() {
 
 				}
 				break;
-				case default: {
+				default: {
 				}
 				break;
 			}
