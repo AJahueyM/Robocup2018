@@ -171,8 +171,10 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 	Absis<int> pitchLog;
 	long pitchRecordTarget = encCountsPitchRecord;
 	while(averageMovement < toMove && tileColor != Black){
-		if(averageMovement > pitchRecordTarget)
+		if(averageMovement > pitchRecordTarget){
 			pitchLog.push_back(getPitch());
+			pitchRecordTarget+=encCountsPitchRecord;
+		}
 
 		if(!ignoreColorSensor)
 			tileColor = getTileColor();
