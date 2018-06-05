@@ -34,7 +34,7 @@ private:
 	double kConstantDriveGyro = 1, kConstantDriveDistance = 1, kConstantTurn = 1;
 	long turnTimeOut = 5000, delayTurnCorrection = 500, delayCourseCorrection = 1000, encCountsPitchRecord;
 	short int angleCourseCorrection = 30;
-	uint8_t wallDistanceSidesThresh = 15;
+	uint8_t wallDistanceSidesThresh = 15, wallDesiredDistance = 6.5;
 	uint8_t lastEncoderReading = 0, encoderReadRateMs = 16, lastHeatReading = 0, heatReadRateMs = 100;
 	uint8_t led1Pin = 35, led2Pin = 37, blinkTimesVictimDetected = 2;
 	Led leds;
@@ -72,6 +72,7 @@ public:
 	int getDistanceRightFront();
 	int getDistanceRightBack();
 	int getDistanceBack();
+	int getDesiredWallDistance();
 	void driveDisplacement(double displacement, int angle, double velocity, bool ignoreColorSensor = false);
 	void alignWithWall(RobotFace faceToAlign);
 	bool wasLastDisplacementCompleted();

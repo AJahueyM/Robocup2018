@@ -33,8 +33,8 @@ private:
 	Cerebrum(DriveTrain& driveTrain);
     Cerebrum &operator=(const Cerebrum &);
 	Path getPathLowerCost(Coord start, vector<Coord> targets, Map* map);
-	bool Cerebrum::roundCompleted(Absis<Map*> maps);
-	NavigationResult Cerebrum::navigateLevel(Map* mapCurrent, Coord startCoord);
+	bool roundCompleted(Absis<Map*> maps);
+	NavigationResult navigateLevel(Map* mapCurrent, Coord startCoord);
 	void followPath(Path& path);
     void driveForward();
     void turnRobot(Direction dir);

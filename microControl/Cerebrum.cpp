@@ -116,7 +116,7 @@ vector<Coord> Cerebrum::getCandidates(){
 				//cout << "LA TILE VISITADA ES (" << x << "," << y << ")" << endl;
 				vector <Tile*> neighbors;
 				for(int i = 0; i < maze[y][x].getCurrentNeighbors(); ++i){
-					neighbors.push_back(maze[y][x].getNeighbors(i));
+					neighbors.push_back( (Tile*) maze[y][x].getNeighbors(i));
 				}
 
 				//cout << "SUS VECINOS NO VISITADOS SON : ";
@@ -333,6 +333,13 @@ void Cerebrum::followPath(Path& path){
 				turnRobot(Right);
 			}
 			driveForward();
+		}
+	}
+	while(driveTrain.getDistanceFront() != driveTrain.getDesiredWallDistance()){
+		if(driveTrain.getDistanceFront() > driveTrain.getDesiredWallDistance()){
+			driveTrain.driveStraight(angles[0], movementSpeed);
+		}else{
+			driveTrain.driveStraight(angles[0], -movementSpeed);
 		}
 	}
 }

@@ -133,16 +133,29 @@ void DriveTrain::driveStraight(int angle, double velocity) {
 		drivingWithDistance = true;
 		short int distanceError = 0;
 		if(rightDistanceValid){
-			error = getDistanceRightBack() - getDistanceRightFront();
+			if(getDistanceRightFront() != getDesiredWallDistance()){
+				error = getDistanceFront() - getDesiredWallDistance();
+			}else{
+				error = getDistanceRightFront() - getDistanceRightBack();
+			}
+
 		}else{
-			error = getDistanceLeftBack() - getDistanceLeftFront();
+			if(getDistanceLeftFront() != getDesiredWallDistance()){
+				error = getDesiredWallDistance() - getDistanceLeftFront();
+			}else{	
+				error = getDistanceLeftBack() - getDistanceLeftFront();
+			}
 		}
+
+
 		multiplier = error * kConstantDriveDistance;
 	}else{
 		drivingWithDistance = false;
 		error = shortestAngleTurn(getYaw(), angle);
 		multiplier = error * kConstantDriveGyro;
 	}
+	if(velocity < 0)
+		error*=-1;
 
 	if(error < 0){
 		setRightMotorsVelocity(velocity);
@@ -159,6 +172,9 @@ void DriveTrain::driveStraight(int angle, double velocity) {
 void DriveTrain::driveDisplacement(double displacement, int angle, double velocity, bool ignoreColorSensor) {
 	interruptedColor = false;
 	lastDisplacementCompleted = false;
+	if(velocity  == 0){
+		return;
+	}
 	encR.write(0);
 	encL.write(0);
 	long startCountR = encR.read();
@@ -170,7 +186,18 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 	Color tileColor = White;
 	Absis<int> pitchLog;
 	long pitchRecordTarget = encCountsPitchRecord;
-	while(averageMovement < toMove && tileColor != Black){
+	while(abs(averageMovement) < toMove && tileColor != Black){
+
+		if(velocity > 0 ){
+			if(getDistanceFront() < getDesiredWallDistance()){
+				return;
+			}
+		}else{
+			if(getDistanceBack() < getDesiredWallDistance()){
+				return;
+			}
+		}
+
 		if(averageMovement > pitchRecordTarget){
 			pitchLog.push_back(getPitch());
 			pitchRecordTarget+=encCountsPitchRecord;
