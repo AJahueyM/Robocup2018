@@ -288,6 +288,8 @@ void Cerebrum::run(){
 }
 
 void Cerebrum::followPath(Path& path){
+	Tile currentTile = maze[mazeFloor]->getTileAt(currentRobotCoord);
+	driveTrain.setShouldDispense(!currentTile.getLeftKit());
 	for(Coord coord : path.getPath()){
 		int deltaX = coord.getX() - currentRobotCoord.getX();
 		int deltaY = coord.getY() - currentRobotCoord.getY();
@@ -335,7 +337,6 @@ void Cerebrum::followPath(Path& path){
 			driveForward();
 		}
 	}
-	Tile currentTile = maze[mazeFloor]->getTileAt(currentRobotCoord);
 	while(currentTile.wallExists(robotUp) &&  driveTrain.getDistanceFront() != driveTrain.getDesiredWallDistance()){
 		if(driveTrain.getDistanceFront() > driveTrain.getDesiredWallDistance()){
 			driveTrain.driveStraight(angles[0], movementSpeed);
@@ -626,6 +627,12 @@ Tile Cerebrum::getCurrentTile(){
 	}
 	if(angleDiff > maxAngleDiff){
 		tile.setBumpLevel(Max);
+	}
+
+	if(driveTrain.leftKitLastMovement()){
+		tile.setLeftKit(true);
+	}else{
+		driveTrain.setLeftKit(false);
 	}
 	return tile;
 }

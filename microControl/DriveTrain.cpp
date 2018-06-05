@@ -29,7 +29,7 @@ void DriveTrain::blinkLeds(uint8_t times){
 }
 
 void DriveTrain::checkHeatDispense() {
-	if(!leftKit){
+	if(!leftKit && shouldDispense){
 		if(millis() - lastHeatReading > heatReadRateMs){
 			if (mlxL.readObjectTempC() - mlxL.readAmbientTempC() > heatDiferenceVictim) {
 				blinkLeds(blinkTimesVictimDetected);
