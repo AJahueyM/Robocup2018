@@ -9,6 +9,7 @@ DriveTrain::DriveTrain() : topRight(2), topLeft(3), lowRight(4), lowLeft(1), enc
   	encR.write(0);
 	encL.write(0);
 	Serial.println("DriveTrain initialized");
+	encCountsPitchRecord = cmsPitchRecord * encCountsPerRev / wheelCircunference;
 }
 
 void DriveTrain::setRightMotorsVelocity(double velocity) {
@@ -57,6 +58,11 @@ void DriveTrain::turn(double rotation) {
 int DriveTrain::getYaw() {
 	return gyro.getYaw();
 }
+
+Absis<int> DriveTrain::getPitchHistory(){
+	return pitchHistory;
+}
+
 int DriveTrain::getPitch() {
 	return gyro.getPitch();
 }
@@ -162,8 +168,12 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 	long averageMovement = 0;
 	long toMove = (abs(displacement) / wheelCircunference) * encCountsPerRev;
 	Color tileColor = White;
-
+	Absis<int> pitchLog;
+	long pitchRecordTarget = encCountsPitchRecord;
 	while(averageMovement < toMove && tileColor != Black){
+		if(averageMovement > pitchRecordTarget)
+			pitchLog.push_back(getPitch());
+
 		if(!ignoreColorSensor)
 			tileColor = getTileColor();
 
@@ -176,16 +186,16 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 		driveStraight(angle, velocity);
 		if(frontLLimitS.getState() || frontRLimitS.getState()){
 				if(frontRLimitS.getState()){
-					turnToAngle(30);
+					turnToAngle(getYaw() + angleCourseCorrection);
 				}else{
-					turnToAngle(-30);
+					turnToAngle(getYaw() - angleCourseCorrection);
 				}
 				driveVelocity(-.5);
 				delay(delayCourseCorrection);
 				turnToAngle(0);
 		}
 	}
-
+	pitchHistory =  pitchLog;
 	if(tileColor == Black){
 		interruptedColor = true;
 	}else{

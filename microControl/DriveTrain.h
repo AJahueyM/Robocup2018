@@ -1,6 +1,7 @@
 #ifndef __DRIVETRAIN_H_
 #define __DRIVETRAIN_H_
 #include <math.h>
+#include "Absis.h"
 #include <Encoder.h>
 #include "Motor.h"
 #include "Gyro.h"
@@ -29,9 +30,10 @@ private:
 	TOF frontTof, backTof;
 	Encoder encR, encL;
 	Button backRLimitS, backLLimitS, frontRLimitS, frontLLimitS;
-	double wheelCircunference = 7.0 * M_PI, encCountsPerRev = 3400.0, heatDiferenceVictim = 4, lastDisplacement = 0;
+	double wheelCircunference = 6.5 * M_PI, encCountsPerRev = 3400.0, heatDiferenceVictim = 4, lastDisplacement = 0, cmsPitchRecord = 2;
 	double kConstantDriveGyro = 1, kConstantDriveDistance = 1, kConstantTurn = 1;
-	long turnTimeOut = 5000, delayTurnCorrection = 500, delayCourseCorrection = 1000;
+	long turnTimeOut = 5000, delayTurnCorrection = 500, delayCourseCorrection = 1000, encCountsPitchRecord;
+	short int angleCourseCorrection = 30;
 	uint8_t wallDistanceSidesThresh = 15;
 	uint8_t lastEncoderReading = 0, encoderReadRateMs = 16, lastHeatReading = 0, heatReadRateMs = 100;
 	uint8_t led1Pin = 35, led2Pin = 37, blinkTimesVictimDetected = 2;
@@ -41,6 +43,7 @@ private:
 	Dispenser dispenser = Dispenser::getInstance();
 	ColorSensor colorSensor = ColorSensor();
 	LCD& lcd = LCD::getInstance();
+	Absis<int> pitchHistory;
 	bool lastDisplacementCompleted = false, interruptedColor = false, leftKit = false, shouldDispense = true;
 	bool drivingWithDistance = false;
 public:
@@ -56,6 +59,7 @@ public:
 	void turn(double rotation);
 	int getYaw();
 	int getPitch();
+	Absis<int> getPitchHistory();
 	void resetYaw();
 	void resetPitch();
 	void resetAll();

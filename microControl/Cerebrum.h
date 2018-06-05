@@ -57,6 +57,7 @@ private:
     double movementSpeed = .75, preciseMovementSpeed = -.25, rampMovementSpeed = .5;
  	uint8_t distanceMoveTiles = 30, turnCounter = 0, mazeFloor = 0, wallTolerance = 9, wallThreshold = 15;
 	short int  angles[4];
+	int lowBumpAngleDiff = 5, mediumAngleDiff = 10, maxAngleDiff = 15;
  	bool hasStarted = false;
 };
 #endif

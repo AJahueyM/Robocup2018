@@ -499,7 +499,6 @@ Tile Cerebrum::getInitialTile(){
 
 Tile Cerebrum::getCurrentTile(){
 	byte result = B00000000, result2 = B00000000;
-
 	if(driveTrain.getDistanceFront() < wallThreshold){
 		//Serial.print("F");
 		switch(currentRobotDirection){
@@ -596,11 +595,32 @@ Tile Cerebrum::getCurrentTile(){
 	if(driveTrain.getPitch() > 0 ){
 		if(driveTrain.getPitch() > 20)
 			result = result | isRampMask;
-	}else if(driveTrain.getPitch() > 5 && driveTrain.getPitch() < 20){
-	//	result2 = result2 | hasBumpMask; // 
 	}
 	result2 = result2 | maskVisited;
-	return Tile(result, result2);
+	Tile tile(result, result2);
+	Absis<int> pitchHistory = driveTrain.getPitchHistory();
+	int lowestAngle = 300, highestAngle = -300;
+
+	for(int i = 0; i < pitchHistory.size(); ++i){
+		int angle = pitchHistory[i];
+		if(angle < lowestAngle){
+			lowestAngle = angle;
+		}
+		if(angle > highestAngle){
+			lowestAngle = angle;
+		}
+	}
+	int angleDiff = abs(highestAngle - lowestAngle);
+	if(angleDiff > lowBumpAngleDiff){
+		tile.setBumpLevel(Small);
+	}
+	if(angleDiff > mediumAngleDiff){
+		tile.setBumpLevel(Medium);
+	}
+	if(angleDiff > maxAngleDiff){
+		tile.setBumpLevel(Max);
+	}
+	return tile;
 }
 
 Tile Cerebrum::getRobotTile(Direction dir){
