@@ -12,6 +12,7 @@
 #include "Dispenser.h"
 #include "ColorSensor.h"
 #include <Adafruit_MLX90614.h>
+#include "VisionSensor.h"
 #include "LCD.h"
 #include "Led.h"
 
@@ -25,7 +26,6 @@ private:
 	DriveTrain();
     DriveTrain &operator=(const DriveTrain &);
 	Motor topRight, topLeft, lowRight, lowLeft;
-	Gyro gyro = Gyro::getInstance();
 	Sharp  rightSharpFront, rightSharpBack, leftSharpFront, leftSharpBack;
 	TOF frontTof, backTof;
 	Encoder encR, encL;
@@ -40,9 +40,11 @@ private:
 	Led leds;
 	Adafruit_MLX90614 mlxR = Adafruit_MLX90614(0x5A);
 	Adafruit_MLX90614 mlxL = Adafruit_MLX90614(0x55);
-	Dispenser dispenser = Dispenser::getInstance();
 	ColorSensor colorSensor = ColorSensor();
-	LCD& lcd = LCD::getInstance();
+	Dispenser dispenser = Dispenser::getInstance();
+	LCD lcd = LCD::getInstance();
+	Gyro gyro = Gyro::getInstance();
+	VisionSensor visionSensor = VisionSensor::getInstance();
 	Absis<int> pitchHistory;
 	bool lastDisplacementCompleted = false, interruptedColor = false, leftKit = false, shouldDispense = true;
 	bool drivingWithDistance = false;
@@ -53,7 +55,7 @@ public:
 	};
 	void setRightMotorsVelocity(double velocity);
 	void setLeftMotorsVelocity(double velocity);
-	void checkHeatDispense();
+	void checkDispense();
 	void blinkLeds(uint8_t times = 5);
 	void driveVelocity(double velocity);
 	void turn(double rotation);
