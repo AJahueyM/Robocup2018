@@ -12,7 +12,7 @@ uint8_t Sharp::getDistance(){
 		distance = 13 * pow(volts, -1);
 		if(distance > 30)
 			distance = 30;
-		if(distance < 6)
+		if(distance < 4)
 			distance = 30;
 		//average += distance;
 		distance = filter.kalmanFilter();

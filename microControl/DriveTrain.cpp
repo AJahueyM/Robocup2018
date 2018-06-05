@@ -244,19 +244,19 @@ int DriveTrain::getDistanceFront() {
 }
 
 int DriveTrain::getDistanceLeftFront() {
-	return leftSharpFront.getDistance();
+	return leftSharpFront.getDistance() - 4;
 }
 
 int DriveTrain::getDistanceLeftBack(){
-	return leftSharpBack.getDistance();
+	return leftSharpBack.getDistance() - 4;
 }
 
 int DriveTrain::getDistanceRightFront() {
-	return rightSharpFront.getDistance();
+	return rightSharpFront.getDistance() - 4;
 }
 
 int DriveTrain::getDistanceRightBack(){
-	return rightSharpBack.getDistance();
+	return rightSharpBack.getDistance() - 4;
 }
 
 int DriveTrain::getDistanceBack(){
