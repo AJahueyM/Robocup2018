@@ -32,6 +32,13 @@ public:
 		return buffer;
 	}
 
+	 bool operator==(Point3D v2) {
+		if (this->x == v2.x && this->y == v2.y && this->z == v2.z)
+			return true;
+		else
+			return false;
+	}
+
 	friend Point3D operator+=(Point3D &v1, Point3D v2) {
 		v1 = v1 + v2;
 		return v1;
