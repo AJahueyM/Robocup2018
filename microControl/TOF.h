@@ -8,6 +8,7 @@ public:
     TOF(const uint8_t pinShut, const uint8_t address = VL53L0X_I2C_ADDR);
     const static uint8_t validPin[];
     const static uint8_t sensorNumber;
+    static bool sensorSetUp[];
     static bool vlxSetup;
     int getDistance();
 private:

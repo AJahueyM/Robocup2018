@@ -9,7 +9,7 @@ public:
 	uint8_t getDistance();
 private:
 	Filter filter = Filter(10,3,10);
-	float distance;
+	float distance, average;
 	int readForFilter = 25;
 	uint8_t analogPort;
 };

@@ -42,7 +42,6 @@ private:
 	Adafruit_MLX90614 mlxL = Adafruit_MLX90614(0x55);
 	ColorSensor colorSensor = ColorSensor();
 	Dispenser dispenser = Dispenser::getInstance();
-	LCD lcd = LCD::getInstance();
 	Gyro gyro = Gyro::getInstance();
 	VisionSensor visionSensor = VisionSensor::getInstance();
 	Absis<int> pitchHistory;

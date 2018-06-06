@@ -6,10 +6,10 @@ Gyro::Gyro(){
 		Serial.println("NO BNO 055 DETECTED");
 		//while(1);
 	}
-	bno.setExtCrystalUse(true);
+	//bno.setExtCrystalUse(true);
 	delay(1000);
 	double startTime = millis();
-  	yawOffSet = 0;
+  	yawOffSet = getYaw();
 	pitchOffSet = 0;
 	Serial.println("BNO Initialized");
 }
@@ -20,7 +20,7 @@ int Gyro::getYaw(){
 	if(millis() - lastReadTime > readRateMs){
 		imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
 		int i = euler.x();
-		bool debug = false;
+		bool debug = true;
 		if(debug){
 			Serial.print("Before= ");
 			Serial.print(i);

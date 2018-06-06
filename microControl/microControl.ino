@@ -6,7 +6,6 @@
 DriveTrain* driveTrain;
 Cerebrum* cerebrum;
 
-//Button limit1(43), limit2(45), limit3(3), limit4(4), button1(28), button2(30);
 using namespace std;
 
 void setup() {
@@ -23,8 +22,22 @@ void setup() {
 }
 
 void loop() {
-  // cout << driveTrain->getTileColor() << endl;
-  // driveTrain->driveVelocity(.5);
+  LCD& lcd = LCD::getInstance();
+ // cout << driveTrain->getTileColor() << endl;
+  driveTrain->driveVelocity(.5);
+  //driveTrain->setRightMotorsVelocity(.25);
   // driveTrain->blinkLeds();
   // delay(500);
+  //driveTrain->getYaw();
+  //cout <<  << endl;
+  String str;
+  str.concat(driveTrain->getDistanceFront());
+  str.concat(" ");
+  str.concat(driveTrain->getDistanceBack());
+  str.concat(" ");
+  str.concat(driveTrain->getDistanceRightFront());
+  str.concat(" ");
+  str.concat(driveTrain->getDistanceLeftFront());
+  lcd.display(str);
+  //cout << "F: " << driveTrain->getDistanceFront() << " B: " << driveTrain->getDistanceBack() << " RF: " << driveTrain->getDistanceRightFront() << " RB: " << driveTrain->getDistanceRightBack() << " LF: " << driveTrain->getDistanceLeftFront() << " LB: "<< driveTrain->getDistanceLeftBack() << endl;
 }

@@ -1,8 +1,8 @@
 #include "DriveTrain.h"
 ///Constructor
-DriveTrain::DriveTrain() : topRight(2), topLeft(3), lowRight(4), lowLeft(1), encR(19, 18),encL(16,17), 
-	frontTof(42), backTof(49, 0x30), rightSharpFront(13), rightSharpBack(12),leftSharpFront(11), leftSharpBack(10),
-	backRLimitS(43), backLLimitS(45),  frontRLimitS (4) , frontLLimitS(4), leds(led1Pin){
+DriveTrain::DriveTrain() : topRight(4), topLeft(3), lowRight(1), lowLeft(2), encR(19, 18),encL(16,17), 
+	frontTof(49, 0x31), backTof(42, 0x30), rightSharpFront(13), rightSharpBack(10),leftSharpFront(12), leftSharpBack(11),
+	backRLimitS(4), backLLimitS(3),  frontRLimitS (45) , frontLLimitS(43), leds(led1Pin){
 	Serial.println("DriveTrain initializing...");
 	leds.addPin(led2Pin);
 	leds.setState(false);
@@ -73,6 +73,7 @@ void DriveTrain::checkDispense() {
 	}
 }
 void DriveTrain::driveVelocity(double velocity) {
+	cout << "R: " << encR.read() << "\t L: " << encL.read() << endl;
 	setRightMotorsVelocity(velocity);
 	setLeftMotorsVelocity(velocity);
 }
@@ -159,18 +160,19 @@ void DriveTrain::driveStraight(int angle, double velocity) {
 		drivingWithDistance = true;
 		short int distanceError = 0;
 		if(rightDistanceValid){
-			if(getDistanceRightFront() != getDesiredWallDistance()){
-				error = getDistanceFront() - getDesiredWallDistance();
-			}else{
-				error = getDistanceRightFront() - getDistanceRightBack();
-			}
-
+			// if(getDistanceRightFront() != getDesiredWallDistance()){
+			// 	error = getDistanceFront() - getDesiredWallDistance();
+			// }else{
+			// 	error = getDistanceRightFront() - getDistanceRightBack();
+			// }
+			error = getDistanceFront() - getDesiredWallDistance();
 		}else{
-			if(getDistanceLeftFront() != getDesiredWallDistance()){
-				error = getDesiredWallDistance() - getDistanceLeftFront();
-			}else{	
-				error = getDistanceLeftBack() - getDistanceLeftFront();
-			}
+			// if(getDistanceLeftFront() != getDesiredWallDistance()){
+			// 	error = getDesiredWallDistance() - getDistanceLeftFront();
+			// }else{	
+			// 	error = getDistanceLeftBack() - getDistanceLeftFront();
+			// }
+			error = getDesiredWallDistance() - getDistanceLeftFront();
 		}
 
 
@@ -285,7 +287,7 @@ int DriveTrain::getDistanceRightBack(){
 }
 
 int DriveTrain::getDistanceBack(){
-	return backTof.getDistance();
+	return  backTof.getDistance();
 }
 
 void DriveTrain::alignWithWall(RobotFace faceToAlign) {

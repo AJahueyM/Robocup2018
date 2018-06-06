@@ -8,6 +8,8 @@ Cerebrum::Cerebrum(DriveTrain& driveTrain) : driveTrain(driveTrain), lcd(LCD::ge
 
 	button1 = new Button(30);
 	button2 = new Button(28);
+
+	lcd.display(String("Robot booted up"));
 }
 
 Path Cerebrum::getPathLowerCost(Coord start, vector<Coord> targets, Map* map){
