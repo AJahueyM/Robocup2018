@@ -32,6 +32,18 @@ public:
 		return buffer;
 	}
 
+	 bool operator==(Point3D v2) {
+		if (this->x == v2.x && this->y == v2.y && this->z == v2.z)
+			return true;
+		else
+			return false;
+	}
+
+	friend Point3D operator+=(Point3D &v1, Point3D v2) {
+		v1 = v1 + v2;
+		return v1;
+	}
+
 	Point3D operator-(Point3D v2) {
 		Point3D buffer(this->x, this->y, this->z);
 		double xSub, ySub, zSub;
@@ -82,12 +94,18 @@ public:
 	//}
 
 	static Point3D getVector(double magnitude, double pitch, double yaw) {
-		double gama = 90 - pitch;  
-		double y = magnitude * sin(gama * converterToRads) * sin(yaw * converterToRads); 
-		double x = magnitude * sin(gama * converterToRads) * cos(yaw * converterToRads);
-		double z = magnitude * cos(gama * converterToRads);
+		double phi = 90 - pitch;  
+		double y = magnitude * sin(phi * converterToRads) * sin(yaw * converterToRads);
+		double x = magnitude * sin(phi * converterToRads) * cos(yaw * converterToRads);
+		double z = magnitude * cos(phi * converterToRads);
 
 		Point3D result(x, y, z);
+		return result;
+	}
+
+	static Point3D addAndGetVector(double magInitial, double pitchInitial, double yawInitial, double magFinal,  double pitchFinal, double yawFinal) {
+
+		Point3D result = getVector(magInitial, pitchInitial, yawInitial) + getVector(magFinal, pitchFinal, yawFinal);
 		return result;
 	}
 
