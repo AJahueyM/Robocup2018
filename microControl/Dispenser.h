@@ -8,7 +8,7 @@ private:
 	uint8_t amountAvailable;
 	uint8_t outputCenter, outputLeft, outputRight;
 	uint8_t pin = 6;
-	Servo servoDispenser;
+	//Servo servoDispenser;
  	Dispenser();
     Dispenser &operator=(const Dispenser &);
 public:

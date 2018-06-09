@@ -30,13 +30,13 @@ private:
 	TOF frontTof, backTof;
 	Encoder encR, encL;
 	Button backRLimitS, backLLimitS, frontRLimitS, frontLLimitS;
-	double wheelCircunference = 6.5 * M_PI, encCountsPerRev = 3576.0, encCountsPerCm , heatDiferenceVictim = 4, lastDisplacement = 0, cmsPitchRecord = 2;
-	double kConstantDriveGyro = 1, kConstantDriveDistance = 1, kConstantTurn = 1;
-	long turnTimeOut = 5000, delayTurnCorrection = 500, delayCourseCorrection = 1000, encCountsPitchRecord;
+	double wheelCircunference = 7.0 * M_PI, encCountsPerRev = 3591.84, encCountsPerCm , heatDiferenceVictim = 4, lastDisplacement = 0, cmsPitchRecord = 2;
+	double kConstantDriveGyro = 1, kConstantDriveDistance = 0.3, kConstantTurn = 0.055;
+	long turnTimeOut = 2000, delayTurnCorrection = 500, delayCourseCorrection = 1000, encCountsPitchRecord;
 	short int angleCourseCorrection = 30;
 	uint8_t wallDistanceSidesThresh = 15, wallDesiredDistance = 6.5;
 	uint8_t lastEncoderReading = 0, encoderReadRateMs = 16, lastHeatReading = 0, heatReadRateMs = 100;
-	uint8_t led1Pin = 35, led2Pin = 37, blinkTimesVictimDetected = 2;
+	uint8_t led1Pin = 35, led2Pin = 37, blinkTimesVictimDetected = 15;
 	Led leds;
 	Adafruit_MLX90614 mlxR = Adafruit_MLX90614(0x5A);
 	Adafruit_MLX90614 mlxL = Adafruit_MLX90614(0x55);
@@ -44,6 +44,7 @@ private:
 	Dispenser dispenser = Dispenser::getInstance();
 	Gyro gyro = Gyro::getInstance();
 	VisionSensor visionSensor = VisionSensor::getInstance();
+	LCD& lcd = LCD::getInstance();
 	Absis<int> pitchHistory;
 	bool lastDisplacementCompleted = false, interruptedColor = false, leftKit = false, shouldDispense = true;
 	bool drivingWithDistance = false;

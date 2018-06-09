@@ -7,9 +7,14 @@ Sharp::Sharp(uint8_t analogPort){
 
 uint8_t Sharp::getDistance(){
 	for(int i = 0; i < readForFilter; ++i){
-		uint16_t value = analogRead(analogPort);
-		if (value < 16)  value = 16;
-	    distance =  2076.0 / (value - 11.0);
+		float volts = analogRead(analogPort)*0.0048828125;  // value from sensor * (5/1024)
+		int distance = 13*pow(volts, -1); // worked out from datasheet graph
+
+		if (distance <= 30){
+			return distance;   // print the distance
+		}else{
+			return 31;
+		}
 		distance = filter.kalmanFilter();
 	}
 

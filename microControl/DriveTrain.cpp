@@ -1,7 +1,7 @@
 #include "DriveTrain.h"
 ///Constructor
-DriveTrain::DriveTrain() : topRight(4), topLeft(3), lowRight(1), lowLeft(2), encR(19, 18),encL(16,17), 
-	frontTof(49, 0x31), backTof(42, 0x30), rightSharpFront(13), rightSharpBack(10),leftSharpFront(12), leftSharpBack(11),
+DriveTrain::DriveTrain() : topRight(4), topLeft(2), lowRight(1), lowLeft(3), encL(16, 17),encR(19,18), 
+	frontTof(49, 0x32), backTof(42, 0x33), rightSharpFront(13), rightSharpBack(10),leftSharpFront(12), leftSharpBack(11),
 	backRLimitS(4), backLLimitS(3),  frontRLimitS (45) , frontLLimitS(43), leds(led1Pin){
 	Serial.println("DriveTrain initializing...");
 	leds.addPin(led2Pin);
@@ -19,8 +19,8 @@ void DriveTrain::setRightMotorsVelocity(double velocity) {
 }
 
 void DriveTrain::setLeftMotorsVelocity(double velocity) {
-	topLeft.driveVelocity(velocity);
-	lowLeft.driveVelocity(velocity);
+	topLeft.driveVelocity(-velocity);
+	lowLeft.driveVelocity(-velocity);
 }
 
 void DriveTrain::blinkLeds(uint8_t times){
@@ -73,7 +73,6 @@ void DriveTrain::checkDispense() {
 	}
 }
 void DriveTrain::driveVelocity(double velocity) {
-	cout << "R: " << encR.read() << "\t L: " << encL.read() << endl;
 	setRightMotorsVelocity(velocity);
 	setLeftMotorsVelocity(velocity);
 }
@@ -111,33 +110,42 @@ void DriveTrain::setYawOffset(int value){
 }
 
 void DriveTrain::turnToAngle(int angle) {
-	if (angle < -180) {
-		do {
-			angle += 180;
-		} while (angle < -180);
-	}
-	if (angle > 180) {
-		do {
-			angle -= 180;
-		}  while (angle > 180);
-	}
+	lcd.display(String("1"));
+	// if (angle < -180) {
+	// 	do {
+	// 		angle += 180;
+	// 	} while (angle < -180);
+	// }
+	// if (angle > 180) {
+	// 	do {
+	// 		angle -= 180;
+	// 	}  while (angle > 180);
+	// }
+	lcd.display(String("2"));
 
-	short int error = shortestAngleTurn(getYaw(), angle);
+	short int error =  angle - getYaw();// shortestAngleTurn(getYaw(), angle);
 	long startTime = millis();
+	lcd.display(String("3"));
 
-	while(error != 0 && millis() - startTime < turnTimeOut) {
+	while(abs(error) > 1 && millis() - startTime < turnTimeOut) {
+		lcd.display(String("4"));
 		checkDispense();
-		error = shortestAngleTurn(getYaw(), angle);
+		error = angle - getYaw();// shortestAngleTurn(getYaw(), angle);
+		lcd.display(String("5"));
 		double output = error * kConstantTurn;
-		if(output > 1){
-			output = 1;
-		}else if(output < -1){
-			output = -1;
-		}
+
+		output = output > 1 ? 1 : output;
+		output = output < -1 ? -1 : output;
+		output = output < 0.225 && output >  0 ?  0.225 : output;
+		output = output < 0 && output >  -0.225 ?  -0.225 : output;
+
+		lcd.display(String("6"));
+		lcd.display(String("7"));
 		turn(output);
+		lcd.display(String("8"));
 	}
 	turn(0);
-	if(error != 0){
+	if(abs(error) > 10){
 		if(error < 0){
 			turn(0.75);
 		}else if(error > 0){
@@ -150,54 +158,74 @@ void DriveTrain::turnToAngle(int angle) {
 }
 
 void DriveTrain::driveStraight(int angle, double velocity) {
+	// cout << "R: " << encR.read() << "\t L: " << encL.read() << endl;
+	// String str;
+	// str.concat("R:");
+	// str.concat(encR.read());
+	// str.concat(" L:");
+	// str.concat(encL.read());
+	// lcd.display(str);
 	checkDispense();
 	double multiplier;
 	bool rightDistanceValid = (getDistanceRightFront() < wallDistanceSidesThresh) && (getDistanceRightBack() < wallDistanceSidesThresh);
 	bool leftDistanceValid = (getDistanceLeftFront() < wallDistanceSidesThresh) && (getDistanceLeftBack() < wallDistanceSidesThresh);
 	bool correctWithDistance = rightDistanceValid || leftDistanceValid;
-	short int error = 0;
+	double error = 0;
 	if(correctWithDistance){
 		drivingWithDistance = true;
-		short int distanceError = 0;
+		double distanceError = 0;
 		if(rightDistanceValid){
 			// if(getDistanceRightFront() != getDesiredWallDistance()){
-			// 	error = getDistanceFront() - getDesiredWallDistance();
+				error = getDistanceRightFront() - getDesiredWallDistance();
 			// }else{
 			// 	error = getDistanceRightFront() - getDistanceRightBack();
 			// }
-			error = getDistanceFront() - getDesiredWallDistance();
 		}else{
 			// if(getDistanceLeftFront() != getDesiredWallDistance()){
-			// 	error = getDesiredWallDistance() - getDistanceLeftFront();
+				error = getDesiredWallDistance() - getDistanceLeftFront();
 			// }else{	
 			// 	error = getDistanceLeftBack() - getDistanceLeftFront();
 			// }
-			error = getDesiredWallDistance() - getDistanceLeftFront();
 		}
 
 
 		multiplier = error * kConstantDriveDistance;
 	}else{
 		drivingWithDistance = false;
-		error = shortestAngleTurn(getYaw(), angle);
+		error = angle - getYaw();
 		multiplier = error * kConstantDriveGyro;
+	}
+
+	multiplier = abs(multiplier);
+
+
+	if(multiplier >  .25){
+		multiplier = .25;
+	}
+	if(multiplier < 0){
+		multiplier = 0;
 	}
 	if(velocity < 0)
 		error*=-1;
 
 	if(error < 0){
 		setRightMotorsVelocity(velocity);
-		setLeftMotorsVelocity(velocity * multiplier);
+		setLeftMotorsVelocity(velocity * (1 -multiplier));
+	
 	}else if (error > 0){
-		setRightMotorsVelocity(velocity * multiplier);
+		setRightMotorsVelocity(velocity * (1 - multiplier));
 		setLeftMotorsVelocity(velocity);
+
 	}else{
 		setRightMotorsVelocity(velocity);
 		setLeftMotorsVelocity(velocity);
+
 	}
+
 }
 
 void DriveTrain::driveDisplacement(double displacement, int angle, double velocity, bool ignoreColorSensor) {
+
 	interruptedColor = false;
 	lastDisplacementCompleted = false;
 	if(velocity  == 0){
@@ -215,14 +243,16 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 	Absis<int> pitchLog;
 	long pitchRecordTarget = encCountsPitchRecord;
 	int startDistance = getDistanceFront();
-	while(abs(averageMovement) < toMove && tileColor != Black){
-
+	while(abs(averageMovement) <= toMove && tileColor != Black){
+		lcd.display(String(averageMovement / encCountsPerCm));
 		if(velocity > 0 ){
 			if(getDistanceFront() < getDesiredWallDistance()){
+				turn(0);
 				return;
 			}
 		}else{
 			if(getDistanceBack() < getDesiredWallDistance()){
+				turn(0);
 				return;
 			}
 		}
@@ -233,17 +263,17 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 		}
 
 		if(!ignoreColorSensor)
-			tileColor = getTileColor();
+			///tileColor = getTileColor();
 
 		if(millis() - lastEncoderReading > encoderReadRateMs){
-			encCountR = encR.read();
+			//encCountR = encR.read();
 			encCountL = encL.read();
 			lastEncoderReading = millis();
-			averageMovement = (encCountL + encCountR) / 2;
-			if(abs(getPitch()) < 2 && startDistance != 0){
-				int newDistance = getDistanceFront() - startDistance;
-				averageMovement = (averageMovement + (newDistance * encCountsPerCm)) / 2;
-			}
+			averageMovement = encCountL;
+			// if(abs(getPitch()) < 2 && startDistance != 0){
+			// 	int newDistance = getDistanceFront() - startDistance;
+			// 	averageMovement = (averageMovement + (newDistance * encCountsPerCm)) / 2;
+			// }
 		}
 		driveStraight(angle, velocity);
 		if(frontLLimitS.getState() || frontRLimitS.getState()){
@@ -257,13 +287,16 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 				turnToAngle(0);
 		}
 	}
+	lcd.display(String("IM DONE BEATCH"));
+
+	turn(0);
+
 	pitchHistory =  pitchLog;
 	if(tileColor == Black){
 		interruptedColor = true;
 	}else{
 		lastDisplacementCompleted = true;
 	}
-	driveVelocity(0);
 }
 
 int DriveTrain::getDistanceFront() {
@@ -288,6 +321,10 @@ int DriveTrain::getDistanceRightBack(){
 
 int DriveTrain::getDistanceBack(){
 	return  backTof.getDistance();
+}
+
+int DriveTrain::getDesiredWallDistance(){
+	return wallDesiredDistance;
 }
 
 void DriveTrain::alignWithWall(RobotFace faceToAlign) {

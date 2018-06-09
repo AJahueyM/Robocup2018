@@ -4,6 +4,7 @@
 #include "Coord.h"
 #include "Path.h"
 #include "Absis.h"
+#include "LCD.h"
 #include "Ramp.h"
 #ifdef ARDUINO
 #include <ArduinoSTL.h>
@@ -36,6 +37,7 @@ public:
 	bool usedAllRamps();
 	bool wasCompleted();
 	static void createRamp(Map* startMap, Tile* start, Map* endMap, Tile* end);
+	LCD& lcd = LCD::getInstance();
 private:
 	Absis<Absis<Tile>> tileMap;
 	Absis<Ramp> ramps;

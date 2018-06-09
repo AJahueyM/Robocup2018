@@ -31,7 +31,7 @@ void Tile::setRamp(bool isRamp){
 }
 
 bool Tile::wallExists(Direction side){
-    byte result;
+    byte result = 0;
     switch(side){
        	case Up:
            result = identity & wallUpMask;

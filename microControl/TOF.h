@@ -13,7 +13,7 @@ public:
     int getDistance();
 private:
     long lastReadTime = 0;
-    const long readRateMs = 100;
+    const long readRateMs = 10;
     int distance = 0;
     Adafruit_VL53L0X lox;
 

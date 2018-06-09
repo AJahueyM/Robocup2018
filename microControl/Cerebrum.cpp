@@ -6,10 +6,10 @@ Cerebrum::Cerebrum(DriveTrain& driveTrain) : driveTrain(driveTrain), lcd(LCD::ge
 	angles[2] = 180;
 	angles[3] = -90;
 
-	button1 = new Button(30);
-	button2 = new Button(28);
+	button1 = new Button(4);
+	button2 = new Button(3);
 
-	lcd.display(String("Robot booted up"));
+
 }
 
 Path Cerebrum::getPathLowerCost(Coord start, vector<Coord> targets, Map* map){
@@ -44,6 +44,22 @@ NavigationResult Cerebrum::navigateLevel(Map* mapCurrent, Coord startCoord){ //R
 	vector<Coord> candidates = mapCurrent->getCandidates();
 	Coord start = mapCurrent->getTileAt(startCoord);
 	Coord target;
+
+
+	for(int i = 0; i < candidates.size(); ++i){
+		Coord candidate = candidates[i];
+		String str;
+		str.concat("CANDIDATE ");
+		str.concat(i);
+		str.concat(" ");
+		str.concat(candidate.getX());
+		str.concat(" ");
+		str.concat(candidate.getY());
+		delay(200);
+		lcd.display(str);
+		while(!button1->getState());
+			delay(10);
+	}
 	
 	while(candidates.size() > 0){
 		vector<Coord> targets;
@@ -53,17 +69,38 @@ NavigationResult Cerebrum::navigateLevel(Map* mapCurrent, Coord startCoord){ //R
 		
 		Path bestPath = getPathLowerCost(start, targets, mapCurrent);
 		
+		String str;
+		str.concat("TAR: ");
+		str.concat(bestPath.getCoordAt(bestPath.getLength()-1).getX());
+		str.concat(" ");
+		str.concat(bestPath.getCoordAt(bestPath.getLength()-1).getY());
+		str.concat(" ");
+		str.concat("FRO: ");
+		str.concat(start.getX());
+		str.concat(" ");
+		str.concat(start.getY());
+		str.concat("s");
+		str.concat(candidates.size());
+		
+		delay(200);
+		while(!button1->getState()){
+			delay(10);
+			lcd.display(str);
+		}
+		delay(200);
 
 		if(bestPath.getValid()){
 			target = bestPath.getCoordAt(bestPath.getLength()-1);
 			cout << "StartX: " << (int) start.getX() << " StartY: " << (int)start.getY() << " Floor: " << (int) mapCurrent->getLevelNum() <<  endl;
 			cout << "EndX: " << (int)target.getX() << " EndY: " <<(int) target.getY() << endl;
 			bestPath.print();
-			/* TODO= SCAN TILE AND UPDATE MAP.TEST ONCE WE HAVE ROBOT
-				followPath(bestPath);
-			*/
-			currentRobotCoord = target;
+			//TODO= SCAN TILE AND UPDATE MAP.TEST ONCE WE HAVE ROBOT
 
+			followPath(bestPath);
+
+			currentRobotCoord = target;
+			mapCurrent->setRobotCoord(currentRobotCoord);
+			mapCurrent->setTileAt(currentRobotCoord, getCurrentTile());
 			if(mapCurrent->getTileAt(target).isRamp()){
 
 				data.endCoord = target;
@@ -79,8 +116,10 @@ NavigationResult Cerebrum::navigateLevel(Map* mapCurrent, Coord startCoord){ //R
 		mapCurrent->getTileAt(target).visited(true);		/// COMENT THIS WHEN TESTING WITH ROBOT
 
 		candidates = mapCurrent->getCandidates();
-		char c;
-		cin >> c;
+
+		while(!button1->getState())
+			updateTelemetry();
+
 	}
 	data.endCoord = target;
 
@@ -97,9 +136,9 @@ NavigationResult Cerebrum::navigateLevel(Map* mapCurrent, Coord startCoord){ //R
 
 		Path pathToClosestRamp = getPathLowerCost(data.endCoord, targetCoords, mapCurrent);
 
-		/* GO TO RAMP
-			followPath(bestPath);
-		*/
+		
+		followPath(pathToClosestRamp);
+		
 		pathToClosestRamp.print();
 		data.endReason = RampReached;
 		data.endCoord = pathToClosestRamp.getCoordAt(pathToClosestRamp.getLength() -1);
@@ -141,84 +180,18 @@ vector<Coord> Cerebrum::getCandidates(){
 }
 
 void Cerebrum::start(){
-	Absis<Absis<Tile>> tileMap, tileMap2, tileMap3;
-	const uint8_t rows = 7, cols = 5, rows1 = 3, cols1 = 3;
 
-	for(int y = 0; y < rows; ++y){
-		Absis<Tile> row;
-		tileMap.push_back(row);
-
-		for(int x = 0; x < cols; ++x){
-			tileMap[y].push_back(Tile(x, y));
-		}
-	}
-
-	for(int y = 0; y < rows1; ++y){
-		Absis<Tile> row;
-		tileMap2.push_back(row);
-
-		for(int x = 0; x < cols1; ++x){
-			tileMap2[y].push_back(Tile(x, y));
-		}
-	}	
-
-	for(int y = 0; y < rows1; ++y){
-		Absis<Tile> row;
-		tileMap3.push_back(row);
-
-		for(int x = 0; x < cols1; ++x){
-			tileMap3[y].push_back(Tile(x, y));
-		}
-	}	
-
-	tileMap[0][0].visited(true);
-
-	tileMap[1][0].setWall(Down, true);
-	tileMap[3][0].setWall(Down, true);
-	tileMap[0][1].setWall(Down, true);
-	tileMap[2][1].setWall(Down, true);
-	tileMap[3][1].setWall(Left, true);
-	tileMap[4][1].setWall(Left, true);
-	tileMap[4][1].setWall(Down, true);
-	tileMap[5][1].setWall(Left, true);
-	tileMap[5][1].setWall(Down, true);
-	tileMap[0][2].setWall(Down, true);
-	tileMap[4][2].setWall(Down, true);
-	tileMap[0][3].setWall(Down, true);
-	tileMap[3][3].setWall(Down, true);
-	//tileMap[3][3].setWall(Right, true);
-	tileMap[1][4].setWall(Left, true);
-	tileMap[2][4].setWall(Down, true);
-	tileMap[4][4].setWall(Left, true);
-	tileMap[5][4].setWall(Left, true);
-	tileMap[6][4].setWall(Left, true);
-
-	tileMap[2][0].setBumpLevel(Small);
-	tileMap[5][0].setBumpLevel(Small);
-	tileMap[3][1].setBumpLevel(Medium);
-	tileMap[4][1].setBumpLevel(Max);
-	tileMap[5][1].setBumpLevel(Max);
-	tileMap[0][2].setBumpLevel(Small);
-	tileMap[2][2].setBumpLevel(Small);
-	tileMap[5][3].setBumpLevel(Medium);
-	tileMap[2][4].setBumpLevel(Small);
-	tileMap[5][4].setBumpLevel(Small);
 
 
   //cout <<  (int) tileMap[2][0].getCost() << " " <<  (int) tileMap[4][0].getCost() << " " <<  (int) tileMap[2][1].getCost() << endl;
   	//Map tMap(tileMap);
-
-	Map* map1 = new Map(tileMap, 0);
-	Map* map2 = new Map(tileMap2, 1);
-	Map* map3 = new Map(tileMap3, 2);
-
-	Map::createRamp(map1, &map1->getTileAt(Coord(4,0)), map2, &map2->getTileAt(Coord(0,0)));
-	Map::createRamp(map1, &map1->getTileAt(Coord(0,4)), map3, &map3->getTileAt(Coord(2,0)));
+	Tile tile = getInitialTile();
+	Map* map1 = new Map(tile, 0);
 
 	maze.push_back(map1);
-	maze.push_back(map2);
-	maze.push_back(map3);
-
+	while(!button1->getState())
+		updateTelemetry();
+	delay(200);
 }
 
 
@@ -226,7 +199,7 @@ void Cerebrum::run(){
 
 	Tile* startTile = &maze[mazeFloor]->getTileMap()[0][0];
 	NavigationResult navigationResult;
-	Coord currentCoord(0,0);
+	Coord currentCoord  = maze[mazeFloor]->getRobotCoord();;
 
 	while(!roundCompleted(maze)){
 		//cout << "LEVEL--------------" << (int) maze[mazeFloor]->getLevelNum() << endl;
@@ -268,9 +241,9 @@ void Cerebrum::run(){
 
 		Path pathToRamp = AStar::getPath(currentCoord, bestRamp.getOrigin(), mapCurrent->getTileMap());
 		pathToRamp.print();
-		/*RUN PATH
+		//RUN PATH
 		followPath(pathToRamp);
-		*/
+		
 		mazeFloor = bestRamp.getTargetFloor();
 		currentCoord = bestRamp.getEnd();
 		currentRobotCoord = currentCoord;
@@ -290,6 +263,7 @@ void Cerebrum::run(){
 }
 
 void Cerebrum::followPath(Path& path){
+	lcd.display("DOING PATH");
 	Tile currentTile = maze[mazeFloor]->getTileAt(currentRobotCoord);
 	driveTrain.setShouldDispense(!currentTile.getLeftKit());
 	for(Coord coord : path.getPath()){
@@ -485,9 +459,9 @@ Tile Cerebrum::getInitialTile(){
 	}
 	Serial.println();
 
-	driveTrain.turnToAngle(0);
 
-	Color sensedColor = driveTrain.getTileColor();
+	//Color sensedColor = driveTrain.getTileColor();
+	Color sensedColor = White;
 	switch (sensedColor) {
 		case White:
 		break;
@@ -760,4 +734,56 @@ void Cerebrum::updateRobotOrientations(){
 			robotDown = Right;
 		break;
 	}
+}
+
+void Cerebrum::updateTelemetry(){
+	String str;
+	
+	Tile currentTile = maze[mazeFloor]->getTileAt(maze[mazeFloor]->getRobotCoord());
+	str.concat("CURR: ");
+	str.concat(maze[mazeFloor]->getRobotCoord().getX());
+	str.concat(" ");
+	str.concat(maze[mazeFloor]->getRobotCoord().getY());
+	str.concat(" ");
+	str.concat(currentTile.wallExists(Up));
+	str.concat(currentTile.wallExists(Right));
+	str.concat(currentTile.wallExists(Down));
+	str.concat(currentTile.wallExists(Left));
+	str.concat(" ");
+	str.concat(maze[mazeFloor]->getWidth());
+	str.concat(" ");
+	str.concat(maze[mazeFloor]->getHeight());
+	str.concat(" ");
+	str.concat(maze[mazeFloor]->getNonVisitedTiles());
+	lcd.display(str);
+}
+void Cerebrum::showVisitedTilesLCD(){
+	Absis<Absis<Tile>> tileMap = maze[mazeFloor]->getTileMap();
+	for(int y = 0; y < tileMap.size(); ++y){
+		for(int x = 0; x < tileMap[0].size(); ++x){
+			if(tileMap[y][x].wasVisited()){
+				Tile tile = tileMap[y][x];
+				String str;
+				str.concat("VIS: ");
+				str.concat(tile.wallExists(Up));
+				str.concat(tile.wallExists(Right));
+				str.concat(tile.wallExists(Down));
+				str.concat(tile.wallExists(Left));
+				str.concat(" ");
+				str.concat(x);
+				str.concat(" ");
+				str.concat(y);
+				str.concat(" ");
+				str.concat(tile.getX());
+				str.concat(" ");
+				str.concat(tile.getY());
+				lcd.display(str);
+				while(!button1->getState()){
+					delay(100);
+				}
+				delay(100);
+			}
+
+		}
+	} 
 }

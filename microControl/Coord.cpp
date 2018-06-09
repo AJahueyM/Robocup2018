@@ -9,11 +9,11 @@ Coord::Coord(uint8_t x, uint8_t y){
     this->x = x;
     this->y = y;
 }
-uint8_t Coord::getX() const{
-    return this->x;
+int Coord::getX() const{
+    return (int) this->x;
 }
-uint8_t Coord::getY() const{
-    return this->y;
+int Coord::getY() const{
+    return (int) this->y;
 }
 void Coord::setX(uint8_t x){
     this->x = x;

@@ -3,13 +3,21 @@
 Map::Map(Absis<Absis<Tile>>& tileMap, const uint8_t levelNum){
 	this->tileMap = tileMap;
 	this->levelNum = levelNum;
+	robotCoord = Coord(0,0);
+
 	updateMap();
 }
 
 Map::Map(Tile initialTile, const uint8_t levelNum){
-	tileMap.push_back(Absis<Tile>());
-	tileMap[0].push_back(initialTile);
+	Absis<Tile> row;
+	row.push_back(initialTile);
+	tileMap.push_back(row);
+
 	this->levelNum = levelNum;
+
+	robotCoord = Coord(0,0);
+
+	updateMap();
 }
 
 uint8_t Map::getLevelNum(){
@@ -36,23 +44,25 @@ Coord Map::getRobotCoord(){
 }
 
 void Map::expandMap(){
-	cout << "X: ";
-	cout << getRobotCoord().getX() << endl;
-	cout << "Y: ";
-	cout << getRobotCoord().getY() << endl;
 
 	if(getRobotCoord().getX()  == getWidth() - 1){
 		if(!getTileAt(getRobotCoord()).wallExists(Right)){
 			for(int i = 0; i < tileMap.size(); ++i){
-				tileMap[i].push_back(Tile());
+				Tile tile;
+				tileMap[i].push_back(tile);
+
 			}
 		}
 	}
 
+
 	if(getRobotCoord().getX() == 0){
 		if(!getTileAt(getRobotCoord()).wallExists(Left)){
 			for(int i = 0; i < tileMap.size(); ++i){
-				tileMap[i].addStart(Tile());
+
+				Tile tile;
+				tileMap[i].addStart(tile);
+
 			}
 			Coord newRobotCoord = getRobotCoord();
 			newRobotCoord.setX(1);
@@ -62,10 +72,17 @@ void Map::expandMap(){
 
 	if(getRobotCoord().getY() == 0){
 		if(!getTileAt(getRobotCoord()).wallExists(Down)){
+
+
 			Absis<Tile> newRow;
+
 			for(int i = 0; i < tileMap[0].size(); ++i){
-				newRow.push_back(Tile());
+
+				Tile tile;
+				newRow.push_back(tile);
+
 			}
+
      		tileMap.addStart( newRow);
 			Coord newRobotCoord = getRobotCoord();
 			newRobotCoord.setY(1);
@@ -75,14 +92,19 @@ void Map::expandMap(){
 
 	if(getRobotCoord().getY() == getHeight() - 1){
 		if(!getTileAt(getRobotCoord()).wallExists(Up)){
+
 			Absis<Tile> newRow;
+			
 			for(int i = 0; i < tileMap[0].size(); ++i){
-				newRow.push_back(Tile());
+				Tile tile;
+				newRow.push_back(tile);
+
 			}
+
 			tileMap.push_back(newRow);
+
 		}
 	}
-	updateMap();
 }
 
 void Map::setRobotCoord(Coord coord){
@@ -155,18 +177,32 @@ void Map::updateCoords(){
 }
 
 void Map::updateWalls(){
+	cout << "UPDATING WALLS" << endl;
     for(int y = 0; y < tileMap.size(); ++y){
         for(int x = 0; x < tileMap[0].size() ; ++x){
+			cout << "CHECKING " << x << "\t" << y << endl;
             Tile &node = tileMap[y][x];
 
-            if(y - 1 >= 0 && node.wallExists(Up))
-                tileMap[y-1][x].setWall(Down, true);
-            if(y + 1 < tileMap.size() && node.wallExists(Down))
-                tileMap[y+1][x].setWall(Up, true);
-            if(x + 1 < tileMap[0].size() && node.wallExists(Right))
+            if(y - 1 >= 0 && node.wallExists(Down)){
+				cout << "UPDATING WALL UP" << endl;
+                tileMap[y-1][x].setWall(Up, true);
+			}
+            if(y + 1 < tileMap.size() && node.wallExists(Up)){
+				cout << "UPDATING WALL DOWN" << endl;
+								cout << "UPDATING WALL RIGHT" << endl;
+
+                tileMap[y+1][x].setWall(Down, true);
+			}
+            if(x + 1 < tileMap[0].size() && node.wallExists(Right)){
+				cout << "UPDATING WALL RIGHT" << endl;
+				
                 tileMap[y][x+1].setWall(Left, true);
-            if(x - 1 >= 0 && node.wallExists(Left))
+			}
+            if(x - 1 >= 0 && node.wallExists(Left)){
+				cout << "UPDATING WALL LEFT" << endl;
+
                 tileMap[y][x-1].setWall(Right, true);
+			}
         }
     }
 }
@@ -197,13 +233,12 @@ void Map::checkPockets(){
 
 void Map::updateNeighbors(){
 	for(int y = 0; y < tileMap.size(); ++y){
-		Absis<Tile>& row = tileMap[y];
 		for(int x = 0; x < tileMap[0].size(); ++x){
-			Tile& node = row[x];
+			Tile& node = tileMap[y][x];
 
-			if(y - 1 >= 0 && !node.wallExists(Up))
+			if(y - 1 >= 0 && !node.wallExists(Down))
 				node.addNeighbor(&tileMap[y-1][x]);
-			if(y + 1 < tileMap.size() && !node.wallExists(Down))
+			if(y + 1 < tileMap.size() && !node.wallExists(Up))
 				node.addNeighbor(&tileMap[y+1][x]);
 			if(x + 1 < tileMap[0].size() && !node.wallExists(Right))
 				node.addNeighbor(&tileMap[y][x+1]);
@@ -214,11 +249,15 @@ void Map::updateNeighbors(){
 }
 
 void Map::updateMap(){
+	expandMap();
+
 	updateCoords();
-	checkPockets();
+
 	updateWalls();
+
 	updateNeighbors();
 }
+
 Absis<Absis<Tile>>& Map::getTileMap(){
 	return this->tileMap;
 }
