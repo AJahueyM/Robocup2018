@@ -30,12 +30,12 @@ private:
 	TOF frontTof, backTof;
 	Encoder encR, encL;
 	Button backRLimitS, backLLimitS, frontRLimitS, frontLLimitS;
-	double wheelCircunference = 7.0 * M_PI, encCountsPerRev = 3591.84, encCountsPerCm , heatDiferenceVictim = 4, lastDisplacement = 0, cmsPitchRecord = 2;
+	double wheelCircunference = 7.0 * M_PI, encCountsPerRev = 3000, encCountsPerCm , heatDiferenceVictim = 4, lastDisplacement = 0, cmsPitchRecord = 2;
 	double kConstantDriveGyro = 1, kConstantDriveDistance = 0.3, kConstantTurn = 0.055;
 	long turnTimeOut = 2000, delayTurnCorrection = 500, delayCourseCorrection = 1000, encCountsPitchRecord;
 	short int angleCourseCorrection = 30;
 	uint8_t wallDistanceSidesThresh = 15, wallDesiredDistance = 6.5;
-	uint8_t lastEncoderReading = 0, encoderReadRateMs = 16, lastHeatReading = 0, heatReadRateMs = 100;
+	uint8_t lastEncoderReading = 0, encoderReadRateMs = 10, lastHeatReading = 0, heatReadRateMs = 100;
 	uint8_t led1Pin = 35, led2Pin = 37, blinkTimesVictimDetected = 15;
 	Led leds;
 	Adafruit_MLX90614 mlxR = Adafruit_MLX90614(0x5A);
@@ -77,6 +77,7 @@ public:
 	int getDesiredWallDistance();
 	void driveDisplacement(double displacement, int angle, double velocity, bool ignoreColorSensor = false);
 	void alignWithWall(RobotFace faceToAlign);
+	void moveDesiredDistanceToWall(double velocity);
 	bool wasLastDisplacementCompleted();
 	double getLastDisplacement();
 	Color getTileColor();

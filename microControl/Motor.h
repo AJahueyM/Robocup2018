@@ -9,8 +9,6 @@ class Motor{
 private:
 	static Adafruit_MotorShield AFMS; 
 	Adafruit_DCMotor *myMotor;
-	long updateRateMs = 10;
-	long lastUpdate = 0;
 
 public:
 	Motor(uint8_t port);

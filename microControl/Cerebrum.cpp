@@ -19,9 +19,6 @@ Path Cerebrum::getPathLowerCost(Coord start, vector<Coord> targets, Map* map){
 			Path candidatePath = AStar::getPath(start, end, map->getTileMap());
 			uint8_t cost = candidatePath.getCost();
 			cout << "CANDIDATE COST= " << (int) cost <<"\tx: " <<(int)  end.getX() << "\ty: " <<(int)  end.getY() << endl;
-			if(!candidatePath.getValid()){
-				map->getTileAt(end).visited(true);
-			}
 			if( cost < minorCost && candidatePath.getValid()){
 				minorCost = candidatePath.getCost();
 				bestPath = candidatePath;
@@ -45,21 +42,6 @@ NavigationResult Cerebrum::navigateLevel(Map* mapCurrent, Coord startCoord){ //R
 	Coord start = mapCurrent->getTileAt(startCoord);
 	Coord target;
 
-
-	for(int i = 0; i < candidates.size(); ++i){
-		Coord candidate = candidates[i];
-		String str;
-		str.concat("CANDIDATE ");
-		str.concat(i);
-		str.concat(" ");
-		str.concat(candidate.getX());
-		str.concat(" ");
-		str.concat(candidate.getY());
-		delay(200);
-		lcd.display(str);
-		while(!button1->getState());
-			delay(10);
-	}
 	
 	while(candidates.size() > 0){
 		vector<Coord> targets;
@@ -79,28 +61,25 @@ NavigationResult Cerebrum::navigateLevel(Map* mapCurrent, Coord startCoord){ //R
 		str.concat(start.getX());
 		str.concat(" ");
 		str.concat(start.getY());
-		str.concat("s");
+		str.concat("sC");
 		str.concat(candidates.size());
-		
+		str.concat("sT");
+		str.concat(targets.size());
+
 		delay(200);
-		while(!button1->getState()){
-			delay(10);
-			lcd.display(str);
-		}
-		delay(200);
+		lcd.display(str);
 
 		if(bestPath.getValid()){
 			target = bestPath.getCoordAt(bestPath.getLength()-1);
-			cout << "StartX: " << (int) start.getX() << " StartY: " << (int)start.getY() << " Floor: " << (int) mapCurrent->getLevelNum() <<  endl;
-			cout << "EndX: " << (int)target.getX() << " EndY: " <<(int) target.getY() << endl;
-			bestPath.print();
 			//TODO= SCAN TILE AND UPDATE MAP.TEST ONCE WE HAVE ROBOT
 
 			followPath(bestPath);
+			mapCurrent->setRobotCoord(target);
+			mapCurrent->setTileAt(target, getCurrentTile());
+			currentRobotCoord = mapCurrent->getRobotCoord();
+			start = currentRobotCoord;
 
-			currentRobotCoord = target;
-			mapCurrent->setRobotCoord(currentRobotCoord);
-			mapCurrent->setTileAt(currentRobotCoord, getCurrentTile());
+
 			if(mapCurrent->getTileAt(target).isRamp()){
 
 				data.endCoord = target;
@@ -111,14 +90,11 @@ NavigationResult Cerebrum::navigateLevel(Map* mapCurrent, Coord startCoord){ //R
 			#ifdef ARDUINO
 			cout << "free= " << freeMemory() << endl;
 			#endif
-			start = target;
 		}
-		mapCurrent->getTileAt(target).visited(true);		/// COMENT THIS WHEN TESTING WITH ROBOT
-
+		//mapCurrent->getTileAt(target).visited(true);		/// COMENT THIS WHEN TESTING WITH ROBOT
 		candidates = mapCurrent->getCandidates();
-
-		while(!button1->getState())
-			updateTelemetry();
+		delay(100);
+		updateTelemetry();
 
 	}
 	data.endCoord = target;
@@ -185,6 +161,7 @@ void Cerebrum::start(){
 
   //cout <<  (int) tileMap[2][0].getCost() << " " <<  (int) tileMap[4][0].getCost() << " " <<  (int) tileMap[2][1].getCost() << endl;
   	//Map tMap(tileMap);
+	resetGyro();
 	Tile tile = getInitialTile();
 	Map* map1 = new Map(tile, 0);
 
@@ -251,24 +228,35 @@ void Cerebrum::run(){
 		
 		*/
 	}
+	
+	Coord returnTo = maze[mazeFloor]->getOriginCoord();
+	Path returnPath = AStar::getPath(maze[mazeFloor]->getRobotCoord(), returnTo, maze[mazeFloor]->getTileMap());
+	String str;
+	str.concat("GOING BACK!!!! TO: x:");
+	str.concat(returnTo.getX());
+	str.concat(" y:");
+	str.concat(returnTo.getY());
+	delay(200);
+	lcd.display(str);
 
-	Coord returnTo = *startTile;
-	Path returnPath = AStar::getPath(currentCoord, returnTo, maze[mazeFloor]->getTileMap());
 	cout << "REGRESANDO" << endl;
 	returnPath.print();
-	/*RUN PATH AND FINISH
-	followPath(returnTo);
-	*/
+	//RUN PATH AND FINISH
+	followPath(returnPath);
+	lcd.display("DONE!!!");
+
 
 }
 
 void Cerebrum::followPath(Path& path){
-	lcd.display("DOING PATH");
-	Tile currentTile = maze[mazeFloor]->getTileAt(currentRobotCoord);
+
+	Tile currentTile = maze[mazeFloor]->getTileAt(maze[mazeFloor]->getRobotCoord());
 	driveTrain.setShouldDispense(!currentTile.getLeftKit());
-	for(Coord coord : path.getPath()){
-		int deltaX = coord.getX() - currentRobotCoord.getX();
-		int deltaY = coord.getY() - currentRobotCoord.getY();
+
+	for(int i = 0; i < path.getLength(); ++i){
+		Coord coord = path.getCoordAt(i);
+		int deltaX = coord.getX() - maze[mazeFloor]->getRobotCoord().getX();
+		int deltaY = coord.getY() - maze[mazeFloor]->getRobotCoord().getY();
 
 		if(deltaX > 0){
 			if(currentRobotDirection == Up){
@@ -293,33 +281,29 @@ void Cerebrum::followPath(Path& path){
 			
 		}else if(deltaY > 0){
 			if(currentRobotDirection == Right){
+				turnRobot(Left);
+			}else if(currentRobotDirection == Down){
 				turnRobot(Right);
-			}else if(currentRobotDirection == Up){
-				turnRobot(Left);
-				turnRobot(Left);
+				turnRobot(Right);
 			}else if(currentRobotDirection == Left){
-				turnRobot(Left);
+				turnRobot(Right);
 			}
 			driveForward();
 		}else if(deltaY < 0){
 			if(currentRobotDirection == Right){
-				turnRobot(Left);
+				turnRobot(Right);
 			}else if(currentRobotDirection == Left){
-				turnRobot(Right);
-			}else if(currentRobotDirection == Down){
-				turnRobot(Right);
-				turnRobot(Right);
+				turnRobot(Left);
+			}else if(currentRobotDirection == Up){
+				turnRobot(Left);
+				turnRobot(Left);
 			}
 			driveForward();
 		}
+		driveTrain.moveDesiredDistanceToWall(preciseMovementSpeed);
 	}
-	while(currentTile.wallExists(robotUp) &&  driveTrain.getDistanceFront() != driveTrain.getDesiredWallDistance()){
-		if(driveTrain.getDistanceFront() > driveTrain.getDesiredWallDistance()){
-			driveTrain.driveStraight(angles[0], movementSpeed);
-		}else{
-			driveTrain.driveStraight(angles[0], -movementSpeed);
-		}
-	}
+	
+	driveTrain.turnToAngle(angles[0]);
 }
 
 void Cerebrum::driveForward(){
@@ -394,6 +378,12 @@ void Cerebrum::turnRobot(Direction dir){
 		default:
 		break;
 	}
+	driveTrain.moveDesiredDistanceToWall(preciseMovementSpeed);
+
+	if(((driveTrain.getDistanceBack() < 15 && driveTrain.getDistanceBack() != 0)  && currentRobotDirection == Up )&&  turnCounter > limitTurnCounter){
+		turnCounter = 0;
+		resetGyro();
+	}
 	updateRobotOrientations();
 }
 
@@ -402,12 +392,22 @@ void Cerebrum::shiftAngle(Direction dir){
 	int second = angles[1];
 	int third = angles[2];
 	int fourth = angles[3];
+	
 	switch(dir){
 		case Right:
 			angles[0] = second;
 			angles[1] = third;
 			angles[2] = fourth;
 			angles[3] = first;
+			if(currentRobotDirection == Up){
+				currentRobotDirection = Right;
+			}else if(currentRobotDirection == Right){
+				currentRobotDirection = Down;
+			}else if(currentRobotDirection == Left){
+				currentRobotDirection = Up;
+			}else if(currentRobotDirection == Down){
+				currentRobotDirection = Left;
+			}
 		break;
 
 		case Left:
@@ -415,22 +415,17 @@ void Cerebrum::shiftAngle(Direction dir){
 			angles[1] = first;
 			angles[2] = second;
 			angles[3] = third;
+			if(currentRobotDirection == Up){
+				currentRobotDirection = Left;
+			}else if(currentRobotDirection == Right){
+				currentRobotDirection = Up;
+			}else if(currentRobotDirection == Left){
+				currentRobotDirection = Down;
+			}else if(currentRobotDirection == Down){
+				currentRobotDirection = Right;
+			}
 		break;
-	};
-
-	first = angles[0]; 
-	second = angles[1];
-	third = angles[2];
-	fourth = angles[3];
-
-	if(first == 0)
-		currentRobotDirection = Up;
-	else if(second == 0)
-		currentRobotDirection = Left;
-	else if(third == 0)
-		currentRobotDirection = Down;
-	else if(fourth == 0)
-		currentRobotDirection = Right;
+	};	
 }
 
 Tile Cerebrum::getInitialTile(){
@@ -482,25 +477,25 @@ Tile Cerebrum::getInitialTile(){
 }
 
 Tile Cerebrum::getCurrentTile(){
-	byte result = B00000000, result2 = B00000000;
+	Tile tile;
 	if(driveTrain.getDistanceFront() < wallThreshold){
 		//Serial.print("F");
 		switch(currentRobotDirection){
 			case Up:
-				result = result | wallUpMask;
+				tile.setWall(Up, true);
 			break;
 
 			case Down:
-				result = result | wallDownMask;
+				tile.setWall(Down, true);
 			break;
 
 			case Right:
-				result = result | wallRightMask;
+				tile.setWall(Right, true);
 
 			break;
 
 			case Left:
-				result = result | wallLeftMask;
+				tile.setWall(Left, true);
 			break;
 
 			default:
@@ -513,19 +508,19 @@ Tile Cerebrum::getCurrentTile(){
 
 		switch(currentRobotDirection){
 			case Up:
-				result = result | wallLeftMask;
+				tile.setWall(Left, true);
 			break;
 
 			case Down:
-				result = result | wallRightMask;
+				tile.setWall(Right, true);
 			break;
 
 			case Right:
-				result = result | wallUpMask;
+				tile.setWall(Up, true);
 			break;
 
 			case Left:
-				result = result | wallDownMask;
+				tile.setWall(Down, true);
 			break;
 
 			default:
@@ -538,20 +533,20 @@ Tile Cerebrum::getCurrentTile(){
 
 		switch(currentRobotDirection){
 			case Up:
-				result = result | wallRightMask;
+				tile.setWall(Right, true);
 			break;
 
 			case Down:
-				result = result | wallLeftMask;
+				tile.setWall(Left, true);
 			break;
 
 			case Right:
-				result = result | wallDownMask;
+				tile.setWall(Down, true);
 
 			break;
 
 			case Left:
-				result = result | wallUpMask;
+				tile.setWall(Up, true);
 			break;
 
 			default:
@@ -564,11 +559,11 @@ Tile Cerebrum::getCurrentTile(){
 		break;
 
 		case Black:
-			result = result | isBlackMask;
+			tile.setColor(Black);
 		break;
 
 		case Silver:
-			result = result | isCheckpointMask;
+			tile.setColor(White);
 		break;
 
 		default:
@@ -578,10 +573,12 @@ Tile Cerebrum::getCurrentTile(){
 
 	if(driveTrain.getPitch() > 0 ){
 		if(driveTrain.getPitch() > 20)
-			result = result | isRampMask;
+			tile.setRamp(true);
 	}
-	result2 = result2 | maskVisited;
-	Tile tile(result, result2);
+	cout << "IN GET CURRENTTILE: " << tile.wasVisited() << endl;
+	tile.visited(true);
+	cout << "IN GET CURRENTTILE AFTER: " << tile.wasVisited() << endl;
+
 	Absis<int> pitchHistory = driveTrain.getPitchHistory();
 	int lowestAngle = 300, highestAngle = -300;
 
@@ -596,14 +593,21 @@ Tile Cerebrum::getCurrentTile(){
 	}
 	int angleDiff = abs(highestAngle - lowestAngle);
 	tile.setBumpLevel(Flat);
+	cout << "INTER GETCURRENTTILE= " << tile.wasVisited() << endl;
 	if(angleDiff > lowBumpAngleDiff){
 		tile.setBumpLevel(Small);
+	cout << "INTER GETCURRENTTILE= " << tile.wasVisited() << endl;
+
 	}
 	if(angleDiff > mediumAngleDiff){
 		tile.setBumpLevel(Medium);
+		cout << "INTER GETCURRENTTILE= " << tile.wasVisited() << endl;
+
 	}
 	if(angleDiff > maxAngleDiff){
 		tile.setBumpLevel(Max);
+		cout << "INTER GETCURRENTTILE= " << tile.wasVisited() << endl;
+
 	}
 
 	if(driveTrain.leftKitLastMovement()){
@@ -611,6 +615,7 @@ Tile Cerebrum::getCurrentTile(){
 	}else{
 		driveTrain.setLeftKit(false);
 	}
+	cout << "FINAL GETCURRENTTILE= " << tile.wasVisited() << endl;
 	return tile;
 }
 
@@ -698,11 +703,11 @@ Tile Cerebrum::getRobotTile(Direction dir){
 }
 
 void Cerebrum::resetGyro(){
-	const double distanceMoveStart = 6, speedMoveStart = .5;
+	const double distanceMoveStart = driveTrain.getDesiredWallDistance();
 	driveTrain.turnToAngle(0);
 	driveTrain.alignWithWall(Back);
 	driveTrain.resetAll();
-	driveTrain.driveDisplacement(distanceMoveStart,angles[0], speedMoveStart);
+	driveTrain.driveDisplacement(distanceMoveStart,angles[0], preciseMovementSpeed);
 }
 
 void Cerebrum::updateRobotOrientations(){
@@ -755,6 +760,28 @@ void Cerebrum::updateTelemetry(){
 	str.concat(maze[mazeFloor]->getHeight());
 	str.concat(" ");
 	str.concat(maze[mazeFloor]->getNonVisitedTiles());
+	str.concat(" ");
+	switch(currentRobotDirection){
+		case Up:{
+			str.concat("U");
+		}
+		break;
+		
+		case Right:{
+			str.concat("R");
+		}
+		break;		
+
+		case Down:{
+			str.concat("D");
+		}
+		break;		
+		
+		case Left:{
+			str.concat("L");
+		}
+		break;
+	}
 	lcd.display(str);
 }
 void Cerebrum::showVisitedTilesLCD(){

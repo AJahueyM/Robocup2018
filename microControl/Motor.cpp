@@ -19,19 +19,17 @@ Motor::Motor(uint8_t port){
 }
 
 void Motor::driveVelocity(double velocity){
-	if(millis() - lastUpdate > updateRateMs ){
-		double output = mapD(fabs(velocity), 0.0,1.0,0.0,255.0);
+	double output = mapD(fabs(velocity), 0.0,1.0,0.0,255.0);
 
-		myMotor->setSpeed(output);
-		if(velocity > 0.0){
-			myMotor->run(FORWARD);
-		}else if(velocity < 0.0){
-			myMotor->run(BACKWARD);
-		}else{
-			//myMotor->run(RELEASE);
-		}
-		lastUpdate = millis();
+	myMotor->setSpeed(output);
+	if(velocity > 0.0){
+		myMotor->run(FORWARD);
+	}else if(velocity < 0.0){
+		myMotor->run(BACKWARD);
+	}else{
+		//myMotor->run(RELEASE);
 	}
+	
 }
 
 

@@ -20,7 +20,7 @@ int Gyro::getYaw(){
 	if(millis() - lastReadTime > readRateMs){
 		imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
 		int i = euler.x();
-		bool debug = true;
+		bool debug = false;
 		if(debug){
 			Serial.print("Before= ");
 			Serial.print(i);

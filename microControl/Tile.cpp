@@ -109,6 +109,26 @@ void Tile::visited(bool value){
     }
 }
 
+void Tile::setColor(Color color){
+    switch(color){
+        case Black:{
+            identity = identity | isBlackMask;
+        }
+        break;
+
+        case Silver:{
+            identity = identity | isCheckpointMask;
+        }
+        break;
+
+        default:{
+            identity = identity & ~isCheckpointMask;
+            identity = identity & ~isBlackMask;
+
+        }
+    }
+}
+
 Color Tile::getColor(){
     byte result = B00000000;
 
@@ -152,15 +172,31 @@ BumpLevel Tile::getBumpLevel(){
 void Tile::setBumpLevel(BumpLevel bumpType){
     byte result;
     switch(bumpType){
-        case Small:
+        case Small:{
             result = identity2 | smallBumpMask;
+            result = identity2 & ~mediumBumpMask;
+            result = identity2 & ~maxBumpMask;
+           
+        }
             break;
-        case Medium:
+        case Medium:{
+            result = identity2 & ~smallBumpMask;
             result = identity2 | mediumBumpMask;
+            result = identity2 & ~maxBumpMask;
+        }
             break;
-        case Max:
+        case Max:{
+            result = identity2 & ~smallBumpMask;
+            result = identity2 & ~mediumBumpMask;
             result = identity2 | maxBumpMask;
+        }
             break;
+        default:{
+            result = identity2 & ~smallBumpMask;
+            result = identity2 & ~mediumBumpMask;
+            result = identity2 & ~maxBumpMask;
+        }
+        break;
     }
 
     identity2 = result;
@@ -183,4 +219,12 @@ uint8_t Tile::getCost(){
     }
 
     return 1;
+}
+
+byte Tile::getIdentity1(){
+    return identity;
+}
+
+byte Tile::getIdentity2(){
+    return identity2;
 }

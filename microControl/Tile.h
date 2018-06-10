@@ -16,13 +16,24 @@ public:
 	void setWall(Direction side, bool value) override;
 	void setLeftKit(bool value);
 	bool getLeftKit();
+	void setColor(Color color);
 	bool wasVisited();
 	bool hasBump();
 	void visited(bool value);
+	byte getIdentity1();
+	byte getIdentity2();
 	Color getColor();
 	BumpLevel getBumpLevel() ;
 	void setBumpLevel(BumpLevel bumpType);
 	uint8_t getCost() override;
+
+	Tile& operator=(const Tile& a){
+		if(this != &a){
+			this->identity = a.getIdentity1();
+			this->identity2 = a.getIdentity2();
+		}
+		return *this;
+	}
 private:
 	byte identity = 0;
 	byte identity2 = 0;

@@ -36,7 +36,11 @@ Tile& Map::getTileAt(Coord coord){
 
 void Map::setTileAt(Coord coord, Tile newTile){
 	tileMap[coord.getY()][coord.getX()] = newTile;
+	cout << "VISITED BEFORE PARAM= " << newTile.wasVisited() << endl;
+	cout << "VISITED BEFORE= " << tileMap[coord.getY()][coord.getX()].wasVisited() << endl;
 	updateMap();
+	cout <<  "VISITED AFTER= "<< tileMap[coord.getY()][coord.getX()].wasVisited() << endl;
+
 }
 
 Coord Map::getRobotCoord(){
@@ -67,6 +71,7 @@ void Map::expandMap(){
 			Coord newRobotCoord = getRobotCoord();
 			newRobotCoord.setX(1);
 			setRobotCoord(newRobotCoord);
+			originCoord.setX(originCoord.getX()+1);
 		}
 	}
 
@@ -87,6 +92,8 @@ void Map::expandMap(){
 			Coord newRobotCoord = getRobotCoord();
 			newRobotCoord.setY(1);
 			setRobotCoord(newRobotCoord);
+			originCoord.setY(originCoord.getY()+1);
+
 		}
 	}
 
@@ -235,15 +242,16 @@ void Map::updateNeighbors(){
 	for(int y = 0; y < tileMap.size(); ++y){
 		for(int x = 0; x < tileMap[0].size(); ++x){
 			Tile& node = tileMap[y][x];
-
-			if(y - 1 >= 0 && !node.wallExists(Down))
-				node.addNeighbor(&tileMap[y-1][x]);
-			if(y + 1 < tileMap.size() && !node.wallExists(Up))
-				node.addNeighbor(&tileMap[y+1][x]);
-			if(x + 1 < tileMap[0].size() && !node.wallExists(Right))
-				node.addNeighbor(&tileMap[y][x+1]);
-			if(x - 1 >= 0 && !node.wallExists(Left))
-				node.addNeighbor(&tileMap[y][x-1]);
+			if(node.wasVisited()){
+				if(y - 1 >= 0 && !node.wallExists(Down))
+					node.addNeighbor(&tileMap[y-1][x]);
+				if(y + 1 < tileMap.size() && !node.wallExists(Up))
+					node.addNeighbor(&tileMap[y+1][x]);
+				if(x + 1 < tileMap[0].size() && !node.wallExists(Right))
+					node.addNeighbor(&tileMap[y][x+1]);
+				if(x - 1 >= 0 && !node.wallExists(Left))
+					node.addNeighbor(&tileMap[y][x-1]);
+			}
 		}
 	}
 }
@@ -253,7 +261,7 @@ void Map::updateMap(){
 
 	updateCoords();
 
-	updateWalls();
+	//updateWalls();
 
 	updateNeighbors();
 }
@@ -318,3 +326,6 @@ void Map::createRamp(Map* startMap, Tile* start, Map* endMap, Tile* end){
 	endMap->addRamp(rampEnd);
 }
 
+Coord Map::getOriginCoord(){
+	return originCoord;
+}

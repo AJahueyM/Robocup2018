@@ -38,6 +38,7 @@ public:
 	bool wasCompleted();
 	static void createRamp(Map* startMap, Tile* start, Map* endMap, Tile* end);
 	LCD& lcd = LCD::getInstance();
+	Coord getOriginCoord();
 private:
 	Absis<Absis<Tile>> tileMap;
 	Absis<Ramp> ramps;
@@ -46,7 +47,7 @@ private:
 	void checkPockets();
 	void updateNeighbors();
 	void updateMap();
-	Coord robotCoord;
+	Coord robotCoord, originCoord;
 	byte mockIdentity = B11111101;
 	Tile mockTile = Tile(mockIdentity, mockIdentity);
 	Direction robotDirection;

@@ -1,6 +1,6 @@
 #include "DriveTrain.h"
 ///Constructor
-DriveTrain::DriveTrain() : topRight(4), topLeft(2), lowRight(1), lowLeft(3), encL(16, 17),encR(19,18), 
+DriveTrain::DriveTrain() : topRight(4), topLeft(2), lowRight(1), lowLeft(3), encL(19, 18),encR(16,17), 
 	frontTof(49, 0x32), backTof(42, 0x33), rightSharpFront(13), rightSharpBack(10),leftSharpFront(12), leftSharpBack(11),
 	backRLimitS(4), backLLimitS(3),  frontRLimitS (45) , frontLLimitS(43), leds(led1Pin){
 	Serial.println("DriveTrain initializing...");
@@ -110,39 +110,20 @@ void DriveTrain::setYawOffset(int value){
 }
 
 void DriveTrain::turnToAngle(int angle) {
-	lcd.display(String("1"));
-	// if (angle < -180) {
-	// 	do {
-	// 		angle += 180;
-	// 	} while (angle < -180);
-	// }
-	// if (angle > 180) {
-	// 	do {
-	// 		angle -= 180;
-	// 	}  while (angle > 180);
-	// }
-	lcd.display(String("2"));
 
-	short int error =  angle - getYaw();// shortestAngleTurn(getYaw(), angle);
+	short int error =  shortestAngleTurn(getYaw(), angle); //angle - getYaw();// shortestAngleTurn(getYaw(), angle);
 	long startTime = millis();
-	lcd.display(String("3"));
 
-	while(abs(error) > 1 && millis() - startTime < turnTimeOut) {
-		lcd.display(String("4"));
+	while(millis() - startTime < turnTimeOut && abs(error) > 1) {
 		checkDispense();
-		error = angle - getYaw();// shortestAngleTurn(getYaw(), angle);
-		lcd.display(String("5"));
+		error = shortestAngleTurn(getYaw(), angle); // angle - getYaw();// shortestAngleTurn(getYaw(), angle);
 		double output = error * kConstantTurn;
 
 		output = output > 1 ? 1 : output;
 		output = output < -1 ? -1 : output;
-		output = output < 0.225 && output >  0 ?  0.225 : output;
-		output = output < 0 && output >  -0.225 ?  -0.225 : output;
-
-		lcd.display(String("6"));
-		lcd.display(String("7"));
+		output = output < 0.3 && output >  0 ?  0.3 : output;
+		output = output < 0 && output >  -0.3 ?  -0.3 : output;
 		turn(output);
-		lcd.display(String("8"));
 	}
 	turn(0);
 	if(abs(error) > 10){
@@ -243,15 +224,16 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 	Absis<int> pitchLog;
 	long pitchRecordTarget = encCountsPitchRecord;
 	int startDistance = getDistanceFront();
+
 	while(abs(averageMovement) <= toMove && tileColor != Black){
-		lcd.display(String(averageMovement / encCountsPerCm));
+		// lcd.display(String(averageMovement / encCountsPerCm));
 		if(velocity > 0 ){
-			if(getDistanceFront() < getDesiredWallDistance()){
+			if(getDistanceFront() < getDesiredWallDistance() && getDistanceFront() != 0){
 				turn(0);
 				return;
 			}
 		}else{
-			if(getDistanceBack() < getDesiredWallDistance()){
+			if(getDistanceBack() < getDesiredWallDistance() &  getDistanceFront() != 0){
 				turn(0);
 				return;
 			}
@@ -270,10 +252,6 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 			encCountL = encL.read();
 			lastEncoderReading = millis();
 			averageMovement = encCountL;
-			// if(abs(getPitch()) < 2 && startDistance != 0){
-			// 	int newDistance = getDistanceFront() - startDistance;
-			// 	averageMovement = (averageMovement + (newDistance * encCountsPerCm)) / 2;
-			// }
 		}
 		driveStraight(angle, velocity);
 		if(frontLLimitS.getState() || frontRLimitS.getState()){
@@ -287,8 +265,6 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 				turnToAngle(0);
 		}
 	}
-	lcd.display(String("IM DONE BEATCH"));
-
 	turn(0);
 
 	pitchHistory =  pitchLog;
@@ -358,6 +334,23 @@ void DriveTrain::alignWithWall(RobotFace faceToAlign) {
 			setLeftMotorsVelocity(0);
 	}
 	driveVelocity(0);
+}
+
+void DriveTrain::moveDesiredDistanceToWall(double velocity){
+	while((getDistanceFront() < 15 &&  getDistanceFront() != getDesiredWallDistance() ) && getDistanceFront() != 0) {
+			if(getDistanceFront() > getDesiredWallDistance()){
+				driveVelocity(velocity);
+			}else{
+				driveVelocity(-velocity);
+			}
+		}
+		while((getDistanceBack() < 15 &&  getDistanceBack() != getDesiredWallDistance() ) && getDistanceBack() != 0) {
+			if(getDistanceBack() > getDesiredWallDistance()){
+				driveVelocity(-velocity);
+			}else{
+				driveVelocity(velocity);
+			}
+		}
 }
 
 Color DriveTrain::getTileColor(){

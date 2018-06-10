@@ -30,10 +30,10 @@ void setup() {
 
   // TOF tof(TOF::validPin[0]);
   // tof.getDistance();
-  // cerebrum->start();
+  cerebrum->start();
 
 
-  // cerebrum->run();
+  cerebrum->run();
 }
 
 void loop() {
@@ -45,7 +45,6 @@ void loop() {
   //driveTrain->getYaw();
   //cout <<  << endl;
   //driveTrain->turnToAngle(0);
-  driveTrain->driveStraight(0, 0.5);
   // String str;
   // str.concat(driveTrain->getDistanceFront());
   // str.concat(" ");
