@@ -2,6 +2,13 @@
 #define __COLORSENSOR_H_
 #include "Arduino.h"
 #include "Utils.h"
+#include "LCD.h"
+
+struct ColorProfile{
+  short int r;
+  short int g;
+  short int b;
+};
 
 class ColorSensor{
 private:
@@ -13,12 +20,27 @@ private:
   const uint8_t  S2 = 24;
   const uint8_t  S3 = 26;
   const uint8_t sensorOut =  22;
+  const uint8_t sensorReadings = 20;
+  ColorProfile whiteProfile, blackProfile, silverProfile;
   bool calibrar = true;
   bool withinRange(int input, int value);
+  ColorSensor();
+  ColorSensor &operator=(const ColorSensor &);
+  LCD lcd = LCD::getInstance();
+
+  short int getRedFrequency();
+  short int getGreenFrequency();
+  short int getBlueFrequency();
 
 public:
-  ColorSensor();
+  static ColorSensor& getInstance(){
+    static ColorSensor instance;
+    return instance;
+  }
   Color getColor();
+  void calibrateWhite();
+  void calibrateBlack();
+  void calibrateSilver();
 
 };
 #endif

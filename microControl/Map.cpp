@@ -36,10 +36,7 @@ Tile& Map::getTileAt(Coord coord){
 
 void Map::setTileAt(Coord coord, Tile newTile){
 	tileMap[coord.getY()][coord.getX()] = newTile;
-	cout << "VISITED BEFORE PARAM= " << newTile.wasVisited() << endl;
-	cout << "VISITED BEFORE= " << tileMap[coord.getY()][coord.getX()].wasVisited() << endl;
 	updateMap();
-	cout <<  "VISITED AFTER= "<< tileMap[coord.getY()][coord.getX()].wasVisited() << endl;
 
 }
 
@@ -48,7 +45,7 @@ Coord Map::getRobotCoord(){
 }
 
 void Map::expandMap(){
-
+	delay(100);
 	if(getRobotCoord().getX()  == getWidth() - 1){
 		if(!getTileAt(getRobotCoord()).wallExists(Right)){
 			for(int i = 0; i < tileMap.size(); ++i){
@@ -147,7 +144,7 @@ vector<Coord> Map::getCandidates(){
 	Absis<Absis<Tile>> &maze = getTileMap();
 	for (int y = 0; y < maze.size(); ++y) {
 		for (int x = 0; x < maze[0].size(); ++x) {
-			if (maze[y][x].wasVisited()) {
+			if (maze[y][x].wasVisited() && !maze[y][x].isRamp()) {
 
 				//cout << "LA TILE VISITADA ES (" << x << "," << y << ")" << endl;
 				vector <Tile*> neighbors;
@@ -184,31 +181,25 @@ void Map::updateCoords(){
 }
 
 void Map::updateWalls(){
-	cout << "UPDATING WALLS" << endl;
+
     for(int y = 0; y < tileMap.size(); ++y){
         for(int x = 0; x < tileMap[0].size() ; ++x){
-			cout << "CHECKING " << x << "\t" << y << endl;
             Tile &node = tileMap[y][x];
+			if(node.wasVisited()){
+				if(y - 1 >= 0 && node.wallExists(Down)){
+					tileMap[y-1][x].setWall(Up, true);
+				}
+				if(y + 1 < tileMap.size() && node.wallExists(Up)){
+					tileMap[y+1][x].setWall(Down, true);
+				}
+				if(x + 1 < tileMap[0].size() && node.wallExists(Right)){
+					
+					tileMap[y][x+1].setWall(Left, true);
+				}
+				if(x - 1 >= 0 && node.wallExists(Left)){
 
-            if(y - 1 >= 0 && node.wallExists(Down)){
-				cout << "UPDATING WALL UP" << endl;
-                tileMap[y-1][x].setWall(Up, true);
-			}
-            if(y + 1 < tileMap.size() && node.wallExists(Up)){
-				cout << "UPDATING WALL DOWN" << endl;
-								cout << "UPDATING WALL RIGHT" << endl;
-
-                tileMap[y+1][x].setWall(Down, true);
-			}
-            if(x + 1 < tileMap[0].size() && node.wallExists(Right)){
-				cout << "UPDATING WALL RIGHT" << endl;
-				
-                tileMap[y][x+1].setWall(Left, true);
-			}
-            if(x - 1 >= 0 && node.wallExists(Left)){
-				cout << "UPDATING WALL LEFT" << endl;
-
-                tileMap[y][x-1].setWall(Right, true);
+					tileMap[y][x-1].setWall(Right, true);
+				}
 			}
         }
     }
@@ -261,7 +252,7 @@ void Map::updateMap(){
 
 	updateCoords();
 
-	//updateWalls();
+	updateWalls();
 
 	updateNeighbors();
 }

@@ -51,7 +51,7 @@ int TOF::getDistance(){
         if(measure.RangeStatus != 4)
             distance = measure.RangeMilliMeter / 10;
         else
-            distance = 0;
+            distance = 900;
         lastReadTime = millis();
     }
     return distance;

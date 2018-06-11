@@ -21,6 +21,10 @@ void LCD::display(String message){
     }
 
 }
+void LCD::display(int message){
+    display(String(message));
+}
+
 
 String LCD::getMessage(){
 	return message;

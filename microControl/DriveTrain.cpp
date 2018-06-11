@@ -112,6 +112,7 @@ void DriveTrain::setYawOffset(int value){
 void DriveTrain::turnToAngle(int angle) {
 
 	short int error =  shortestAngleTurn(getYaw(), angle); //angle - getYaw();// shortestAngleTurn(getYaw(), angle);
+
 	long startTime = millis();
 
 	while(millis() - startTime < turnTimeOut && abs(error) > 1) {
@@ -148,11 +149,12 @@ void DriveTrain::driveStraight(int angle, double velocity) {
 	// lcd.display(str);
 	checkDispense();
 	double multiplier;
-	bool rightDistanceValid = (getDistanceRightFront() < wallDistanceSidesThresh) && (getDistanceRightBack() < wallDistanceSidesThresh);
-	bool leftDistanceValid = (getDistanceLeftFront() < wallDistanceSidesThresh) && (getDistanceLeftBack() < wallDistanceSidesThresh);
+	bool rightDistanceValid = (getDistanceRightFront() <= wallDistanceSidesThresh) && (getDistanceRightFront() > 2) ;
+	bool leftDistanceValid = (getDistanceLeftFront() <= wallDistanceSidesThresh)  && (getDistanceLeftFront() > 2) ;
 	bool correctWithDistance = rightDistanceValid || leftDistanceValid;
 	double error = 0;
-	if(correctWithDistance){
+	int angleError = abs(shortestAngleTurn(getYaw(), angle));
+	if(correctWithDistance && angleError < 10){
 		drivingWithDistance = true;
 		double distanceError = 0;
 		if(rightDistanceValid){
@@ -162,6 +164,7 @@ void DriveTrain::driveStraight(int angle, double velocity) {
 			// 	error = getDistanceRightFront() - getDistanceRightBack();
 			// }
 		}else{
+
 			// if(getDistanceLeftFront() != getDesiredWallDistance()){
 				error = getDesiredWallDistance() - getDistanceLeftFront();
 			// }else{	
@@ -173,15 +176,15 @@ void DriveTrain::driveStraight(int angle, double velocity) {
 		multiplier = error * kConstantDriveDistance;
 	}else{
 		drivingWithDistance = false;
-		error = angle - getYaw();
+		error = shortestAngleTurn(getYaw(), angle);
 		multiplier = error * kConstantDriveGyro;
 	}
 
 	multiplier = abs(multiplier);
 
 
-	if(multiplier >  .25){
-		multiplier = .25;
+	if(multiplier >  .65){
+		multiplier = .65;
 	}
 	if(multiplier < 0){
 		multiplier = 0;
@@ -191,10 +194,10 @@ void DriveTrain::driveStraight(int angle, double velocity) {
 
 	if(error < 0){
 		setRightMotorsVelocity(velocity);
-		setLeftMotorsVelocity(velocity * (1 -multiplier));
+		setLeftMotorsVelocity(velocity * (1.0 - multiplier));
 	
 	}else if (error > 0){
-		setRightMotorsVelocity(velocity * (1 - multiplier));
+		setRightMotorsVelocity(velocity * (1.0 - multiplier));
 		setLeftMotorsVelocity(velocity);
 
 	}else{
@@ -206,7 +209,6 @@ void DriveTrain::driveStraight(int angle, double velocity) {
 }
 
 void DriveTrain::driveDisplacement(double displacement, int angle, double velocity, bool ignoreColorSensor) {
-
 	interruptedColor = false;
 	lastDisplacementCompleted = false;
 	if(velocity  == 0){
@@ -214,6 +216,7 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 	}
 	encR.write(0);
 	encL.write(0);
+
 	long startCountR = encR.read();
 	long startCountL = encL.read();
 	long encCountR = startCountR;
@@ -223,17 +226,18 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 	Color tileColor = White;
 	Absis<int> pitchLog;
 	long pitchRecordTarget = encCountsPitchRecord;
-	int startDistance = getDistanceFront();
-
+	bool expandedMovement = false;
 	while(abs(averageMovement) <= toMove && tileColor != Black){
 		// lcd.display(String(averageMovement / encCountsPerCm));
 		if(velocity > 0 ){
 			if(getDistanceFront() < getDesiredWallDistance() && getDistanceFront() != 0){
+				lastDisplacementCompleted = true;
 				turn(0);
 				return;
 			}
 		}else{
-			if(getDistanceBack() < getDesiredWallDistance() &  getDistanceFront() != 0){
+			if(getDistanceBack() < getDesiredWallDistance() &&  getDistanceBack() != 0){
+				lastDisplacementCompleted = true;
 				turn(0);
 				return;
 			}
@@ -254,6 +258,7 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 			averageMovement = encCountL;
 		}
 		driveStraight(angle, velocity);
+
 		if(frontLLimitS.getState() || frontRLimitS.getState()){
 				if(frontRLimitS.getState()){
 					turnToAngle(getYaw() + angleCourseCorrection);
@@ -262,10 +267,16 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 				}
 				driveVelocity(-.5);
 				delay(delayCourseCorrection);
-				turnToAngle(0);
+				turnToAngle(angle);
+		}
+		if(getPitch() >  3 && !expandedMovement){
+			expandedMovement = true;
+			toMove *= 1.1;
 		}
 	}
+
 	turn(0);
+	turnToAngle(angle);
 
 	pitchHistory =  pitchLog;
 	if(tileColor == Black){

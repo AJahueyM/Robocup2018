@@ -65,7 +65,12 @@ int Gyro::getYaw(){
 int Gyro::getPitch(){
 	imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
 	int pitch = abs(euler.y() - pitchOffSet);
-	return pitch;
+	if(pitch > 180)
+			pitch -= 360;
+
+	if(pitch < -180)
+		pitch+=360;
+	return abs(pitch);
 
 }
 
