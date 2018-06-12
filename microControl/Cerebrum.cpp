@@ -45,12 +45,7 @@ NavigationResult Cerebrum::navigateLevel(Map* mapCurrent, Coord startCoord){ //R
 	
 	while(candidates.size() > 0){
 
-		vector<Coord> targets;
-		
-
-		targets = getClosestFrom(candidates, start);
-
-		Path bestPath = getPathLowerCost(start, targets, mapCurrent);
+		Path bestPath = getPathLowerCost(start, candidates, mapCurrent);
 
 
 		if(bestPath.getValid()){
@@ -167,20 +162,66 @@ void Cerebrum::run(){
 		//cout << "LEVEL--------------" << (int) maze[mazeFloor]->getLevelNum() << endl;
 		navigationResult = navigateLevel(maze[mazeFloor], currentCoord);
 		if(navigationResult.endReason == RampReached){
-
+			while(!button1->getState()){
+				lcd.display("RAMP REACHED");
+			}
 			/*
 			ADVANCE UNTIL RAMP IS REACHED
 			getCurrentTile
 
 			*/
-			Ramp* ramp = maze[mazeFloor]->getRampAt(navigationResult.endCoord);
-			mazeFloor = ramp->getTargetFloor();
-			ramp->setUsed(true);
-			cout << "RAMP-----CHANGE LEVEL------ " << (int) mazeFloor<< endl;
+			while(driveTrain.getPitch() > 20){
+				driveTrain.driveStraight(angles[0], rampMovementSpeed);
+			}
+			driveTrain.turn(0);
+			driveTrain.driveDisplacement(15, angles[0], preciseMovementSpeed);
+			driveTrain.moveDesiredDistanceToWall(preciseMovementSpeed);
 
-			currentCoord = ramp->getEnd();
-			maze[mazeFloor]->getTileAt(currentCoord).visited(true);
+			Tile currentTile = getCurrentTile();
+			Tile rampTile;
+			rampTile.setRamp(true);
+			rampTile.visited(true);
+			Coord newTile;
+			switch(currentRobotDirection){
+				case Up:{
+					rampTile.setWall(Right, true);
+					rampTile.setWall(Down, true);
+					rampTile.setWall(Left, true);
+					newTile.setY(1);
+				}
+				break;
+				case Right:{
+					rampTile.setWall(Up, true);
+					rampTile.setWall(Down, true);
+					rampTile.setWall(Left, true);
+					newTile.setX(1);
+
+				}
+				break;
+				case Left:{
+					rampTile.setWall(Up, true);
+					rampTile.setWall(Down, true);
+					rampTile.setWall(Right, true);
+				}
+				break;
+				case Down:{
+					rampTile.setWall(Up, true);
+					rampTile.setWall(Left, true);
+					rampTile.setWall(Right, true);
+				}
+				break;
+			}
+			Map* newMap = new Map(rampTile, ++mazeFloor);
+			newMap->setRobotCoord(newTile);
+			newMap->setTileAt(newTile, currentTile);
+
+			currentCoord = newMap->getRobotCoord();
 			currentRobotCoord = currentCoord;
+			maze.push_back(newMap);
+
+			while(!button1->getState())
+				updateTelemetry();
+
 		}
 	}
 
@@ -552,9 +593,7 @@ Tile Cerebrum::getCurrentTile(){
 		if(driveTrain.getPitch() > 20)
 			tile.setRamp(true);
 	}
-	cout << "IN GET CURRENTTILE: " << tile.wasVisited() << endl;
 	tile.visited(true);
-	cout << "IN GET CURRENTTILE AFTER: " << tile.wasVisited() << endl;
 
 	Absis<int> pitchHistory = driveTrain.getPitchHistory();
 	int lowestAngle = 300, highestAngle = -300;
@@ -731,7 +770,7 @@ void Cerebrum::updateTelemetry(){
 	str.concat(maze[mazeFloor]->getWidth());
 	str.concat(" H:");
 	str.concat(maze[mazeFloor]->getHeight());
-	str.concat(" ");
+	str.concat(" NV:");
 	str.concat(maze[mazeFloor]->getNonVisitedTiles());
 	str.concat(" ");
 	switch(currentRobotDirection){
@@ -755,6 +794,7 @@ void Cerebrum::updateTelemetry(){
 		}
 		break;
 	}
+	str.concat(" F:");
 	str.concat(mazeFloor);
 	lcd.display(str);
 }

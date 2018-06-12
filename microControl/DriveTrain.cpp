@@ -348,20 +348,21 @@ void DriveTrain::alignWithWall(RobotFace faceToAlign) {
 }
 
 void DriveTrain::moveDesiredDistanceToWall(double velocity){
-	while((getDistanceFront() < 15 &&  getDistanceFront() != getDesiredWallDistance() ) && getDistanceFront() != 0) {
+	while((getDistanceFront() < 18 &&  getDistanceFront() != getDesiredWallDistance() ) && getDistanceFront() != 0) {
 			if(getDistanceFront() > getDesiredWallDistance()){
 				driveVelocity(velocity);
 			}else{
 				driveVelocity(-velocity);
 			}
 		}
-		while((getDistanceBack() < 15 &&  getDistanceBack() != getDesiredWallDistance() ) && getDistanceBack() != 0) {
+		while((getDistanceBack() < 18 &&  getDistanceBack() != getDesiredWallDistance() ) && getDistanceBack() != 0) {
 			if(getDistanceBack() > getDesiredWallDistance()){
 				driveVelocity(-velocity);
 			}else{
 				driveVelocity(velocity);
 			}
 		}
+		turn(0);
 }
 
 Color DriveTrain::getTileColor(){
