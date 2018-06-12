@@ -46,30 +46,30 @@ void DriveTrain::checkDispense() {
 			lastHeatReading = millis();
 		}
 
-		VisionResponse visionResponse = visionSensor.getStatus();
-		Direction dir = visionResponse.dir;
-		if(visionResponse.victim != None){
-			leftKit = true;
-			blinkLeds(blinkTimesVictimDetected);
-			switch(visionResponse.victim){
-				case Harmed:{
-					dispenser.dispenseDirection(dir, 2);
-				}
-				break;
-				case Stable:{
-					dispenser.dispenseDirection(dir);
-				}
-				break;
-				case Unharmed:{
+		// VisionResponse visionResponse = visionSensor.getStatus();
+		// Direction dir = visionResponse.dir;
+		// if(visionResponse.victim != None){
+		// 	leftKit = true;
+		// 	blinkLeds(blinkTimesVictimDetected);
+		// 	switch(visionResponse.victim){
+		// 		case Harmed:{
+		// 			dispenser.dispenseDirection(dir, 2);
+		// 		}
+		// 		break;
+		// 		case Stable:{
+		// 			dispenser.dispenseDirection(dir);
+		// 		}
+		// 		break;
+		// 		case Unharmed:{
 
-				}
-				break;
-				default: {
-				}
-				break;
-			}
+		// 		}
+		// 		break;
+		// 		default: {
+		// 		}
+		// 		break;
+		// 	}
 
-		}
+		// }
 	}
 }
 void DriveTrain::driveVelocity(double velocity) {

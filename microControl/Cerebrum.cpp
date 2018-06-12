@@ -68,8 +68,6 @@ NavigationResult Cerebrum::navigateLevel(Map* mapCurrent, Coord startCoord){ //R
 			currentRobotCoord = mapCurrent->getRobotCoord();
 			start = currentRobotCoord;
 
-			delay(200);
-			lcd.display(7);
 			if(mapCurrent->getTileAt(target).isRamp()){
 
 				data.endCoord = target;
@@ -217,8 +215,6 @@ void Cerebrum::run(){
 	
 	Coord returnTo = maze[mazeFloor]->getOriginCoord();
 	Path returnPath = AStar::getPath(maze[mazeFloor]->getRobotCoord(), returnTo, maze[mazeFloor]->getTileMap());
-	String str;
-
 	followPath(returnPath);
 
 
@@ -339,6 +335,7 @@ void Cerebrum::driveForward(){
 
 		driveTrain.driveDisplacement(10, angles[0], movementSpeed * -1, true);
 	}
+	updateTelemetry();
 }
 
 void Cerebrum::turnRobot(Direction dir){
@@ -360,9 +357,10 @@ void Cerebrum::turnRobot(Direction dir){
 	driveTrain.moveDesiredDistanceToWall(preciseMovementSpeed);
 
 	if(((driveTrain.getDistanceBack() < 15 && driveTrain.getDistanceBack() != 0)  && currentRobotDirection == Up )&&  turnCounter > limitTurnCounter){
-		if(maze[mazeFloor]->getTileAt(maze[mazeFloor]->getRobotCoord()))
-		turnCounter = 0;
-		resetGyro();
+		if(maze[mazeFloor]->getTileAt(maze[mazeFloor]->getRobotCoord()).getCost() < 2){
+			turnCounter = 0;
+			resetGyro();
+		}
 	}
 	updateRobotOrientations();
 }
@@ -725,18 +723,18 @@ void Cerebrum::updateTelemetry(){
 	String str;
 	
 	Tile currentTile = maze[mazeFloor]->getTileAt(maze[mazeFloor]->getRobotCoord());
-	str.concat("CURR:");
+	str.concat("X:");
 	str.concat(maze[mazeFloor]->getRobotCoord().getX());
-	str.concat(" ");
+	str.concat(" Y:");
 	str.concat(maze[mazeFloor]->getRobotCoord().getY());
 	str.concat(" ");
 	str.concat(currentTile.wallExists(Up));
 	str.concat(currentTile.wallExists(Right));
 	str.concat(currentTile.wallExists(Down));
 	str.concat(currentTile.wallExists(Left));
-	str.concat(" ");
+	str.concat(" W:");
 	str.concat(maze[mazeFloor]->getWidth());
-	str.concat(" ");
+	str.concat(" H:");
 	str.concat(maze[mazeFloor]->getHeight());
 	str.concat(" ");
 	str.concat(maze[mazeFloor]->getNonVisitedTiles());
@@ -762,6 +760,7 @@ void Cerebrum::updateTelemetry(){
 		}
 		break;
 	}
+	str.concat(mazeFloor);
 	lcd.display(str);
 }
 void Cerebrum::showVisitedTilesLCD(){
