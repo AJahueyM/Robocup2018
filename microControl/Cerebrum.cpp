@@ -569,22 +569,17 @@ Tile Cerebrum::getCurrentTile(){
 		}
 	}
 	int angleDiff = abs(highestAngle - lowestAngle);
-
+	if(angleDiff > 200)
+		angleDiff = 0;
 	tile.setBumpLevel(Flat);
-	cout << "INTER GETCURRENTTILE= " << tile.wasVisited() << endl;
-	if(angleDiff > lowBumpAngleDiff){
+	if(angleDiff >= lowBumpAngleDiff && angleDiff < mediumAngleDiff){
 		tile.setBumpLevel(Small);
-	cout << "INTER GETCURRENTTILE= " << tile.wasVisited() << endl;
 
-	}
-	if(angleDiff > mediumAngleDiff){
+	}else if(angleDiff >=  mediumAngleDiff && angleDiff < maxAngleDiff){
 		tile.setBumpLevel(Medium);
-		cout << "INTER GETCURRENTTILE= " << tile.wasVisited() << endl;
 
-	}
-	if(angleDiff > maxAngleDiff){
+	}else if(angleDiff > maxAngleDiff){
 		tile.setBumpLevel(Max);
-		cout << "INTER GETCURRENTTILE= " << tile.wasVisited() << endl;
 
 	}
 	

@@ -170,37 +170,34 @@ BumpLevel Tile::getBumpLevel(){
 }
 
 void Tile::setBumpLevel(BumpLevel bumpType){
-    byte result;
     switch(bumpType){
         case Small:{
-            result = identity2 | smallBumpMask;
-            result = identity2 & ~mediumBumpMask;
-            result = identity2 & ~maxBumpMask;
-           
+            identity2 = identity2 & ~mediumBumpMask;
+            identity2 = identity2 & ~maxBumpMask;
+            identity2 = identity2 | smallBumpMask;
+          
         }
             break;
         case Medium:{
-            result = identity2 & ~smallBumpMask;
-            result = identity2 | mediumBumpMask;
-            result = identity2 & ~maxBumpMask;
+            identity2 = identity2 & ~smallBumpMask;
+            identity2 = identity2 & ~maxBumpMask;
+            identity2 = identity2 | mediumBumpMask;
+
         }
             break;
         case Max:{
-            result = identity2 & ~smallBumpMask;
-            result = identity2 & ~mediumBumpMask;
-            result = identity2 | maxBumpMask;
+            identity2 = identity2 & ~smallBumpMask;
+            identity2 = identity2 & ~mediumBumpMask;
+            identity2 = identity2 | maxBumpMask;
         }
             break;
         default:{
-            result = identity2 & ~smallBumpMask;
-            result = identity2 & ~mediumBumpMask;
-            result = identity2 & ~maxBumpMask;
+            identity2 = identity2 & ~smallBumpMask;
+            identity2 = identity2 & ~mediumBumpMask;
+            identity2 = identity2 & ~maxBumpMask;
         }
         break;
     }
-
-    identity2 = result;
-
 }
 
 uint8_t Tile::getCost(){
