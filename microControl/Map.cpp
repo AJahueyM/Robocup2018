@@ -69,6 +69,11 @@ void Map::expandMap(){
 			newRobotCoord.setX(1);
 			setRobotCoord(newRobotCoord);
 			originCoord.setX(originCoord.getX()+1);
+			for(int i = 0; i < ramps.size(); ++i){
+				Coord previousOrigin = ramps[i].getOrigin();
+				previousOrigin.setX(previousOrigin.getX() + 1);
+				ramps[i].setOrigin(previousOrigin);
+			}
 		}
 	}
 
@@ -90,7 +95,11 @@ void Map::expandMap(){
 			newRobotCoord.setY(1);
 			setRobotCoord(newRobotCoord);
 			originCoord.setY(originCoord.getY()+1);
-
+			for(int i = 0; i < ramps.size(); ++i){
+				Coord previousOrigin = ramps[i].getOrigin();
+				previousOrigin.setY(previousOrigin.getY() + 1);
+				ramps[i].setOrigin(previousOrigin);
+			}
 		}
 	}
 
@@ -306,11 +315,36 @@ bool Map::wasCompleted(){
 	return (usedAllRamps() && getCandidates().size() == 0);
 }
 
-void Map::createRamp(Map* startMap, Tile* start, Map* endMap, Tile* end){
+void Map::createRamp(Map* startMap, Coord start, Direction currentRobotDir, Map* endMap, Coord end){
 	Ramp rampStart(start, endMap->getLevelNum());
 	rampStart.setEnd(end);
 
 	Ramp rampEnd(end, startMap->getLevelNum());
+	Coord startForEnd = start;
+
+	switch(currentRobotDir){
+		case Up:{
+			start.setY(start.getY() + 1);
+		}
+		break;
+
+		case Right:{
+			start.setX(start.getX() + 1);
+
+		}
+		break;
+
+		case Down:{
+		start.setY(start.getY() - 1);
+
+		}
+		break;
+
+		case Left:{
+			start.setX(start.getX() - 1);
+		}
+		break;
+	}
 	rampEnd.setEnd(start);
 	
 	startMap->addRamp(rampStart);

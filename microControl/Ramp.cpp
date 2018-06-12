@@ -4,20 +4,24 @@ Ramp::Ramp(){
 
 }
 
-Ramp::Ramp(Tile* origin, uint8_t targetFloor){
+Ramp::Ramp(Coord origin, uint8_t targetFloor){
     this->origin = origin;
     this->targetFloor = targetFloor;
 }
 
+void Ramp::setOrigin(Coord origin){
+    this->origin = origin;
+}
+
 Coord Ramp::getOrigin() const{
-    return *this->origin;
+    return this->origin;
 }
 
 Coord Ramp::getEnd() const{
-    return *this->end;
+    return this->end;
 }
 
-void Ramp::setEnd(Tile* end){
+void Ramp::setEnd(Coord end){
     this->end = end;
 }
 

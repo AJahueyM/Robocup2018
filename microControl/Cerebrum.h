@@ -42,7 +42,7 @@ private:
 	Tile getInitialTile();
 	Tile getCurrentTile();
 	Tile getRobotTile(Direction dir);
-	void resetGyro();
+	void resetGyro(RobotFace dir);
 	void updateRobotOrientations();
 
 	void updateTelemetry();

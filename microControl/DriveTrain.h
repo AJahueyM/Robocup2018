@@ -32,7 +32,7 @@ private:
 	Button backRLimitS, backLLimitS, frontRLimitS, frontLLimitS;
 	double wheelCircunference = 7.0 * M_PI, encCountsPerRev = 3125, encCountsPerCm , heatDiferenceVictim = 4, lastDisplacement = 0, cmsPitchRecord = 2;
 	double kConstantDriveGyro = 0.25, kConstantDriveDistance = 0.1, kConstantTurn = 0.055;
-	long turnTimeOut = 2000, delayTurnCorrection = 500, delayCourseCorrection = 500, encCountsPitchRecord = 50;
+	long turnTimeOut = 2000, delayTurnCorrection = 500, delayCourseCorrection = 500, encCountsPitchRecord = 50, movementUpdateRate = 10, lastUpdatedMovement = 0;;
 	short int angleCourseCorrection = 30;
 	uint8_t wallDistanceSidesThresh = 10, wallDesiredDistance = 7;
 	uint8_t lastEncoderReading = 0, encoderReadRateMs = 20, lastHeatReading = 0, heatReadRateMs = 100;

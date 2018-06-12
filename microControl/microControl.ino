@@ -6,6 +6,7 @@
 DriveTrain* driveTrain;
 Cerebrum* cerebrum;
 using namespace std;
+    uint8_t sLetterPin = 10, hLetterPin = 11, uLetterPin = 12, directionLetterPin = 13;
 
 void setup() {
   LCD lcd = LCD::getInstance();
@@ -15,7 +16,10 @@ void setup() {
   driveTrain = &DriveTrain::getInstance();
   cerebrum = &Cerebrum::getInstance(*driveTrain);
 	lcd.display(String("Robot booted up"));
-
+  pinMode(sLetterPin, INPUT);
+  pinMode(hLetterPin, INPUT);
+  pinMode(uLetterPin, INPUT);
+  pinMode(directionLetterPin, INPUT);
 
   Button colorCalButton(30);
 
@@ -75,10 +79,18 @@ void setup() {
 
 
   cerebrum->run();
+  delay(500);
+  lcd.display("DONE!!! gay:)");
 }
 
 void loop() {
-  LCD lcd = LCD::getInstance();
+  // String str;
+  // str.concat(digitalRead(sLetterPin));
+  // str.concat(digitalRead(hLetterPin));
+  // str.concat(digitalRead(uLetterPin));
+  // str.concat(digitalRead(directionLetterPin));
+  // lcd.display(str);
+
  // cout << driveTrain->getTileColor() << endl;
   //driveTrain->setRightMotorsVelocity(.25);
   // driveTrain->blinkLeds();
@@ -94,7 +106,8 @@ void loop() {
   // str.concat(driveTrain->getDistanceLeftFront());
   // str.concat(" ");
   // str.concat(driveTrain->getDistanceBack());
-  //lcd.display(str);
+  // lcd.display(str);
   // cout << "F: " << driveTrain->getDistanceFront() << " B: " << driveTrain->getDistanceBack() << " RF: " << driveTrain->getDistanceRightFront() << " RB: " << driveTrain->getDistanceRightBack() << " LF: " << driveTrain->getDistanceLeftFront() << " LB: "<< driveTrain->getDistanceLeftBack() << endl;
-  lcd.display("DONE!!! :)");
+
+  //lcd.display(driveTrain->getPitch());
 }

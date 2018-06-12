@@ -116,15 +116,18 @@ void DriveTrain::turnToAngle(int angle) {
 	long startTime = millis();
 
 	while(millis() - startTime < turnTimeOut && abs(error) > 1) {
-		checkDispense();
-		error = shortestAngleTurn(getYaw(), angle); // angle - getYaw();// shortestAngleTurn(getYaw(), angle);
-		double output = error * kConstantTurn;
+		if(millis() - lastUpdatedMovement > movementUpdateRate){
+			lastUpdatedMovement = millis();
+			checkDispense();
+			error = shortestAngleTurn(getYaw(), angle); // angle - getYaw();// shortestAngleTurn(getYaw(), angle);
+			double output = error * kConstantTurn;
 
-		output = output > 1 ? 1 : output;
-		output = output < -1 ? -1 : output;
-		output = output < 0.3 && output >  0 ?  0.3 : output;
-		output = output < 0 && output >  -0.3 ?  -0.3 : output;
-		turn(output);
+			output = output > 1 ? 1 : output;
+			output = output < -1 ? -1 : output;
+			output = output < 0.3 && output >  0 ?  0.3 : output;
+			output = output < 0 && output >  -0.3 ?  -0.3 : output;
+			turn(output);
+		}
 	}
 	turn(0);
 	if(abs(error) > 10){
@@ -228,50 +231,53 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 	long pitchRecordTarget = encCountsPitchRecord;
 	bool expandedMovement = false;
 	while(abs(averageMovement) <= toMove && tileColor != Black){
-		// lcd.display(String(averageMovement / encCountsPerCm));
-		if(velocity > 0 ){
-			if(getDistanceFront() < getDesiredWallDistance() && getDistanceFront() != 0){
-				lastDisplacementCompleted = true;
-				turn(0);
-				return;
-			}
-		}else{
-			if(getDistanceBack() < getDesiredWallDistance() &&  getDistanceBack() != 0){
-				lastDisplacementCompleted = true;
-				turn(0);
-				return;
-			}
-		}
-
-		if(averageMovement > pitchRecordTarget){
-			pitchLog.push_back(getPitch());
-			pitchRecordTarget+=encCountsPitchRecord;
-		}
-
-		if(!ignoreColorSensor)
-			///tileColor = getTileColor();
-
-		if(millis() - lastEncoderReading > encoderReadRateMs){
-			//encCountR = encR.read();
-			encCountL = encL.read();
-			lastEncoderReading = millis();
-			averageMovement = encCountL;
-		}
-		driveStraight(angle, velocity);
-
-		if(frontLLimitS.getState() || frontRLimitS.getState()){
-				if(frontRLimitS.getState()){
-					turnToAngle(getYaw() + angleCourseCorrection);
-				}else{
-					turnToAngle(getYaw() - angleCourseCorrection);
+		if(millis() - lastUpdatedMovement > movementUpdateRate){
+			lastUpdatedMovement = millis();
+			// lcd.display(String(averageMovement / encCountsPerCm));
+			if(velocity > 0 ){
+				if(getDistanceFront() < getDesiredWallDistance() && getDistanceFront() != 0){
+					lastDisplacementCompleted = true;
+					turn(0);
+					return;
 				}
-				driveVelocity(-.5);
-				delay(delayCourseCorrection);
-				turnToAngle(angle);
-		}
-		if(getPitch() >  3 && !expandedMovement){
-			expandedMovement = true;
-			toMove *= 1.1;
+			}else{
+				if(getDistanceBack() < getDesiredWallDistance() &&  getDistanceBack() != 0){
+					lastDisplacementCompleted = true;
+					turn(0);
+					return;
+				}
+			}
+
+			if(averageMovement > pitchRecordTarget){
+				pitchLog.push_back(getPitch());
+				pitchRecordTarget+=encCountsPitchRecord;
+			}
+
+			if(!ignoreColorSensor)
+				///tileColor = getTileColor();
+
+			if(millis() - lastEncoderReading > encoderReadRateMs){
+				//encCountR = encR.read();
+				encCountL = encL.read();
+				lastEncoderReading = millis();
+				averageMovement = encCountL;
+			}
+			driveStraight(angle, velocity);
+
+			if(frontLLimitS.getState() || frontRLimitS.getState()){
+					if(frontRLimitS.getState()){
+						turnToAngle(getYaw() + angleCourseCorrection);
+					}else{
+						turnToAngle(getYaw() - angleCourseCorrection);
+					}
+					driveVelocity(-.5);
+					delay(delayCourseCorrection);
+					turnToAngle(angle);
+			}
+			if(getPitch() >  3 && !expandedMovement){
+				expandedMovement = true;
+				toMove *= 1.1;
+			}
 		}
 	}
 

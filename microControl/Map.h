@@ -36,7 +36,7 @@ public:
 	Absis<Ramp>& getRamps();
 	bool usedAllRamps();
 	bool wasCompleted();
-	static void createRamp(Map* startMap, Tile* start, Map* endMap, Tile* end);
+	static void createRamp(Map* startMap, Coord start, Direction currentRobotDir ,  Map* endMap, Coord end);
 	LCD& lcd = LCD::getInstance();
 	Coord getOriginCoord();
 private:
