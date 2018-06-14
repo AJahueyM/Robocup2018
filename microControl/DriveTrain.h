@@ -34,7 +34,7 @@ private:
 	double kConstantDriveGyro = 0.25, kConstantDriveDistance = 0.1, kConstantTurn = 0.055;
 	long turnTimeOut = 2000, delayTurnCorrection = 500, delayCourseCorrection = 500, encCountsPitchRecord = 50, movementUpdateRate = 10, lastUpdatedMovement = 0;;
 	short int angleCourseCorrection = 30;
-	uint8_t wallDistanceSidesThresh = 10, wallDesiredDistance = 7;
+	uint8_t wallDistanceSidesThresh = 20, wallDesiredDistance = 6;
 	uint8_t lastEncoderReading = 0, encoderReadRateMs = 20, lastHeatReading = 0, heatReadRateMs = 100;
 	uint8_t led1Pin = 35, led2Pin = 37, blinkTimesVictimDetected = 15;
 	Led leds;

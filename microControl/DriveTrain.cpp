@@ -1,6 +1,6 @@
 #include "DriveTrain.h"
 ///Constructor
-DriveTrain::DriveTrain() : topRight(4), topLeft(2), lowRight(1), lowLeft(3), encL(19, 18),encR(16,17), 
+DriveTrain::DriveTrain() : topRight(2), topLeft(1), lowRight(4), lowLeft(3), encL(19, 18),encR(16,17), 
 	frontTof(49, 0x32), backTof(42, 0x33), rightSharpFront(13), rightSharpBack(10),leftSharpFront(12), leftSharpBack(11),
 	backRLimitS(4), backLLimitS(3),  frontRLimitS (45) , frontLLimitS(43), leds(led1Pin){
 	Serial.println("DriveTrain initializing...");
@@ -20,7 +20,7 @@ void DriveTrain::setRightMotorsVelocity(double velocity) {
 
 void DriveTrain::setLeftMotorsVelocity(double velocity) {
 	topLeft.driveVelocity(-velocity);
-	lowLeft.driveVelocity(-velocity);
+	lowLeft.driveVelocity(velocity);
 }
 
 void DriveTrain::blinkLeds(uint8_t times){

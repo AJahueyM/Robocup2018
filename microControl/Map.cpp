@@ -153,7 +153,7 @@ vector<Coord> Map::getCandidates(){
 	Absis<Absis<Tile>> &maze = getTileMap();
 	for (int y = 0; y < maze.size(); ++y) {
 		for (int x = 0; x < maze[0].size(); ++x) {
-			if (maze[y][x].wasVisited() && !maze[y][x].isRamp()) {
+			if (maze[y][x].wasVisited()) {
 
 				//cout << "LA TILE VISITADA ES (" << x << "," << y << ")" << endl;
 				vector <Tile*> neighbors;
@@ -320,7 +320,6 @@ void Map::createRamp(Map* startMap, Coord start, Direction currentRobotDir, Map*
 	rampStart.setEnd(end);
 
 	Ramp rampEnd(end, startMap->getLevelNum());
-	Coord startForEnd = start;
 
 	switch(currentRobotDir){
 		case Up:{
@@ -335,7 +334,6 @@ void Map::createRamp(Map* startMap, Coord start, Direction currentRobotDir, Map*
 		break;
 
 		case Down:{
-		start.setY(start.getY() - 1);
 
 		}
 		break;

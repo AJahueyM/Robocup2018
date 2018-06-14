@@ -42,10 +42,13 @@ NavigationResult Cerebrum::navigateLevel(Map* mapCurrent, Coord startCoord){ //R
 	Coord start = mapCurrent->getTileAt(startCoord);
 	Coord target;
 
-	
+	String str;
+	str.concat("CANDIDATES=");
+	str.concat(candidates.size());
+	delay(200);
+	lcd.display(str);
+	delay(1000);
 	while(candidates.size() > 0){
-		String str;
-
 
 		Path bestPath = getPathLowerCost(start, candidates, mapCurrent);
 
@@ -59,17 +62,43 @@ NavigationResult Cerebrum::navigateLevel(Map* mapCurrent, Coord startCoord){ //R
 			mapCurrent->setRobotCoord(target);
 
 			Tile tile =  getCurrentTile();
-
+			if(tile.isRamp()){
+				switch(currentRobotDirection){
+					case Up:{
+						tile.setWall(Right, true);
+						tile.setWall(Up, true);
+						tile.setWall(Left, true);
+					}
+					break;
+					case Right:{
+						tile.setWall(Up, true);
+						tile.setWall(Down, true);
+						tile.setWall(Right, true);
+					}
+					break;
+					case Left:{
+						tile.setWall(Up, true);
+						tile.setWall(Down, true);
+						tile.setWall(Left, true);
+					}
+					break;
+					case Down:{
+						tile.setWall(Down, true);
+						tile.setWall(Left, true);
+						tile.setWall(Right, true);
+					}
+					break;
+				}
+			}
 			mapCurrent->setTileAt(target,tile);
 			currentRobotCoord = mapCurrent->getRobotCoord();
 			start = currentRobotCoord;
-
 			if(tile.isRamp()){
-
 				data.endCoord = target;
 				data.endReason = RampReached;
 				return data;
 			}
+
 		}
 		//mapCurrent->getTileAt(target).visited(true);		/// COMENT THIS WHEN TESTING WITH ROBOT
 
@@ -171,7 +200,7 @@ void Cerebrum::run(){
 			getCurrentTile
 
 			*/
-			while(driveTrain.getPitch() > 20){
+			while(driveTrain.getPitch() > 10){
 				driveTrain.driveStraight(angles[0], rampMovementSpeed);
 			}
 			driveTrain.turn(0);
@@ -211,7 +240,7 @@ void Cerebrum::run(){
 						rampTile.setWall(Up, true);
 						rampTile.setWall(Left, true);
 						rampTile.setWall(Right, true);
-						previousTile.setY( previousTile.getY() - 1);
+						previousTile.setY( previousTile.getY() + 1);
 
 					}
 					break;
@@ -647,7 +676,7 @@ Tile Cerebrum::getCurrentTile(){
 		break;
 	}
 	// Serial.println();
-	if(driveTrain.getPitch() > 20)
+	if(driveTrain.getPitch() >= 20)
 		tile.setRamp(true);
 	
 	tile.visited(true);
