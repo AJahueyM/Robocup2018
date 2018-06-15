@@ -2,13 +2,11 @@
 #define __LED_H_
 #include "Arduino.h"
 #include "Utils.h"
-#include <ArduinoSTL.h>
-using namespace std;
 
 class Led{
 public:
   explicit Led(uint8_t pin);
-  explicit Led(vector<uint8_t> pin);
+  explicit Led(Absis<uint8_t> pin);
   void blink(unsigned int times, bool fadeInOut = false, unsigned int periodMs = 100);
   void setState(bool state);
   bool getState() const;
@@ -20,7 +18,7 @@ private:
   void setupPins();
   void setPins(uint8_t value);
   uint8_t maxIntensity = 255, minIntensity = 0;
-  vector<uint8_t> pins;
+  Absis<uint8_t> pins;
   bool state;
 
 };

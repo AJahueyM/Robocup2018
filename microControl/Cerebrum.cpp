@@ -175,10 +175,11 @@ void Cerebrum::run(){
 }
 
 
-Path Cerebrum::getPathLowerCost(Coord start, vector<Coord> targets, Map* map){
+Path Cerebrum::getPathLowerCost(Coord start, Absis<Coord> targets, Map* map){
 		uint8_t minorCost = 254;
 		Path bestPath;
-		for(Coord end  : targets){
+		for(int i = 0; i < targets.size(); ++i){
+			Coord end = targets[i];
 			Path candidatePath = AStar::getPath(start, end, map->getTileMap());
 			uint8_t cost = candidatePath.getCost();
 			cout << "CANDIDATE COST= " << (int) cost <<"\tx: " <<(int)  end.getX() << "\ty: " <<(int)  end.getY() << endl;
@@ -203,7 +204,7 @@ bool Cerebrum::roundCompleted(Absis<Map*> maps){
 
 NavigationResult Cerebrum::navigateLevel(Map* mapCurrent, Coord startCoord){ //Returns last coordinate reached
 	NavigationResult data;
-	vector<Coord> candidates = mapCurrent->getCandidates();
+	Absis<Coord> candidates = mapCurrent->getCandidates();
 	Coord start = mapCurrent->getTileAt(startCoord);
 	Coord target;
 	while(candidates.size() > 0){
@@ -270,7 +271,7 @@ NavigationResult Cerebrum::navigateLevel(Map* mapCurrent, Coord startCoord){ //R
 		data.endReason = Completed;
 	}else{
 		Absis<Ramp> ramps = mapCurrent->getRamps();
-		vector<Coord> targetCoords;
+		Absis<Coord> targetCoords;
 		for(int i = 0; i < ramps.size(); ++i){
 			Ramp ramp = ramps[i];
 			if(!ramp.getUsed())

@@ -39,11 +39,11 @@ Path AStar::getPath(Coord startCoord, Coord endCoord, Absis<Absis<Tile>>& maze){
         }
     }
 
-    vector<Tile*> openSet, closedSet;
+    Absis<Tile*> openSet, closedSet;
 
     Tile *start = &maze[startCoord.getY()][startCoord.getX()], *end = &maze[endCoord.getY()][endCoord.getX()];
 
-    vector<Tile*> endNeighbors;
+    Absis<Tile*> endNeighbors;
     for(int i = 0; i < end->getCurrentNeighbors(); ++i){
         endNeighbors.push_back(end->getNeighbors(i));
     }
@@ -60,7 +60,7 @@ Path AStar::getPath(Coord startCoord, Coord endCoord, Absis<Absis<Tile>>& maze){
         Tile *current = openSet[lowestIndex];
         if(current == end){
           
-            vector<Coord> temp, path;
+            Absis<Coord> temp, path;
             uint8_t cost = 0;
             while(current->getPrevious() != nullptr){
                 cost += current->getCost();
@@ -121,6 +121,5 @@ Path AStar::getPath(Coord startCoord, Coord endCoord, Absis<Absis<Tile>>& maze){
             }
         }
     }
-    cout << "No solution" << endl;
     return pathFinal;
 }

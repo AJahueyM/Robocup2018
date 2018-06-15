@@ -27,12 +27,12 @@ public:
 	uint8_t getWidth();
 	uint8_t getHeight();
 	int getNonVisitedTiles();
-	vector<Coord> getCandidates();
+	Absis<Coord> getCandidates();
 	Absis<Absis<Tile>>& getTileMap();
 	void setTileMap(Absis<Absis<Tile>> tileMap); 
 	void addRamp(Ramp ramp);
 	Ramp* getRampAt(Coord coord);
-	vector<Coord> getRampsCoords();
+	Absis<Coord> getRampsCoords();
 	Absis<Ramp>& getRamps();
 	bool usedAllRamps();
 	bool wasCompleted();

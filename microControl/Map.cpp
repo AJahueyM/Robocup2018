@@ -148,15 +148,15 @@ int Map::getNonVisitedTiles(){
 	return counter;
 }
 
-vector<Coord> Map::getCandidates(){
-	vector <Coord> vec;
+Absis<Coord> Map::getCandidates(){
+	Absis <Coord> vec;
 	Absis<Absis<Tile>> &maze = getTileMap();
 	for (int y = 0; y < maze.size(); ++y) {
 		for (int x = 0; x < maze[0].size(); ++x) {
 			if (maze[y][x].wasVisited()) {
 
 				//cout << "LA TILE VISITADA ES (" << x << "," << y << ")" << endl;
-				vector <Tile*> neighbors;
+				Absis <Tile*> neighbors;
 				for(int i = 0; i < maze[y][x].getCurrentNeighbors(); ++i){
 					neighbors.push_back(maze[y][x].getNeighbors(i));
 				}
@@ -290,8 +290,8 @@ Ramp* Map::getRampAt(Coord coord){
 	return nullptr;
 }
 
-vector<Coord> Map::getRampsCoords(){
-	vector<Coord> coords;
+Absis<Coord> Map::getRampsCoords(){
+	Absis<Coord> coords;
 	for(int i = 0; i < ramps.size(); ++i){
 		coords.push_back(ramps[i].getOrigin());
 	}

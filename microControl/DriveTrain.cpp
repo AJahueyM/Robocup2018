@@ -259,10 +259,10 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 	long pitchRecordTarget = encCountsPitchRecord;
 	bool expandedMovement = false;
 	int distanceRepeatedCounter = 0;
-	int distanceCounterLimit = 30;
+	int distanceCounterLimit = 20;
 	int distanceBeforeStuck = 0;
 	int lastDistance = 0;
-	int distanceThresh = 3;
+	int distanceThresh = 2;
 	while(abs(averageMovement) <= toMove && tileColor != Black){
 		if(millis() - lastUpdatedMovement > movementUpdateRate){
 			lastUpdatedMovement = millis();
@@ -410,26 +410,29 @@ void DriveTrain::alignWithWall(RobotFace faceToAlign) {
 		speed = .4;
 		break;
 	}
+	long startTime = millis();
+	while ((!right->getState() || !left->getState() )&& millis() - startTime < alignTimeOut )  {
+		if(millis() - lastUpdatedMovement > movementUpdateRate){
+			lastUpdatedMovement = millis();		
+			if(getPitch() > 30){
+				turn(0);
+				if(speed > 0)
+					driveVelocity(-.3);
+				else
+					driveVelocity(.3);
+				delay(750);
+				turn(0);
+			}
 
-	while (!right->getState() || !left->getState()) {
-		if(getPitch() > 30){
-			turn(0);
-			if(speed > 0)
-				driveVelocity(-.3);
+			if (!right->getState())
+				setRightMotorsVelocity(speed);
 			else
-				driveVelocity(.3);
-			delay(750);
-			turn(0);
+				setRightMotorsVelocity(0);
+			if (!left->getState())
+				setLeftMotorsVelocity(speed);
+			else
+				setLeftMotorsVelocity(0);
 		}
-
-		if (!right->getState())
-			setRightMotorsVelocity(speed);
-		else
-			setRightMotorsVelocity(0);
-		if (!left->getState())
-			setLeftMotorsVelocity(speed);
-		else
-			setLeftMotorsVelocity(0);
 	}
 	driveVelocity(0);
 }

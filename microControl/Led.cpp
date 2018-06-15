@@ -5,7 +5,7 @@ Led::Led(uint8_t pin){
 	setupPins();
 }
 
-Led::Led(vector<uint8_t> pins){
+Led::Led(Absis<uint8_t> pins){
 	this->pins = pins;
 	setupPins();
 }
@@ -73,14 +73,16 @@ void Led::addPin(uint8_t pin){
 }
 
 void Led::setupPins(){
-	for(uint8_t pin : pins){
+	for(int i = 0; i < pins.size() ;++i){
+		uint8_t pin = pins[i];
 		pinMode(pin, OUTPUT);
 		analogWrite(pin, minIntensity);
 	}	
 }
 
 void Led::setPins(uint8_t value){
-	for(uint8_t pin : pins){
+	for(int i = 0; i < pins.size() ;++i){
+		uint8_t pin = pins[i];
 		analogWrite(pin, value);
 	}	
 }

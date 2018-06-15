@@ -5,15 +5,6 @@
 #include "Utils.h"
 #include "Absis.h"
 #include "Coord.h"
-
-#ifdef ARDUINO
-#include <ArduinoSTL.h>
-#else
-#include <vector>
-#include <math.h>
-#include <iostream>
-#endif
-
 class AStar{
 public:
     static Path getPath(Coord start, Coord end, Absis<Absis<Tile>>& maze);

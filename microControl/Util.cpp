@@ -31,21 +31,21 @@ int calculateDistance(Coord a, Coord b) {
 	return (dx + dy); 
 }
 
-vector<Coord> getClosestFrom(vector <Coord>& vec, Coord start) {
-	vector<Coord>  end;
-	int distance = 0, minorDistance = 100;
-	for (int i = 0; i < vec.size(); ++i) {
-		Coord candidate = vec[i];
-		distance = calculateDistance(start, candidate);
+// Absis<Coord> getClosestFrom(Absis <Coord>& vec, Coord start) {
+// 	Absis<Coord>  end;
+// 	int distance = 0, minorDistance = 100;
+// 	for (int i = 0; i < vec.size(); ++i) {
+// 		Coord candidate = vec[i];
+// 		distance = calculateDistance(start, candidate);
 
-		if(minorDistance >= distance) {
-      if(minorDistance > distance){
-         minorDistance = distance;
-         end.clear();
-      }
-			end.push_back(candidate);
-		}
+// 		if(minorDistance >= distance) {
+//       if(minorDistance > distance){
+//          minorDistance = distance;
+//          end.clear();
+//       }
+// 			end.push_back(candidate);
+// 		}
 
-	}
-	return end;
-}
+// 	}
+// 	return end;
+// }
