@@ -70,6 +70,8 @@ void setup() {
     }
     delay(200);
 
+    colorSensor.saveProfiles();
+
   }
 
   delay(200);

@@ -3,11 +3,12 @@
 #include "Arduino.h"
 #include "Utils.h"
 #include "LCD.h"
+#include <EEPROM.h>
 
 struct ColorProfile{
-  short int r;
-  short int g;
-  short int b;
+  uint8_t r;
+  uint8_t g;
+  uint8_t b;
 };
 
 class ColorSensor{
@@ -28,9 +29,22 @@ private:
   ColorSensor &operator=(const ColorSensor &);
   LCD lcd = LCD::getInstance();
 
-  short int getRedFrequency();
-  short int getGreenFrequency();
-  short int getBlueFrequency();
+  uint8_t getRedFrequency();
+  uint8_t getGreenFrequency();
+  uint8_t getBlueFrequency();
+
+  uint8_t whiteDirR = 0;
+  uint8_t whiteDirG = 1;
+  uint8_t whiteDirB = 2;
+ 
+  uint8_t blackDirR = 3;
+  uint8_t blackDirG = 4;
+  uint8_t blackDirB = 5;
+
+  uint8_t silverDirR = 6;
+  uint8_t silverDirR = 7;
+  uint8_t silverDirR = 8;
+
 
 public:
   static ColorSensor& getInstance(){
@@ -41,6 +55,7 @@ public:
   void calibrateWhite();
   void calibrateBlack();
   void calibrateSilver();
+  void saveProfiles();
 
 };
 #endif

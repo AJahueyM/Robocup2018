@@ -12,7 +12,23 @@ ColorSensor::ColorSensor(){
 
   digitalWrite(S0, HIGH); 
   digitalWrite(S1, LOW);
+
+  whiteProfile.r = EEPROM.read(whiteDirR);
+  whiteProfile.g = EEPROM.read(whiteDirG);
+  whiteProfile.b = EEPROM.read(whiteDirB);
+
+  blackProfile.r = EEPROM.read(blackDirR);
+  blackProfile.g = EEPROM.read(blackDirG);
+  blackProfile.b = EEPROM.read(blackDirB);
+
+ silverProfile.r = EEPROM.read(silverDirR);
+ silverProfile.g = EEPROM.read(silverDirG);
+ silverProfile.b = EEPROM.read(silverDirB);
+
 }
+
+
+
 bool ColorSensor::withinRange(int input, int value){
   if(input + input * range > value && input - input*range < value)    
     return true;
@@ -114,6 +130,8 @@ void ColorSensor::calibrateWhite(){
 
   whiteProfile.b = sumBuffer / sensorReadings; 
 
+
+
 }
 
 void ColorSensor::calibrateBlack(){
@@ -161,4 +179,18 @@ void ColorSensor::calibrateSilver(){
 
   silverProfile.b = sumBuffer / sensorReadings; 
 
+}
+
+void ColorSensor::saveProfiles(){
+    EEPROM.write(this->whiteDirR,whiteProfile.r);
+    EEPROM.write(this->whiteDirG,whiteProfile.g);
+    EEPROM.write(this->whiteDirB,whiteProfile.b);
+
+    EEPROM.write(this->blackDirR,blackProfile.r);
+    EEPROM.write(this->blackDirG,blackProfile.g);
+    EEPROM.write(this->blackDirB,blackProfile.b);
+
+    EEPROM.write(this->silverDirR,silverProfile.r);
+    EEPROM.write(this->silverDirG,silverProfile.g);
+    EEPROM.write(this->silverDirB,silverProfile.b);
 }
