@@ -47,7 +47,6 @@ private:
 
 	void updateTelemetry();
 	void showVisitedTilesLCD();
-	vector<Coord> getCandidates();
     DriveTrain& driveTrain;
     Direction currentRobotDirection = Up;
    	Direction robotRight, robotLeft, robotUp, robotDown;
@@ -56,7 +55,7 @@ private:
     LCD& lcd;
 	Button *button1, *button2;
     double movementSpeed = .75, preciseMovementSpeed = .35, rampMovementSpeed = .4;
- 	uint8_t distanceMoveTiles = 30, turnCounter = 0, mazeFloor = 0, wallTolerance = 9, wallThreshold = 15;
+ 	uint8_t distanceMoveTiles = 30, rampAngle = 20,  turnCounter = 0, mazeFloor = 0, wallTolerance = 9, wallThreshold = 15;
 	short int  angles[4];
 	int lowBumpAngleDiff = 2, mediumAngleDiff = 4, maxAngleDiff = 8, limitTurnCounter = 6;
  	bool hasStarted = false;

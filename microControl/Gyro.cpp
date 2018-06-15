@@ -9,8 +9,7 @@ Gyro::Gyro(){
 	//bno.setExtCrystalUse(true);
 	delay(1000);
 	double startTime = millis();
-  	yawOffSet = getYaw();
-	pitchOffSet = 0;
+	resetAll();
 	Serial.println("BNO Initialized");
 }
 
@@ -66,14 +65,14 @@ int Gyro::getPitch(){
 	if(millis() - lastReadTime > readRateMs){
 
 		imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
-		int pitchNew = abs(euler.y() - pitchOffSet);
-		if(pitchNew > 180)
-				pitchNew -= 360;
-
-		if(pitchNew < -180)
-			pitchNew+=360;
-
-		pitch = abs(pitchNew);
+		int raw = -euler.y();
+		int pitchNew = abs(euler.y() + pitchOffSet);
+		
+		Serial.print("Raw: ");
+		Serial.print(raw);
+		Serial.print("\tNew: ");
+		Serial.println(pitchNew);
+		pitch = pitchNew;
 		lastReadTime = millis();
 	}
 	return pitch;
@@ -89,11 +88,12 @@ void Gyro::resetYaw(){
 
 void Gyro::resetPitch(){
 	imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
-  	pitchOffSet = abs(euler.y());	
+  	pitchOffSet = -euler.y();	
 }
 
 void Gyro::resetAll(){
 	resetYaw();
+	delay(readRateMs * 2);
 	resetPitch();
 }
 void Gyro::setYawOffset(int value){

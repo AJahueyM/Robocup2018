@@ -31,10 +31,10 @@ private:
 	Encoder encR, encL;
 	Button backRLimitS, backLLimitS, frontRLimitS, frontLLimitS;
 	double wheelCircunference = 7.0 * M_PI, encCountsPerRev = 3125, encCountsPerCm , heatDiferenceVictim = 4, lastDisplacement = 0, cmsPitchRecord = 2;
-	double kConstantDriveGyro = 0.25, kConstantDriveDistance = 0.1, kConstantTurn = 0.055;
+	double kConstantDriveGyro = 0.05, kConstantDriveDistance = 0.07, kConstantTurn = 0.055;
 	long turnTimeOut = 2000, delayTurnCorrection = 500, delayCourseCorrection = 500, encCountsPitchRecord = 50, movementUpdateRate = 10, lastUpdatedMovement = 0;;
 	short int angleCourseCorrection = 30;
-	uint8_t wallDistanceSidesThresh = 20, wallDesiredDistance = 6;
+	uint8_t wallDistanceSidesThresh = 20, wallDesiredDistance = 6.5;
 	uint8_t lastEncoderReading = 0, encoderReadRateMs = 20, lastHeatReading = 0, heatReadRateMs = 100;
 	uint8_t led1Pin = 35, led2Pin = 37, blinkTimesVictimDetected = 15;
 	Led leds;
@@ -62,6 +62,8 @@ public:
 	int getYaw();
 	int getPitch();
 	Absis<int> getPitchHistory();
+	int getAngleDiffPitchHistory();
+	int getAveragePitch();
 	void resetYaw();
 	void resetPitch();
 	void resetAll();

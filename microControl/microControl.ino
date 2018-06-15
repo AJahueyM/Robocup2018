@@ -1,7 +1,6 @@
 #include "Cerebrum.h"
 #include <MemoryFree.h>
 #include <ArduinoSTL.h>
-#include "TOF.h"
 
 DriveTrain* driveTrain;
 Cerebrum* cerebrum;
@@ -52,11 +51,6 @@ void setup() {
     }
     colorSensor.calibrateSilver();
     delay(200);
-
-    while(!colorCalButton.getState()){
-      delay(10);
-      lcd.display("PLACE ON SILVER AND PRESS");
-    }
   }
 
   delay(200);
@@ -65,15 +59,12 @@ void setup() {
     lcd.display("PLACE ON STARTING POS");
   }
 
+  delay(500);
+  while(!colorCalButton.getState()){
+    delay(10);
+    lcd.display(driveTrain->getPitch());
+  }
   driveTrain->blinkLeds(10);
-
-  
-  // driveTrain->driveDisplacement(30,0, .5);
-  // driveTrain->turnToAngle(-90);
-  // driveTrain->driveDisplacement(30,-90, .5);
-
-  // TOF tof(TOF::validPin[0]);
-  // tof.getDistance();
 
   cerebrum->start();
 

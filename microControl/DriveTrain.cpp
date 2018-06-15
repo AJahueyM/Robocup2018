@@ -32,14 +32,14 @@ void DriveTrain::checkDispense() {
 	if(!leftKit && shouldDispense){
 		if(millis() - lastHeatReading > heatReadRateMs){
 			if (mlxL.readObjectTempC() - mlxL.readAmbientTempC() > heatDiferenceVictim) {
-				blinkLeds(blinkTimesVictimDetected);
 				turn(0);
+				blinkLeds(blinkTimesVictimDetected);
 				dispenser.dispenseDirection(Left);
 				leftKit = true;
 			}
 			if (mlxR.readObjectTempC() - mlxR.readAmbientTempC() > heatDiferenceVictim) {
-				blinkLeds(blinkTimesVictimDetected);
 				turn(0);
+				blinkLeds(blinkTimesVictimDetected);
 				dispenser.dispenseDirection(Right);
 				leftKit = true;
 			}
@@ -73,6 +73,16 @@ void DriveTrain::checkDispense() {
 	}
 }
 void DriveTrain::driveVelocity(double velocity) {
+	if(getPitch() > 30){
+		turn(0);
+		if(velocity > 0)
+			driveVelocity(-.3);
+		else
+			driveVelocity(.3);
+		delay(750);
+		turn(0);
+	}
+
 	setRightMotorsVelocity(velocity);
 	setLeftMotorsVelocity(velocity);
 }
@@ -94,6 +104,34 @@ Absis<int> DriveTrain::getPitchHistory(){
 int DriveTrain::getPitch() {
 	return gyro.getPitch();
 }
+
+int DriveTrain::getAngleDiffPitchHistory(){
+	Absis<int> pitchHistory = getPitchHistory();
+	int lowestAngle = 300, highestAngle = -300;
+
+	for(int i = 0; i < pitchHistory.size(); ++i){
+		int angle = pitchHistory[i];
+		if(angle < lowestAngle){
+			lowestAngle = angle;
+		}
+		if(angle > highestAngle){
+			highestAngle = angle;
+		}
+	}
+	int angleDiff = abs(highestAngle - lowestAngle);
+	if(angleDiff > 200)
+		angleDiff = 0;
+	return angleDiff;
+}
+
+int DriveTrain::getAveragePitch(){
+	int sum = 0;
+	for(int i = 0; i < pitchHistory.size(); ++i){
+		sum += pitchHistory[i];
+	}	
+	return sum/pitchHistory.size();
+}
+
 void DriveTrain::resetYaw() {
 	gyro.resetYaw();
 }
@@ -130,15 +168,15 @@ void DriveTrain::turnToAngle(int angle) {
 		}
 	}
 	turn(0);
-	if(abs(error) > 10){
-		if(error < 0){
-			turn(0.75);
-		}else if(error > 0){
-			turn(-0.75);
-		}
-		delay(delayTurnCorrection);
-		turnToAngle(angle);
-	}
+	// if(abs(error) > 10){
+	// 	if(error < 0){
+	// 		turn(0.75);
+	// 	}else if(error > 0){
+	// 		turn(-0.75);
+	// 	}
+	// 	delay(delayTurnCorrection);
+	// 	turnToAngle(angle);
+	// }
 
 }
 
@@ -186,8 +224,8 @@ void DriveTrain::driveStraight(int angle, double velocity) {
 	multiplier = abs(multiplier);
 
 
-	if(multiplier >  .65){
-		multiplier = .65;
+	if(multiplier >  1){
+		multiplier = 1;
 	}
 	if(multiplier < 0){
 		multiplier = 0;
@@ -230,10 +268,42 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 	Absis<int> pitchLog;
 	long pitchRecordTarget = encCountsPitchRecord;
 	bool expandedMovement = false;
+	int distanceRepeatedCounter = 0;
+	int distanceCounterLimit = 30;
+	int distanceBeforeStuck = 0;
+	int lastDistance = 0;
+	int distanceThresh = 3;
 	while(abs(averageMovement) <= toMove && tileColor != Black){
 		if(millis() - lastUpdatedMovement > movementUpdateRate){
 			lastUpdatedMovement = millis();
-			// lcd.display(String(averageMovement / encCountsPerCm));
+		
+			int currentDistance = 0;
+			if(getDistanceFront() < 500){
+				currentDistance = getDistanceFront();
+			}else if(getDistanceBack() < 500){
+				currentDistance = getDistanceBack();
+			}else{
+				distanceRepeatedCounter = 0;
+			}
+			if( abs(lastDistance - currentDistance) < distanceThresh){
+				distanceRepeatedCounter++;
+			}
+			lastDistance = currentDistance;
+			if(distanceRepeatedCounter > distanceCounterLimit){
+				turn(0);
+				turn(-.9);
+				delay(500);
+				turn(.9);
+				delay(500);
+				turn(0);
+				distanceRepeatedCounter = 0;
+				expandedMovement = false;
+				toMove *= 1.10;
+			}
+
+
+
+			lcd.display(getPitch());
 			if(velocity > 0 ){
 				if(getDistanceFront() < getDesiredWallDistance() && getDistanceFront() != 0){
 					lastDisplacementCompleted = true;
@@ -254,7 +324,7 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 			}
 
 			if(!ignoreColorSensor)
-				///tileColor = getTileColor();
+				tileColor = getTileColor();
 
 			if(millis() - lastEncoderReading > encoderReadRateMs){
 				//encCountR = encR.read();
@@ -274,9 +344,12 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 					delay(delayCourseCorrection);
 					turnToAngle(angle);
 			}
-			if(getPitch() >  3 && !expandedMovement){
+			if(getPitch() >  10 && !expandedMovement){
 				expandedMovement = true;
-				toMove *= 1.1;
+				toMove *= 1.10;
+				if(getPitch() >  15){
+					toMove *= 1.10;
+				}
 			}
 		}
 	}

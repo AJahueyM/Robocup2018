@@ -72,7 +72,7 @@ Color ColorSensor::getColor(){
 }
 
 void ColorSensor::calibrateWhite(){
-  short int sumBuffer = 0;
+  int sumBuffer = 0;
   for(int i = 0; i < sensorReadings; ++i){
     sumBuffer += getRedFrequency();
   }
