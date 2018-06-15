@@ -218,52 +218,82 @@ NavigationResult Cerebrum::navigateLevel(Map* mapCurrent, Coord startCoord){ //R
 
 
 			followPath(bestPath);
-			mapCurrent->setRobotCoord(target);
+			if(!driveTrain.wasInterruptedColor()){
+				mapCurrent->setRobotCoord(target);
 
-			Tile tile =  getCurrentTile();
-			if(tile.isRamp()){
-				switch(currentRobotDirection){
-					case Up:{
-						tile.setWall(Right, true);
-						tile.setWall(Up, true);
-						tile.setWall(Left, true);
+				Tile tile = getCurrentTile();
+
+				if(tile.isRamp()){
+					switch(currentRobotDirection){
+						case Up:{
+							tile.setWall(Right, true);
+							tile.setWall(Up, true);
+							tile.setWall(Left, true);
+						}
+						break;
+						case Right:{
+							tile.setWall(Up, true);
+							tile.setWall(Down, true);
+							tile.setWall(Right, true);
+						}
+						break;
+						case Left:{
+							tile.setWall(Up, true);
+							tile.setWall(Down, true);
+							tile.setWall(Left, true);
+						}
+						break;
+						case Down:{
+							tile.setWall(Down, true);
+							tile.setWall(Left, true);
+							tile.setWall(Right, true);
+						}
+						break;
 					}
+				}
+
+				mapCurrent->setTileAt(target,tile);		
+				if(tile.isRamp()){
+					data.endCoord = target;
+					data.endReason = RampReached;
+					return data;
+				}
+			}else{
+				Coord updateColorTile = currentRobotCoord;
+				switch (currentRobotDirection) {
+					case Up:
+						updateColorTile.setY(updateColorTile.getY() + 1);
 					break;
-					case Right:{
-						tile.setWall(Up, true);
-						tile.setWall(Down, true);
-						tile.setWall(Right, true);
-					}
+					case Right:
+						updateColorTile.setX(updateColorTile.getX() + 1);
 					break;
-					case Left:{
-						tile.setWall(Up, true);
-						tile.setWall(Down, true);
-						tile.setWall(Left, true);
-					}
+
+					case Down:
+						updateColorTile.setY(updateColorTile.getY() - 1);
 					break;
-					case Down:{
-						tile.setWall(Down, true);
-						tile.setWall(Left, true);
-						tile.setWall(Right, true);
-					}
+
+					case Left:
+						updateColorTile.setX(updateColorTile.getX() - 1);
 					break;
 				}
-			}
-			mapCurrent->setTileAt(target,tile);
-			currentRobotCoord = mapCurrent->getRobotCoord();
-			start = currentRobotCoord;
-			if(tile.isRamp()){
-				data.endCoord = target;
-				data.endReason = RampReached;
-				return data;
-			}
+				Tile blackTile;
+				blackTile.visited(true);
+				blackTile.setWall(Up, true);
+				blackTile.setWall(Right, true);
+				blackTile.setWall(Down, true);
+				blackTile.setWall(Left, true);
+				blackTile.setColor(Black);
 
+				mapCurrent->setTileAt(updateColorTile, blackTile);
+					
+				driveTrain.driveDisplacement(10, angles[0], movementSpeed * -1, true);
+			}
 		}
 		//mapCurrent->getTileAt(target).visited(true);		/// COMENT THIS WHEN TESTING WITH ROBOT
-
+		currentRobotCoord = mapCurrent->getRobotCoord();
+		start = currentRobotCoord;
 		candidates = mapCurrent->getCandidates();
 		updateTelemetry();
-
 	}
 	data.endCoord = target;
 
@@ -289,6 +319,7 @@ NavigationResult Cerebrum::navigateLevel(Map* mapCurrent, Coord startCoord){ //R
 	}
 
 	return data;
+	
 }
 
 void Cerebrum::followPath(Path& path){
@@ -374,40 +405,7 @@ void Cerebrum::driveForward(){
 	}
 
 	maze[mazeFloor]->setRobotCoord(currentRobotCoord);
-	}else if(driveTrain.wasInterruptedColor()){
-		Coord updateColorTile = currentRobotCoord;
-		switch (currentRobotDirection) {
-			case Up:
-				updateColorTile.setY(updateColorTile.getY() + 1);
-			break;
-			case Right:
-				updateColorTile.setX(updateColorTile.getX() + 1);
-			break;
-
-			case Down:
-				updateColorTile.setY(updateColorTile.getY() - 1);
-			break;
-
-			case Left:
-				updateColorTile.setX(updateColorTile.getX() - 1);
-			break;
-		}
-
-		byte identity = B00000000, identity2 = B00000000;
-		identity = identity | isBlackMask;
-		identity = identity | wallUpMask;
-		identity = identity | wallRightMask;
-		identity = identity | wallDownMask;
-		identity = identity | wallLeftMask;
-
-		identity2 = identity2 | maskVisited;
-
-		Tile blackTile(identity, identity2);
-		maze[mazeFloor]->setTileAt(updateColorTile, blackTile);
-
-		driveTrain.driveDisplacement(10, angles[0], movementSpeed * -1, true);
 	}
-	updateTelemetry();
 }
 
 void Cerebrum::turnRobot(Direction dir){
@@ -774,51 +772,51 @@ void Cerebrum::updateRobotOrientations(){
 }
 
 void Cerebrum::updateTelemetry(){
-	// String str;
+	String str;
 	
-	// Tile currentTile = maze[mazeFloor]->getTileAt(maze[mazeFloor]->getRobotCoord());
-	// str.concat("X:");
-	// str.concat(maze[mazeFloor]->getRobotCoord().getX());
-	// str.concat("Y:");
-	// str.concat(maze[mazeFloor]->getRobotCoord().getY());
-	// str.concat(" ");
-	// str.concat(currentTile.wallExists(Up));
-	// str.concat(currentTile.wallExists(Right));
-	// str.concat(currentTile.wallExists(Down));
-	// str.concat(currentTile.wallExists(Left));
-	// str.concat("W:");
-	// str.concat(maze[mazeFloor]->getWidth());
-	// str.concat("H:");
-	// str.concat(maze[mazeFloor]->getHeight());
-	// str.concat("NV:");
-	// str.concat(maze[mazeFloor]->getNonVisitedTiles());
-	// switch(currentRobotDirection){
-	// 	case Up:{
-	// 		str.concat("U");
-	// 	}
-	// 	break;
+	Tile currentTile = maze[mazeFloor]->getTileAt(maze[mazeFloor]->getRobotCoord());
+	str.concat("X:");
+	str.concat(maze[mazeFloor]->getRobotCoord().getX());
+	str.concat("Y:");
+	str.concat(maze[mazeFloor]->getRobotCoord().getY());
+	str.concat(" ");
+	str.concat(currentTile.wallExists(Up));
+	str.concat(currentTile.wallExists(Right));
+	str.concat(currentTile.wallExists(Down));
+	str.concat(currentTile.wallExists(Left));
+	str.concat("W:");
+	str.concat(maze[mazeFloor]->getWidth());
+	str.concat("H:");
+	str.concat(maze[mazeFloor]->getHeight());
+	str.concat("NV:");
+	str.concat(maze[mazeFloor]->getNonVisitedTiles());
+	switch(currentRobotDirection){
+		case Up:{
+			str.concat("U");
+		}
+		break;
 		
-	// 	case Right:{
-	// 		str.concat("R");
-	// 	}
-	// 	break;		
+		case Right:{
+			str.concat("R");
+		}
+		break;		
 
-	// 	case Down:{
-	// 		str.concat("D");
-	// 	}
-	// 	break;		
+		case Down:{
+			str.concat("D");
+		}
+		break;		
 		
-	// 	case Left:{
-	// 		str.concat("L");
-	// 	}
-	// 	break;
-	// }
-	// str.concat("F:");
-	// str.concat(mazeFloor);
-	// str.concat("C:");
-	// str.concat(driveTrain.getTileColor());
-	// lcd.display(str);
-	lcd.display(freeMemory());
+		case Left:{
+			str.concat("L");
+		}
+		break;
+	}
+	str.concat("F:");
+	str.concat(mazeFloor);
+	str.concat("C:");
+	str.concat(driveTrain.getTileColor());
+	lcd.display(str);
+	//lcd.display(freeMemory());
 }
 void Cerebrum::showVisitedTilesLCD(){
 	Absis<Absis<Tile>> tileMap = maze[mazeFloor]->getTileMap();

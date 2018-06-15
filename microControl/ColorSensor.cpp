@@ -1,4 +1,7 @@
 #include "ColorSensor.h"
+ColorProfile ColorSensor::whiteProfile; 
+ColorProfile ColorSensor::blackProfile;
+ColorProfile ColorSensor::silverProfile;
 
 ColorSensor::ColorSensor(){
   pinMode(S0, OUTPUT);
@@ -49,7 +52,25 @@ Color ColorSensor::getColor(){
     Serial.print(" G= ");
     Serial.print(greenFrequency);
     Serial.print(" B= ");
-    Serial.println(blueFrequency);
+    Serial.print(blueFrequency);
+    Serial.print("\tWP: ");
+    Serial.print(whiteProfile.r);
+    Serial.print(" ");
+    Serial.print(whiteProfile.g);
+    Serial.print(" ");
+    Serial.print(whiteProfile.b);
+    Serial.print("\tBP: ");
+    Serial.print(blackProfile.r);
+    Serial.print(" ");
+    Serial.print(blackProfile.g);
+    Serial.print(" ");
+    Serial.print(blackProfile.b);
+    Serial.print("\tSP: ");
+    Serial.print(silverProfile.r);
+    Serial.print(" ");
+    Serial.print(silverProfile.g);
+    Serial.print(" ");
+    Serial.println(silverProfile.b);
   }
 
   if((withinRange(redFrequency, whiteProfile.r)&& withinRange(greenFrequency, whiteProfile.g))&& withinRange(blueFrequency, whiteProfile.b)){
@@ -78,18 +99,21 @@ void ColorSensor::calibrateWhite(){
   }
 
   whiteProfile.r = sumBuffer / sensorReadings;
+  sumBuffer = 0;
 
   for(int i = 0; i < sensorReadings; ++i){
     sumBuffer += getGreenFrequency();
   }
 
   whiteProfile.g = sumBuffer / sensorReadings;
+  sumBuffer = 0;
 
   for(int i = 0; i < sensorReadings; ++i){
     sumBuffer += getBlueFrequency();
   }
 
   whiteProfile.b = sumBuffer / sensorReadings; 
+
 }
 
 void ColorSensor::calibrateBlack(){
@@ -99,19 +123,20 @@ void ColorSensor::calibrateBlack(){
   }
 
   blackProfile.r = sumBuffer / sensorReadings;
+  sumBuffer = 0;
 
   for(int i = 0; i < sensorReadings; ++i){
     sumBuffer += getGreenFrequency();
   }
 
   blackProfile.g = sumBuffer / sensorReadings;
+  sumBuffer = 0;
 
   for(int i = 0; i < sensorReadings; ++i){
     sumBuffer += getBlueFrequency();
   }
 
   blackProfile.b = sumBuffer / sensorReadings; 
-
 }
 
 void ColorSensor::calibrateSilver(){
@@ -121,16 +146,19 @@ void ColorSensor::calibrateSilver(){
   }
 
   silverProfile.r = sumBuffer / sensorReadings;
+  sumBuffer = 0;
 
   for(int i = 0; i < sensorReadings; ++i){
     sumBuffer += getGreenFrequency();
   }
 
   silverProfile.g = sumBuffer / sensorReadings;
+  sumBuffer = 0;
 
   for(int i = 0; i < sensorReadings; ++i){
     sumBuffer += getBlueFrequency();
   }
 
   silverProfile.b = sumBuffer / sensorReadings; 
+
 }

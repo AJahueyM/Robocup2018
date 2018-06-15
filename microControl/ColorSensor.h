@@ -21,7 +21,7 @@ private:
   const uint8_t  S3 = 26;
   const uint8_t sensorOut =  22;
   const uint8_t sensorReadings = 20;
-  ColorProfile whiteProfile, blackProfile, silverProfile;
+  static ColorProfile whiteProfile, blackProfile, silverProfile;
   bool calibrar = true;
   bool withinRange(int input, int value);
   ColorSensor();

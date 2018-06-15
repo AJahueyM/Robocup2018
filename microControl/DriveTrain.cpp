@@ -257,13 +257,13 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 	Color tileColor = White;
 	Absis<int> pitchLog;
 	long pitchRecordTarget = encCountsPitchRecord;
-	bool expandedMovement = false;
+	bool expandedMovement = false, moving = true;
 	int distanceRepeatedCounter = 0;
-	int distanceCounterLimit = 20;
+	int distanceCounterLimit = 25;
 	int distanceBeforeStuck = 0;
 	int lastDistance = 0;
-	int distanceThresh = 2;
-	while(abs(averageMovement) <= toMove && tileColor != Black){
+	int distanceThresh = 1, distanceTreshMovingRestored = 5;
+	while(abs(averageMovement) <= toMove){
 		if(millis() - lastUpdatedMovement > movementUpdateRate){
 			lastUpdatedMovement = millis();
 		
@@ -276,9 +276,15 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 				distanceRepeatedCounter = 0;
 			}
 			if( abs(lastDistance - currentDistance) < distanceThresh){
+
 				distanceRepeatedCounter++;
 			}
+			if(!moving){
+				if(lastDistance - currentDistance > distanceTreshMovingRestored)
+					moving  = true;
+			}
 			lastDistance = currentDistance;
+
 			if(distanceRepeatedCounter > distanceCounterLimit){
 				turn(0);
 				turn(-.75);
@@ -288,12 +294,10 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 				turn(0);
 				distanceRepeatedCounter = 0;
 				expandedMovement = false;
-				toMove *= 1.10;
-			}
+				moving = false;
+				toMove *= 1.2;
+			}	
 
-
-
-			lcd.display(getPitch());
 			if(velocity > 0 ){
 				if(getDistanceFront() < getDesiredWallDistance() && getDistanceFront() != 0){
 					lastDisplacementCompleted = true;
@@ -315,10 +319,21 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 
 			if(!ignoreColorSensor)
 				tileColor = getTileColor();
+			lcd.display(tileColor);
+
+			if(tileColor == Black){
+				break;
+			}
 
 			if(millis() - lastEncoderReading > encoderReadRateMs){
 				//encCountR = encR.read();
-				encCountL = encL.read();
+				if(moving)
+					encCountL = encL.read();
+				else {
+					encCountL = averageMovement;
+					encL.write(averageMovement);
+				}
+
 				lastEncoderReading = millis();
 				averageMovement = encCountL;
 			}
@@ -420,7 +435,7 @@ void DriveTrain::alignWithWall(RobotFace faceToAlign) {
 					driveVelocity(-.3);
 				else
 					driveVelocity(.3);
-				delay(750);
+				delay(1000);
 				turn(0);
 			}
 

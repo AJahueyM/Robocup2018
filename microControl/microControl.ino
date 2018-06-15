@@ -40,9 +40,21 @@ void setup() {
 
     while(!colorCalButton.getState()){
       delay(10);
+      lcd.display(colorSensor.getColor());
+    }
+    delay(200);
+
+    while(!colorCalButton.getState()){
+      delay(10);
       lcd.display("PLACE ON BLACK AND PRESS");
     }
     colorSensor.calibrateBlack();
+      delay(200);
+
+    while(!colorCalButton.getState()){
+      delay(10);
+      lcd.display(colorSensor.getColor());
+    }
     delay(200);
 
     while(!colorCalButton.getState()){
@@ -51,6 +63,13 @@ void setup() {
     }
     colorSensor.calibrateSilver();
     delay(200);
+
+    while(!colorCalButton.getState()){
+      delay(10);
+      lcd.display(colorSensor.getColor());
+    }
+    delay(200);
+
   }
 
   delay(200);
