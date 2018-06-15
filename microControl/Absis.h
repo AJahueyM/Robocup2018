@@ -42,10 +42,9 @@ public:
         return currentSize ;
     }
     T& operator[](unsigned short int index){
-        if(index >= 0 && index < currentSize)
-            return array[index];
+        return array[index];
     }
-
+    
 private:
     unsigned short int currentSize = 0;
     T *array;

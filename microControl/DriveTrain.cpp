@@ -73,16 +73,6 @@ void DriveTrain::checkDispense() {
 	}
 }
 void DriveTrain::driveVelocity(double velocity) {
-	if(getPitch() > 30){
-		turn(0);
-		if(velocity > 0)
-			driveVelocity(-.3);
-		else
-			driveVelocity(.3);
-		delay(750);
-		turn(0);
-	}
-
 	setRightMotorsVelocity(velocity);
 	setLeftMotorsVelocity(velocity);
 }
@@ -291,9 +281,9 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 			lastDistance = currentDistance;
 			if(distanceRepeatedCounter > distanceCounterLimit){
 				turn(0);
-				turn(-.9);
+				turn(-.75);
 				delay(500);
-				turn(.9);
+				turn(.75);
 				delay(500);
 				turn(0);
 				distanceRepeatedCounter = 0;
@@ -351,6 +341,17 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 					toMove *= 1.10;
 				}
 			}
+
+			if(getPitch() > 30){
+				turn(0);
+				if(velocity > 0)
+					driveVelocity(-.3);
+				else
+					driveVelocity(.3);
+				delay(750);
+				turn(0);
+			}
+
 		}
 	}
 
@@ -400,20 +401,27 @@ void DriveTrain::alignWithWall(RobotFace faceToAlign) {
 	case Back:
 		right = &backRLimitS;
 		left = &backLLimitS;
-		speed = -.75;
+		speed = -.4;
 		break;
 
 	case Front:
 		right = &frontRLimitS;
 		left = &frontLLimitS;
-		speed = .75;
+		speed = .4;
 		break;
 	}
 
 	while (!right->getState() || !left->getState()) {
-    Serial.print(right->getState());
-    Serial.print(" ");
-    Serial.println(left->getState());
+		if(getPitch() > 30){
+			turn(0);
+			if(speed > 0)
+				driveVelocity(-.3);
+			else
+				driveVelocity(.3);
+			delay(750);
+			turn(0);
+		}
+
 		if (!right->getState())
 			setRightMotorsVelocity(speed);
 		else
