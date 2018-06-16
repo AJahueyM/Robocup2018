@@ -44,9 +44,18 @@ void Cerebrum::run(){
 			getCurrentTile
 
 			*/
-			while(driveTrain.getPitch() > rampAngle/2){
-				lcd.display("RAMP REACHED");
-				driveTrain.driveStraight(angles[0], rampMovementSpeed);
+			long startTime = millis();
+			while(driveTrain.getPitch() > rampAngle - 3){
+				String str;
+				str.concat("RAMP REACHED ");
+				str.concat(driveTrain.getPitch());
+				lcd.display(str);
+				
+				if(millis() - startTime < rampMovementSpeedOverTimeout)
+					driveTrain.driveStraight(angles[0], rampMovementSpeed);
+				else
+					driveTrain.driveStraight(angles[0], rampMovementSpeedOverride);
+				
 			}
 			driveTrain.turn(0);
 			driveTrain.driveDisplacement(15, angles[0], preciseMovementSpeed);

@@ -35,23 +35,26 @@ bool ColorSensor::withinRange(int input, int value){
   return false;
 }
 
-short int ColorSensor::getRedFrequency(){
+uint8_t ColorSensor::getRedFrequency(){
   digitalWrite(S2,LOW);
   digitalWrite(S3,LOW);
-  return pulseIn(sensorOut, LOW);
+  int value =  pulseIn(sensorOut, LOW);
+  return value > 0  && value < 254 ? value : 0;
 }
 
-short int ColorSensor::getGreenFrequency(){
+uint8_t ColorSensor::getGreenFrequency(){
     digitalWrite(S2,HIGH);
     digitalWrite(S3,HIGH);
-    return pulseIn(sensorOut, LOW);  
-}
+    int value =  pulseIn(sensorOut, LOW);
+    return value > 0 && value < 254 ? value : 0;
+  }
 
-short int ColorSensor::getBlueFrequency(){
+uint8_t ColorSensor::getBlueFrequency(){
     digitalWrite(S2,LOW);
     digitalWrite(S3,HIGH);
-    return pulseIn(sensorOut, LOW);
-}
+    int value =  pulseIn(sensorOut, LOW);
+    return value > 0  && value < 254? value : 0;
+  }
 
 Color ColorSensor::getColor(){ 
   if(millis() - lastReadTime > timeoutReads){
@@ -88,7 +91,9 @@ Color ColorSensor::getColor(){
     Serial.print(" ");
     Serial.println(silverProfile.b);
   }
-
+  /// REMOVE THIS
+  return White;
+  
   if((withinRange(redFrequency, whiteProfile.r)&& withinRange(greenFrequency, whiteProfile.g))&& withinRange(blueFrequency, whiteProfile.b)){
       if(calibrar)
         Serial.print(" WHITE ");

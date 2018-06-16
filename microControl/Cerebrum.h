@@ -54,8 +54,9 @@ private:
     Absis<Map*> maze;
     LCD& lcd;
 	Button *button1, *button2;
-    double movementSpeed = .75, preciseMovementSpeed = .35, rampMovementSpeed = .4;
+    double movementSpeed = .75, preciseMovementSpeed = .35, rampMovementSpeed = .4, rampMovementSpeedOverride = .75;
  	uint8_t distanceMoveTiles = 30, rampAngle = 20,  turnCounter = 0, mazeFloor = 0, wallTolerance = 9, wallThreshold = 15;
+	long rampMovementSpeedOverTimeout = 4000 ;
 	short int  angles[4];
 	int lowBumpAngleDiff = 2, mediumAngleDiff = 4, maxAngleDiff = 8, limitTurnCounter = 6;
  	bool hasStarted = false;

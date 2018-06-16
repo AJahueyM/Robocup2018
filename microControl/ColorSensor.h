@@ -42,8 +42,8 @@ private:
   uint8_t blackDirB = 5;
 
   uint8_t silverDirR = 6;
-  uint8_t silverDirR = 7;
-  uint8_t silverDirR = 8;
+  uint8_t silverDirG = 7;
+  uint8_t silverDirB = 8;
 
 
 public:
