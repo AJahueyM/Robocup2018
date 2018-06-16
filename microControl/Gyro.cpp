@@ -68,10 +68,6 @@ int Gyro::getPitch(){
 		int raw = -euler.y();
 		int pitchNew = abs(euler.y() + pitchOffSet);
 		
-		Serial.print("Raw: ");
-		Serial.print(raw);
-		Serial.print("\tNew: ");
-		Serial.println(pitchNew);
 		pitch = pitchNew;
 		lastReadTime = millis();
 	}

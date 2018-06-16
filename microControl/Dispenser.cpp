@@ -3,12 +3,12 @@
 
 
 Dispenser::Dispenser(){
-	//servoDispenser.attach(pin);
+	servoDispenser.attach(pin);
 	amountAvailable = 12;
-	outputCenter = 75;
-	outputLeft = 115;
-	outputRight = 40;
- //	servoDispenser.write(outputCenter);
+	outputCenter = 100;
+	outputLeft = 178;
+	outputRight = 11;
+ 	servoDispenser.write(outputCenter);
 }
 
 void Dispenser::setAmountAvailable(uint8_t iAmount){
@@ -26,11 +26,11 @@ void Dispenser::dispenseDirection(Direction direction, uint8_t amount){
 	if(direction == Left){
 		for(int i =0; i < amount; i++){
 			if(kitsAvailable()){
-				// servoDispenser.write(outputCenter);
-				// delay(500);
-				// servoDispenser.write(outputLeft);
-				// delay(500);
-				// servoDispenser.write(outputCenter);
+				servoDispenser.write(outputCenter);
+				delay(500);
+				servoDispenser.write(outputLeft);
+				delay(500);
+				servoDispenser.write(outputCenter);
 				updateAmountAvailable(1);
 				delay(500);
 			}
@@ -39,17 +39,17 @@ void Dispenser::dispenseDirection(Direction direction, uint8_t amount){
 	}else if(direction == Left){
 		for(int i =0; i < amount; i++){
 			if(kitsAvailable()){
-				// servoDispenser.write(outputCenter);
-				// delay(500);
-				// servoDispenser.write(outputRight);
-				// delay(500);
-				// servoDispenser.write(outputCenter);
+				servoDispenser.write(outputCenter);
+				delay(500);
+				servoDispenser.write(outputRight);
+				delay(500);
+				servoDispenser.write(outputCenter);
 				updateAmountAvailable(1);
 				delay(500);
 			}
 		}
 	}else{
-		//servoDispenser.write(outputCenter);
+		servoDispenser.write(outputCenter);
 	}
 	
 }
