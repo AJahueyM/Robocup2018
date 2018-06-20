@@ -93,7 +93,7 @@ Path AStar::getPath(Coord startCoord, Coord endCoord, Absis<Absis<Tile>>& maze){
 
         for(int i = 0; i < amountNeighbors; ++i){
             Tile* neighbor = neighbors[i];
-            if((neighbor->wasVisited() || neighbor == end) && neighbor->getColor() != Black){
+            if((neighbor->wasVisited() || neighbor == end)){
             ///MODIFIED ASTAR TO BE USED ON ROBOCUP
                 if(countsOnVector(closedSet, neighbor) == 0){
                     

@@ -260,7 +260,7 @@ void DriveTrain::driveStraight(int angle, double velocity) {
 
 }
 
-void DriveTrain::driveDisplacement(double displacement, int angle, double velocity, bool ignoreColorSensor) {
+void DriveTrain::driveDisplacement(double displacement, int angle, double velocity, bool ignoreDistanceSensor) {
 	interruptedColor = false;
 	lastDisplacementCompleted = false;
 	if(velocity  == 0){
@@ -275,7 +275,6 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 	long encCountL = startCountL;
 	long averageMovement = 0;
 	long toMove = displacement * encCountsPerCm;
-	Color tileColor = White;
 	Absis<int> pitchLog;
 	long pitchRecordTarget = encCountsPitchRecord;
 	bool expandedMovement = false, moving = true;
@@ -318,31 +317,26 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 				moving = false;
 				toMove *= 1.2;
 			}	
-
-			if(velocity > 0 ){
-				if(getDistanceFront() < getDesiredWallDistance() && getDistanceFront() != 0){
-					lastDisplacementCompleted = true;
-					turn(0);
-					return;
-				}
-			}else{
-				if(getDistanceBack() < getDesiredWallDistance() &&  getDistanceBack() != 0){
-					lastDisplacementCompleted = true;
-					turn(0);
-					return;
+			
+			if(!ignoreDistanceSensor){
+				if(velocity > 0 ){
+					if(getDistanceFront() < getDesiredWallDistance() && getDistanceFront() != 0){
+						lastDisplacementCompleted = true;
+						turn(0);
+						return;
+					}
+				}else{
+					if(getDistanceBack() < getDesiredWallDistance() &&  getDistanceBack() != 0){
+						lastDisplacementCompleted = true;
+						turn(0);
+						return;
+					}
 				}
 			}
 
 			if(averageMovement > pitchRecordTarget){
 				pitchLog.push_back(getPitch());
 				pitchRecordTarget+=encCountsPitchRecord;
-			}
-
-			if(!ignoreColorSensor)
-				tileColor = getTileColor();
-
-			if(tileColor == Black){
-				break;
 			}
 
 			if(millis() - lastEncoderReading > encoderReadRateMs){
@@ -394,11 +388,8 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 	turnToAngle(angle);
 
 	pitchHistory =  pitchLog;
-	if(tileColor == Black){
-		interruptedColor = true;
-	}else{
-		lastDisplacementCompleted = true;
-	}
+	lastDisplacementCompleted = true;
+	
 }
 
 int DriveTrain::getDistanceFront() {

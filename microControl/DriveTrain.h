@@ -81,7 +81,7 @@ public:
 	// int getDistanceRightBack();
 	int getDistanceBack();
 	int getDesiredWallDistance();
-	void driveDisplacement(double displacement, int angle, double velocity, bool ignoreColorSensor = false);
+	void driveDisplacement(double displacement, int angle, double velocity, bool ignoreDistanceSensor = false);
 	void alignWithWall(RobotFace faceToAlign);
 	void moveDesiredDistanceToWall(double velocity);
 	bool wasLastDisplacementCompleted();

@@ -39,6 +39,7 @@ public:
 	static void createRamp(Map* startMap, Coord start, Direction currentRobotDir ,  Map* endMap, Coord end);
 	LCD& lcd = LCD::getInstance();
 	Coord getOriginCoord();
+	Coord getBlackTileCoord();
 private:
 	Absis<Absis<Tile>> tileMap;
 	Absis<Ramp> ramps;

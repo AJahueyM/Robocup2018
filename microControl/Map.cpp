@@ -153,7 +153,7 @@ Absis<Coord> Map::getCandidates(){
 	Absis<Absis<Tile>> &maze = getTileMap();
 	for (int y = 0; y < maze.size(); ++y) {
 		for (int x = 0; x < maze[0].size(); ++x) {
-			if (maze[y][x].wasVisited() && maze[y][x].getColor() != Black) {
+			if (maze[y][x].wasVisited()) {
 
 				//cout << "LA TILE VISITADA ES (" << x << "," << y << ")" << endl;
 				Absis <Tile*> neighbors;
@@ -242,22 +242,19 @@ void Map::updateNeighbors(){
 	for(int y = 0; y < tileMap.size(); ++y){
 		for(int x = 0; x < tileMap[0].size(); ++x){
 			Tile& node = tileMap[y][x];
-			if(node.wasVisited() && node.getColor() != Black){
+			if(node.wasVisited()){
 				node.clearNeighbors();
 				if(y - 1 >= 0 && !node.wallExists(Down))
-					if(tileMap[y-1][x].getColor() != Black)
-						node.addNeighbor(&tileMap[y-1][x]);
+					node.addNeighbor(&tileMap[y-1][x]);
 					
 				if(y + 1 < tileMap.size() && !node.wallExists(Up))
-					if(tileMap[y+1][x].getColor() != Black)
-						node.addNeighbor(&tileMap[y+1][x]);
+					node.addNeighbor(&tileMap[y+1][x]);
 
 				if(x + 1 < tileMap[0].size() && !node.wallExists(Right))
-					if(tileMap[y][x + 1].getColor() != Black)
-						node.addNeighbor(&tileMap[y][x+1]);
+					node.addNeighbor(&tileMap[y][x+1]);
+
 				if(x - 1 >= 0 && !node.wallExists(Left))
-					if(tileMap[y][x - 1].getColor() != Black)
-						node.addNeighbor(&tileMap[y][x-1]);
+					node.addNeighbor(&tileMap[y][x-1]);
 			}
 		}
 	}
@@ -358,4 +355,13 @@ void Map::createRamp(Map* startMap, Coord start, Direction currentRobotDir, Map*
 
 Coord Map::getOriginCoord(){
 	return originCoord;
+}
+
+Coord Map::getBlackTileCoord(){
+	for(int y = 0; y < getHeight(); ++y){
+		for(int x = 0; x < getWidth(); ++x){
+			if(tileMap[y][x].getColor())
+				return Coord(x, y);
+		}
+	}
 }
