@@ -18,13 +18,14 @@ void Cerebrum::start(){
 
   //cout <<  (int) tileMap[2][0].getCost() << " " <<  (int) tileMap[4][0].getCost() << " " <<  (int) tileMap[2][1].getCost() << endl;
   	//Map tMap(tileMap);
-	resetGyro(Back);
+	//resetGyro(Back);
 	Tile tile = getInitialTile();
 	Map* map1 = new Map(tile, 0);
 
 	maze.push_back(map1);
 	while(!button1->getState())
 		updateTelemetry();
+	driveTrain.resetAll();
 	delay(200);
 }
 
@@ -295,10 +296,10 @@ NavigationResult Cerebrum::navigateLevel(Map* mapCurrent, Coord startCoord){ //R
 
 				mapCurrent->setTileAt(updateColorTile, blackTile);
 					
-				driveTrain.driveDisplacement(10, angles[0], movementSpeed * -1, true);
+				driveTrain.driveDisplacement(12, angles[0], movementSpeed * -1, true);
 			}
 		}
-		//mapCurrent->getTileAt(target).visited(true);		/// COMENT THIS WHEN TESTING WITH ROBOT
+		//mapCurrent->getTileAt(target).visited(true);		/// COMMENT THIS WHEN TESTING WITH ROBOT
 		currentRobotCoord = mapCurrent->getRobotCoord();
 		start = currentRobotCoord;
 		candidates = mapCurrent->getCandidates();
@@ -309,20 +310,42 @@ NavigationResult Cerebrum::navigateLevel(Map* mapCurrent, Coord startCoord){ //R
 	if(mapCurrent->wasCompleted()){
 		data.endReason = Completed;
 	}else{
+		delay(200);
+		lcd.display("A");
 		Absis<Ramp> ramps = mapCurrent->getRamps();
+		delay(200);
+		lcd.display("B");
+
 		Absis<Coord> targetCoords;
+		delay(200);
+		lcd.display("C");
+
 		for(int i = 0; i < ramps.size(); ++i){
 			Ramp ramp = ramps[i];
-			if(!ramp.getUsed())
+			delay(200);
+			lcd.display("C.0");
+			if(!ramp.getUsed()){
 				targetCoords.push_back(ramp.getOrigin());
+				String str;
+				delay(200);
+				str.concat("C.1[");
+				str.concat(i);
+				delay(200);
+				str.concat("]");
+				lcd.display(str);
+			}
 		}
-
+		delay(200);
+		lcd.display("D");
 		Path pathToClosestRamp = getPathLowerCost(data.endCoord, targetCoords, mapCurrent);
 
-		
+		delay(200);
+		lcd.display("E");
+	
 		followPath(pathToClosestRamp);
-		
-		pathToClosestRamp.print();
+		delay(200);
+		lcd.display("F");
+
 		data.endReason = RampReached;
 		data.endCoord = pathToClosestRamp.getCoordAt(pathToClosestRamp.getLength() -1);
 	}
@@ -334,7 +357,7 @@ NavigationResult Cerebrum::navigateLevel(Map* mapCurrent, Coord startCoord){ //R
 void Cerebrum::followPath(Path& path){
 
 	Tile currentTile = maze[mazeFloor]->getTileAt(maze[mazeFloor]->getRobotCoord());
-	driveTrain.setShouldDispense(!currentTile.getLeftKit());
+	//driveTrain.setShouldDispense(!currentTile.getLeftKit());
 
 	for(int i = 0; i < path.getLength(); ++i){
 		Coord coord = path.getCoordAt(i);
@@ -411,9 +434,41 @@ void Cerebrum::driveForward(){
 		case Left:
 			currentRobotCoord.setX(currentRobotCoord.getX() - 1);
 		break;
-	}
+		}
 
-	maze[mazeFloor]->setRobotCoord(currentRobotCoord);
+		maze[mazeFloor]->setRobotCoord(currentRobotCoord);
+
+		// if((driveTrain.getAngleDiffPitchHistory() < 5 ) && (driveTrain.getDistanceFront() < 800)){
+		// 	int distance = driveTrain.getDistanceFront();
+
+		// 	int targetDistanceUpper = 6.5;
+		// 	while(targetDistanceUpper <= distance){
+		// 		targetDistanceUpper += 30;
+		// 	}
+		// 	int targetDistanceLower = 0;
+		// 	if(targetDistanceUpper > 30)
+		// 		targetDistanceLower = targetDistanceUpper - 30;
+			
+		// 	int diffUpper = abs(distance - targetDistanceUpper);
+		// 	int diffLower = abs(distance - targetDistanceLower);
+
+		// 	if( (diffUpper > distanceThresholdGridAlign )|| (diffLower > distanceThresholdGridAlign) ){
+		// 		delay(200);
+		// 		lcd.display("CORRECTING");
+		// 		delay(1500);
+		// 		if(diffUpper < diffLower){
+		// 			delay(200);
+		// 			lcd.display(diffUpper);
+		// 			driveTrain.driveDisplacement(diffUpper, angles[0], preciseMovementSpeed);
+		// 		}else{
+		// 			delay(200);
+		// 			lcd.display(diffLower);
+		// 			driveTrain.driveDisplacement(diffLower, angles[0], -preciseMovementSpeed);
+
+		// 		}
+		// 	}
+		// }
+
 	}
 }
 
@@ -442,8 +497,7 @@ void Cerebrum::turnRobot(Direction dir){
 			turnCounter = 0;
 			if(canCorrectBack)
 				resetGyro(Back);
-			else
-				resetGyro(Front);
+
 		}
 	}
 	updateRobotOrientations();
@@ -648,7 +702,7 @@ Tile Cerebrum::getCurrentTile(){
 	}
 	
 	if(driveTrain.leftKitLastMovement()){
-		tile.setLeftKit(true);
+		//tile.setLeftKit(true);
 		driveTrain.setLeftKit(false);
 	}
 	return tile;

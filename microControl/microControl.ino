@@ -5,7 +5,6 @@
 DriveTrain* driveTrain;
 Cerebrum* cerebrum;
 using namespace std;
-    uint8_t sLetterPin = 10, hLetterPin = 11, uLetterPin = 12, directionLetterPin = 13;
 
 void setup() {
   LCD lcd = LCD::getInstance();
@@ -15,11 +14,7 @@ void setup() {
   driveTrain = &DriveTrain::getInstance();
   cerebrum = &Cerebrum::getInstance(*driveTrain);
 	lcd.display(String("Robot booted up"));
-  pinMode(sLetterPin, INPUT);
-  pinMode(hLetterPin, INPUT);
-  pinMode(uLetterPin, INPUT);
-  pinMode(directionLetterPin, INPUT);
-
+  
   Button colorCalButton(30);
 
   if(colorCalButton.getState()){
@@ -72,6 +67,16 @@ void setup() {
 
     colorSensor.saveProfiles();
 
+
+    delay(200);
+
+    while(!colorCalButton.getState()){
+      delay(10);
+      lcd.display("PLACE ON VICTIM");
+    }
+    driveTrain->calibrateHeatVictim();
+    delay(200);
+
   }
 
   delay(200);
@@ -80,11 +85,7 @@ void setup() {
     lcd.display("PLACE ON STARTING POS");
   }
 
-  delay(500);
-  while(!colorCalButton.getState()){
-    delay(10);
-    lcd.display(driveTrain->getPitch());
-  }
+
   driveTrain->blinkLeds(10);
 
   cerebrum->start();
@@ -110,6 +111,7 @@ void loop() {
   //driveTrain->getYaw();
   //cout <<  << endl;
   //driveTrain->turnToAngle(0);
+  // LCD lcd = LCD::getInstance();
   // String str;
   // str.concat(driveTrain->getDistanceFront());
   // str.concat(" ");

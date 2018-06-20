@@ -5,9 +5,9 @@
 Dispenser::Dispenser(){
 	servoDispenser.attach(pin);
 	amountAvailable = 12;
-	outputCenter = 100;
+	outputCenter = 90;
 	outputLeft = 178;
-	outputRight = 11;
+	outputRight = 5;
  	servoDispenser.write(outputCenter);
 }
 
@@ -36,7 +36,7 @@ void Dispenser::dispenseDirection(Direction direction, uint8_t amount){
 			}
 			
 		}
-	}else if(direction == Left){
+	}else if(direction == Right){
 		for(int i =0; i < amount; i++){
 			if(kitsAvailable()){
 				servoDispenser.write(outputCenter);

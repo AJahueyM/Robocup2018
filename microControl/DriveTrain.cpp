@@ -1,8 +1,8 @@
 #include "DriveTrain.h"
 ///Constructor
 DriveTrain::DriveTrain() : topRight(2), topLeft(1), lowRight(4), lowLeft(3), encL(19, 18),encR(16,17), 
-	frontTof(49, 0x32), backTof(42, 0x33), rightSharpFront(13), rightSharpBack(10),leftSharpFront(12), leftSharpBack(11),
-	backRLimitS(4), backLLimitS(3),  frontRLimitS (45) , frontLLimitS(43), leds(led1Pin){
+	frontTof(49, 0x32), backTof(42, 0x33) /*, rightSharpFront(13), rightSharpBack(10),leftSharpFront(12), leftSharpBack(11)*/,
+	backRLimitS(4), backLLimitS(3),  frontRLimitS (45) , frontLLimitS(43), leds(led1Pin) ,rightUltra(39, 33), leftUltra(31, 29){
 	Serial.println("DriveTrain initializing...");
 	leds.addPin(led2Pin);
 	leds.setState(false);
@@ -11,6 +11,7 @@ DriveTrain::DriveTrain() : topRight(2), topLeft(1), lowRight(4), lowLeft(3), enc
 	Serial.println("DriveTrain initialized");
 	encCountsPerCm =	encCountsPerRev /  wheelCircunference; 
 	encCountsPitchRecord = cmsPitchRecord * encCountsPerCm;
+	heatVictim = EEPROM.read(heatDirection);
 }
 
 void DriveTrain::setRightMotorsVelocity(double velocity) {
@@ -19,6 +20,10 @@ void DriveTrain::setRightMotorsVelocity(double velocity) {
 }
 
 void DriveTrain::setLeftMotorsVelocity(double velocity) {
+	String str;
+	str.concat(frontRLimitS.getState());
+	str.concat(frontLLimitS.getState());
+	lcd.display(str);
 	topLeft.driveVelocity(-velocity);
 	lowLeft.driveVelocity(velocity);
 }
@@ -29,15 +34,14 @@ void DriveTrain::blinkLeds(uint8_t times){
 }
 
 void DriveTrain::checkDispense() {
-	if(!leftKit && shouldDispense){
+	if((!leftKit && shouldDispense) && (getAngleDiffPitchHistory() < 5)){
 		if(millis() - lastHeatReading > heatReadRateMs){
-			if (mlxL.readObjectTempC() - mlxL.readAmbientTempC() > heatDiferenceVictim) {
+			if ( mlxL.readObjectTempC() >= heatVictim * .9) {
 				turn(0);
 				blinkLeds(blinkTimesVictimDetected);
 				dispenser.dispenseDirection(Left);
 				leftKit = true;
-			}
-			if (mlxR.readObjectTempC() - mlxR.readAmbientTempC() > heatDiferenceVictim) {
+			}else if (mlxR.readObjectTempC() >= heatVictim * .9) {
 				turn(0);
 				blinkLeds(blinkTimesVictimDetected);
 				dispenser.dispenseDirection(Right);
@@ -72,6 +76,12 @@ void DriveTrain::checkDispense() {
 		// }
 	}
 }
+
+void DriveTrain::calibrateHeatVictim(){
+	heatVictim = mlxL.readObjectTempC();
+	EEPROM.write(heatDirection, (uint8_t) heatVictim);
+}
+
 void DriveTrain::driveVelocity(double velocity) {
 	setRightMotorsVelocity(velocity);
 	setLeftMotorsVelocity(velocity);
@@ -139,34 +149,45 @@ void DriveTrain::setYawOffset(int value){
 
 void DriveTrain::turnToAngle(int angle) {
 
-	short int error =  shortestAngleTurn(getYaw(), angle); //angle - getYaw();// shortestAngleTurn(getYaw(), angle);
+	float error =  shortestAngleTurn(getYaw(), angle); //angle - getYaw();// shortestAngleTurn(getYaw(), angle);
 
-	long startTime = millis();
+	for(int i = 0; i < 5; ++i){
 
-	while(millis() - startTime < turnTimeOut && abs(error) > 1) {
-		if(millis() - lastUpdatedMovement > movementUpdateRate){
-			lastUpdatedMovement = millis();
-			checkDispense();
-			error = shortestAngleTurn(getYaw(), angle); // angle - getYaw();// shortestAngleTurn(getYaw(), angle);
-			double output = error * kConstantTurn;
+		long startTime = millis();
+		bool leftKitReset = false;
+		while(millis() - startTime < turnTimeOut && abs(error) > 1) {
+			if(millis() - lastUpdatedMovement > movementUpdateRate){
+				lastUpdatedMovement = millis();
+				checkDispense();
 
-			output = output > 1 ? 1 : output;
-			output = output < -1 ? -1 : output;
-			output = output < 0.3 && output >  0 ?  0.3 : output;
-			output = output < 0 && output >  -0.3 ?  -0.3 : output;
-			turn(output);
+				if(leftKit && !leftKitReset){
+					startTime = millis();
+					leftKitReset = true;
+				}
+				error = shortestAngleTurn(getYaw(), angle); // angle - getYaw();// shortestAngleTurn(getYaw(), angle);
+				double output = error * kConstantTurn;
+
+				output = output > 1 ? 1 : output;
+				output = output < -1 ? -1 : output;
+				output = output < 0.3 && output >  0 ?  0.3 : output;
+				output = output < 0 && output >  -0.3 ?  -0.3 : output;
+				turn(output);
+			}
+		}
+		turn(0);
+		if(abs(error) > 10.0){
+			if(error < 0.0){
+				turn(0.75);
+			}else if(error > 0.0){
+				turn(-0.75);
+			}
+			delay(delayTurnCorrection);
+			turn(0);
+		}else{
+			break;
 		}
 	}
-	turn(0);
-	// if(abs(error) > 10){
-	// 	if(error < 0){
-	// 		turn(0.75);
-	// 	}else if(error > 0){
-	// 		turn(-0.75);
-	// 	}
-	// 	delay(delayTurnCorrection);
-	// 	turnToAngle(angle);
-	// }
+
 
 }
 
@@ -319,7 +340,6 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 
 			if(!ignoreColorSensor)
 				tileColor = getTileColor();
-			lcd.display(tileColor);
 
 			if(tileColor == Black){
 				break;
@@ -386,20 +406,22 @@ int DriveTrain::getDistanceFront() {
 }
 
 int DriveTrain::getDistanceLeftFront() {
-	return leftSharpFront.getDistance() - 4;
+	//return leftSharpFront.getDistance() - 4;
+	return leftUltra.Ranging(CM) - 4;
 }
 
-int DriveTrain::getDistanceLeftBack(){
-	return leftSharpBack.getDistance() - 4;
-}
+// int DriveTrain::getDistanceLeftBack(){
+// 	return leftSharpBack.getDistance() - 4;
+// }
 
 int DriveTrain::getDistanceRightFront() {
-	return rightSharpFront.getDistance() - 4;
+	//return rightSharpFront.getDistance() - 4;
+	return rightUltra.Ranging(CM) - 4;
 }
 
-int DriveTrain::getDistanceRightBack(){
-	return rightSharpBack.getDistance() - 4;
-}
+// int DriveTrain::getDistanceRightBack(){
+// 	return rightSharpBack.getDistance() - 4;
+// }
 
 int DriveTrain::getDistanceBack(){
 	return  backTof.getDistance();
@@ -410,23 +432,11 @@ int DriveTrain::getDesiredWallDistance(){
 }
 
 void DriveTrain::alignWithWall(RobotFace faceToAlign) {
-	Button *right, *left;
-	double speed;
-	switch (faceToAlign) {
-	case Back:
-		right = &backRLimitS;
-		left = &backLLimitS;
-		speed = -.4;
-		break;
 
-	case Front:
-		right = &frontRLimitS;
-		left = &frontLLimitS;
-		speed = .4;
-		break;
-	}
+	double speed = -.4;
+
 	long startTime = millis();
-	while ((!right->getState() || !left->getState() )&& millis() - startTime < alignTimeOut )  {
+	while ((!backRLimitS.getState() || !backLLimitS.getState() )&& millis() - startTime < alignTimeOut )  {
 		if(millis() - lastUpdatedMovement > movementUpdateRate){
 			lastUpdatedMovement = millis();		
 			if(getPitch() > 30){
@@ -439,11 +449,11 @@ void DriveTrain::alignWithWall(RobotFace faceToAlign) {
 				turn(0);
 			}
 
-			if (!right->getState())
+			if (!backRLimitS.getState())
 				setRightMotorsVelocity(speed);
 			else
 				setRightMotorsVelocity(0);
-			if (!left->getState())
+			if (!backLLimitS.getState())
 				setLeftMotorsVelocity(speed);
 			else
 				setLeftMotorsVelocity(0);
@@ -453,21 +463,29 @@ void DriveTrain::alignWithWall(RobotFace faceToAlign) {
 }
 
 void DriveTrain::moveDesiredDistanceToWall(double velocity){
+	long startTime = millis();
 	while((getDistanceFront() < 18 &&  getDistanceFront() != getDesiredWallDistance() ) && getDistanceFront() != 0) {
+			if(millis() - startTime > moveWallTimeout)
+				break;
+
 			if(getDistanceFront() > getDesiredWallDistance()){
 				driveVelocity(velocity);
 			}else{
 				driveVelocity(-velocity);
 			}
+	}
+	turn(0);
+	startTime = millis();
+	while((getDistanceBack() < 18 &&  getDistanceBack() != getDesiredWallDistance() ) && getDistanceBack() != 0) {
+		if(millis() - startTime > moveWallTimeout)
+			break;
+		if(getDistanceBack() > getDesiredWallDistance()){
+			driveVelocity(-velocity);
+		}else{
+			driveVelocity(velocity);
 		}
-		while((getDistanceBack() < 18 &&  getDistanceBack() != getDesiredWallDistance() ) && getDistanceBack() != 0) {
-			if(getDistanceBack() > getDesiredWallDistance()){
-				driveVelocity(-velocity);
-			}else{
-				driveVelocity(velocity);
-			}
-		}
-		turn(0);
+	}
+	turn(0);
 }
 
 Color DriveTrain::getTileColor(){

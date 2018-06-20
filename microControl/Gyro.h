@@ -8,7 +8,7 @@ class Gyro{
 private:
 	Gyro();
     Gyro &operator=(const Gyro &);
-
+	void updateValues();
 	Adafruit_BNO055 bno = Adafruit_BNO055(55);
 	int yawOffSet, pitchOffSet, yaw = 0, pitch = 0;
 	uint8_t iTurnCounter = 0, iPitchCounter, lastPitch ,readRateMs = 50;

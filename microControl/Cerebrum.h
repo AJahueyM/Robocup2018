@@ -58,7 +58,7 @@ private:
  	uint8_t distanceMoveTiles = 30, rampAngle = 20,  turnCounter = 0, mazeFloor = 0, wallTolerance = 9, wallThreshold = 15;
 	long rampMovementSpeedOverTimeout = 4000 ;
 	short int  angles[4];
-	int lowBumpAngleDiff = 2, mediumAngleDiff = 4, maxAngleDiff = 8, limitTurnCounter = 6;
+	int lowBumpAngleDiff = 2, mediumAngleDiff = 4, maxAngleDiff = 8, limitTurnCounter = 6, distanceThresholdGridAlign = 5;
  	bool hasStarted = false;
 };
 #endif

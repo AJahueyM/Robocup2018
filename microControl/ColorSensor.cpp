@@ -92,7 +92,6 @@ Color ColorSensor::getColor(){
     Serial.println(silverProfile.b);
   }
   /// REMOVE THIS
-  return White;
   
   if((withinRange(redFrequency, whiteProfile.r)&& withinRange(greenFrequency, whiteProfile.g))&& withinRange(blueFrequency, whiteProfile.b)){
       if(calibrar)
