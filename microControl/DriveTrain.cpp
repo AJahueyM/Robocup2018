@@ -287,37 +287,7 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 		if(millis() - lastUpdatedMovement > movementUpdateRate){
 			lastUpdatedMovement = millis();
 		
-			int currentDistance = 0;
-			if(getDistanceFront() < 500){
-				currentDistance = getDistanceFront();
-			}else if(getDistanceBack() < 500){
-				currentDistance = getDistanceBack();
-			}else{
-				distanceRepeatedCounter = 0;
-			}
-			if( abs(lastDistance - currentDistance) < distanceThresh){
-
-				distanceRepeatedCounter++;
-			}
-			if(!moving){
-				if(lastDistance - currentDistance > distanceTreshMovingRestored)
-					moving  = true;
-			}
-			lastDistance = currentDistance;
-
-			if(distanceRepeatedCounter > distanceCounterLimit){
-				turn(0);
-				turn(-.75);
-				delay(500);
-				turn(.75);
-				delay(500);
-				turn(0);
-				distanceRepeatedCounter = 0;
-				expandedMovement = false;
-				moving = false;
-				toMove *= 1.2;
-			}	
-			
+					
 			if(!ignoreDistanceSensor){
 				if(velocity > 0 ){
 					if(getDistanceFront() < getDesiredWallDistance() && getDistanceFront() != 0){
@@ -341,33 +311,23 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 
 			if(millis() - lastEncoderReading > encoderReadRateMs){
 				//encCountR = encR.read();
-				if(moving)
-					encCountL = encL.read();
-				else {
-					encCountL = averageMovement;
-					encL.write(averageMovement);
-				}
-
+				encCountL = encL.read();
+		
 				lastEncoderReading = millis();
 				averageMovement = encCountL;
 			}
 			driveStraight(angle, velocity);
 
-			if(frontLLimitS.getState() || frontRLimitS.getState()){
-					if(frontRLimitS.getState()){
-						turnToAngle(getYaw() + angleCourseCorrection);
-					}else{
-						turnToAngle(getYaw() - angleCourseCorrection);
-					}
-					driveVelocity(-.5);
-					delay(delayCourseCorrection);
-					turnToAngle(angle);
-			}
-			if(getPitch() >  10 && !expandedMovement){
-				expandedMovement = true;
-				toMove *= 1.10;
-				if(getPitch() >  15){
-					toMove *= 1.10;
+			if(!ignoreDistanceSensor){
+				if(frontLLimitS.getState() || frontRLimitS.getState()){
+						if(frontRLimitS.getState()){
+							turnToAngle(getYaw() + angleCourseCorrection);
+						}else{
+							turnToAngle(getYaw() - angleCourseCorrection);
+						}
+						driveVelocity(-.5);
+						delay(delayCourseCorrection);
+						turnToAngle(angle);
 				}
 			}
 
