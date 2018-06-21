@@ -39,12 +39,12 @@ void DriveTrain::checkDispense() {
 			if ( mlxL.readObjectTempC() >= heatVictim * .9) {
 				turn(0);
 				blinkLeds(blinkTimesVictimDetected);
-				dispenser.dispenseDirection(Left);
+				// dispenser.dispenseDirection(Left);
 				leftKit = true;
 			}else if (mlxR.readObjectTempC() >= heatVictim * .9) {
 				turn(0);
 				blinkLeds(blinkTimesVictimDetected);
-				dispenser.dispenseDirection(Right);
+				// dispenser.dispenseDirection(Right);
 				leftKit = true;
 			}
 			lastHeatReading = millis();

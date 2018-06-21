@@ -94,34 +94,17 @@ void setup() {
   cerebrum->run();
   delay(500);
   lcd.display("DONE!!! gay:)");
+
 }
 
 void loop() {
-  // String str;
-  // str.concat(digitalRead(sLetterPin));
-  // str.concat(digitalRead(hLetterPin));
-  // str.concat(digitalRead(uLetterPin));
-  // str.concat(digitalRead(directionLetterPin));
-  // lcd.display(str);
 
- // cout << driveTrain->getTileColor() << endl;
-  //driveTrain->setRightMotorsVelocity(.25);
-  // driveTrain->blinkLeds();
-  // delay(500);
-  //driveTrain->getYaw();
-  //cout <<  << endl;
-  //driveTrain->turnToAngle(0);
+
   // LCD lcd = LCD::getInstance();
   // String str;
-  // str.concat(driveTrain->getDistanceFront());
-  // str.concat(" ");
-  // str.concat(driveTrain->getDistanceRightFront());
-  // str.concat(" ");
-  // str.concat(driveTrain->getDistanceLeftFront());
-  // str.concat(" ");
-  // str.concat(driveTrain->getDistanceBack());
-  // lcd.display(str);
-  // cout << "F: " << driveTrain->getDistanceFront() << " B: " << driveTrain->getDistanceBack() << " RF: " << driveTrain->getDistanceRightFront() << " RB: " << driveTrain->getDistanceRightBack() << " LF: " << driveTrain->getDistanceLeftFront() << " LB: "<< driveTrain->getDistanceLeftBack() << endl;
+  // str.concat(analogRead(13));
+  // str.concat("   ");
+  // str.concat(analogRead(12));
 
-  //lcd.display(driveTrain->getPitch());
+  
 }
