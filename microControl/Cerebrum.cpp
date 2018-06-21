@@ -164,7 +164,7 @@ void Cerebrum::followPath(Path& path){
 
 	for(int i = 0; i < path.getLength(); ++i){
 		Tile& tile = maze[mazeFloor]->getTileAt(currentRobotCoord);
-		driveTrain.setShouldDispense(!tile.getLeftKit());
+		//driveTrain.setShouldDispense(!tile.getLeftKit());
 
 		Coord coord = path.getCoordAt(i);
 		int deltaX = coord.getX() - maze[mazeFloor]->getRobotCoord().getX();
@@ -476,7 +476,7 @@ Tile Cerebrum::getCurrentTile(){
 	}
 	
 	if(driveTrain.leftKitLastMovement()){
-		tile.setLeftKit(true);
+		//tile.setLeftKit(true);
 		driveTrain.setLeftKit(false);
 	}
 	return tile;

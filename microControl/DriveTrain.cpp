@@ -21,8 +21,9 @@ void DriveTrain::setRightMotorsVelocity(double velocity) {
 
 void DriveTrain::setLeftMotorsVelocity(double velocity) {
 	String str;
-	str.concat(frontRLimitS.getState());
-	str.concat(frontLLimitS.getState());
+	str.concat(mlxL.readObjectTempC());
+	str.concat(" ");
+	str.concat(mlxR.readObjectTempC());
 	lcd.display(str);
 	topLeft.driveVelocity(-velocity);
 	lowLeft.driveVelocity(velocity);
