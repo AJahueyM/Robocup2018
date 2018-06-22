@@ -16,6 +16,7 @@
 #include "VisionSensor.h"
 #include "LCD.h"
 #include "Led.h"
+#include <MemoryFree.h>
 
 enum RobotFace {
 	Back,
@@ -34,10 +35,10 @@ private:
 	Button backRLimitS, backLLimitS, frontRLimitS, frontLLimitS;
 	double wheelCircunference = 7.0 * M_PI, encCountsPerRev = 3300, encCountsPerCm , heatVictim = 27, lastDisplacement = 0, cmsPitchRecord = 2;
 	double kConstantDriveGyro = 0.05, kConstantDriveDistance = 0.07, kConstantTurn = 0.055;
-	long alignTimeOut = 3000, turnTimeOut = 2000, moveWallTimeout = 3000, delayTurnCorrection = 500, delayCourseCorrection = 500, encCountsPitchRecord = 50, movementUpdateRate = 10, lastUpdatedMovement = 0, lastHeatReading = 0, lastEncoderReading = 0;
+	long alignTimeOut = 3000, turnTimeOut = 2000, moveWallTimeout = 3000, delayTurnCorrection = 500, delayCourseCorrection = 500, encCountsPitchRecord = 50, movementUpdateRate = 25, lastUpdatedMovement = 0, lastHeatReading = 0, lastEncoderReading = 0;
 	short int angleCourseCorrection = 30;
 	uint8_t heatDirection = 9;
-	uint8_t wallDistanceSidesThresh = 20, wallDesiredDistance = 6.5;
+	uint8_t wallDistanceSidesThresh = 20, wallDesiredDistance = 7;
 	uint8_t encoderReadRateMs = 50, heatReadRateMs = 100;
 	uint8_t led1Pin = 35, led2Pin = 37, blinkTimesVictimDetected = 50;
 	Led leds;

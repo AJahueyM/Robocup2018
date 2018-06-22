@@ -20,11 +20,6 @@ void DriveTrain::setRightMotorsVelocity(double velocity) {
 }
 
 void DriveTrain::setLeftMotorsVelocity(double velocity) {
-	String str;
-	str.concat(mlxL.readObjectTempC());
-	str.concat(" ");
-	str.concat(mlxR.readObjectTempC());
-	lcd.display(str);
 	topLeft.driveVelocity(-velocity);
 	lowLeft.driveVelocity(velocity);
 }
@@ -35,21 +30,21 @@ void DriveTrain::blinkLeds(uint8_t times){
 }
 
 void DriveTrain::checkDispense() {
-	if((!leftKit && shouldDispense) && (getAngleDiffPitchHistory() < 5)){
-		if(millis() - lastHeatReading > heatReadRateMs){
-			if ( mlxL.readObjectTempC() >= heatVictim * .9) {
-				turn(0);
-				blinkLeds(blinkTimesVictimDetected);
-				// dispenser.dispenseDirection(Left);
-				leftKit = true;
-			}else if (mlxR.readObjectTempC() >= heatVictim * .9) {
-				turn(0);
-				blinkLeds(blinkTimesVictimDetected);
-				// dispenser.dispenseDirection(Right);
-				leftKit = true;
-			}
-			lastHeatReading = millis();
-		}
+	// if((!leftKit && shouldDispense) && (getAngleDiffPitchHistory() < 5)){
+	// 	if(millis() - lastHeatReading > heatReadRateMs){
+	// 		if ( mlxL.readObjectTempC() >= heatVictim * .9) {
+	// 			turn(0);
+	// 			blinkLeds(blinkTimesVictimDetected);
+	// 			// dispenser.dispenseDirection(Left);
+	// 			leftKit = true;
+	// 		}else if (mlxR.readObjectTempC() >= heatVictim * .9) {
+	// 			turn(0);
+	// 			blinkLeds(blinkTimesVictimDetected);
+	// 			// dispenser.dispenseDirection(Right);
+	// 			leftKit = true;
+	// 		}
+	// 		lastHeatReading = millis();
+	// 	}
 
 		// VisionResponse visionResponse = visionSensor.getStatus();
 		// Direction dir = visionResponse.dir;
@@ -75,7 +70,7 @@ void DriveTrain::checkDispense() {
 		// 	}
 
 		// }
-	}
+	// }
 }
 
 void DriveTrain::calibrateHeatVictim(){
@@ -89,7 +84,7 @@ void DriveTrain::driveVelocity(double velocity) {
 }
 
 void DriveTrain::turn(double rotation) {
-	setRightMotorsVelocity(rotation * -1);
+	setRightMotorsVelocity(-rotation);
 	setLeftMotorsVelocity(rotation);
 }
 
@@ -149,42 +144,36 @@ void DriveTrain::setYawOffset(int value){
 }
 
 void DriveTrain::turnToAngle(int angle) {
-
-	float error =  shortestAngleTurn(getYaw(), angle); //angle - getYaw();// shortestAngleTurn(getYaw(), angle);
+	int error =  shortestAngleTurn(getYaw(), angle); //angle - getYaw();// shortestAngleTurn(getYaw(), angle);
 
 	for(int i = 0; i < 5; ++i){
-
 		long startTime = millis();
 		bool leftKitReset = false;
 		while(millis() - startTime < turnTimeOut && abs(error) > 1) {
 			if(millis() - lastUpdatedMovement > movementUpdateRate){
+				lcd.display(freeMemory());
 				lastUpdatedMovement = millis();
 				checkDispense();
 
-				if(leftKit && !leftKitReset){
+				if(leftKit && !leftKitReset){ 
 					startTime = millis();
 					leftKitReset = true;
 				}
 				error = shortestAngleTurn(getYaw(), angle); // angle - getYaw();// shortestAngleTurn(getYaw(), angle);
 				double output = error * kConstantTurn;
 
-				output = output > 1 ? 1 : output;
-				output = output < -1 ? -1 : output;
-				output = output < 0.3 && output >  0 ?  0.3 : output;
-				output = output < 0 && output >  -0.3 ?  -0.3 : output;
+				if(output > -.3 && output < 0)
+					output = -.3;
+
+				if(output < .3 && output > 0)
+					output = .3;
+
 				turn(output);
 			}
+			delay(10);
 		}
 		turn(0);
-		if(abs(error) > 10.0){
-			if(error < 0.0){
-				turn(0.75);
-			}else if(error > 0.0){
-				turn(-0.75);
-			}
-			delay(delayTurnCorrection);
-			turn(0);
-		}else{
+		if(abs(error) < 10){
 			break;
 		}
 	}
@@ -291,13 +280,13 @@ void DriveTrain::driveDisplacement(double displacement, int angle, double veloci
 					
 			if(!ignoreDistanceSensor){
 				if(velocity > 0 ){
-					if(getDistanceFront() < getDesiredWallDistance() && getDistanceFront() != 0){
+					if(getDistanceFront() <= getDesiredWallDistance() && getDistanceFront() != 0){
 						lastDisplacementCompleted = true;
 						turn(0);
 						return;
 					}
 				}else{
-					if(getDistanceBack() < getDesiredWallDistance() &&  getDistanceBack() != 0){
+					if(getDistanceBack() <= getDesiredWallDistance() &&  getDistanceBack() != 0){
 						lastDisplacementCompleted = true;
 						turn(0);
 						return;

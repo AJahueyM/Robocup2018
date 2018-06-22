@@ -11,7 +11,7 @@ private:
 	void updateValues();
 	Adafruit_BNO055 bno = Adafruit_BNO055(55);
 	int yawOffSet, pitchOffSet, yaw = 0, pitch = 0;
-	uint8_t iTurnCounter = 0, iPitchCounter, lastPitch ,readRateMs = 50;
+	uint8_t iTurnCounter = 0, iPitchCounter, lastPitch ,readRateMs = 100;
 	long lastReadTime = 0;
 
 //Abiel w/h

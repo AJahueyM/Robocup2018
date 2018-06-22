@@ -19,6 +19,12 @@ Motor::Motor(uint8_t port){
 }
 
 void Motor::driveVelocity(double velocity){
+	if(velocity > 1)
+		velocity = 1.0;
+
+	if(velocity < -1)
+		velocity = -1;
+
 	double output = mapD(fabs(velocity), 0.0,1.0,0.0,255.0);
 
 	myMotor->setSpeed(output);

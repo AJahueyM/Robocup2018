@@ -48,26 +48,31 @@ void Cerebrum::run(){
 
 	Tile blackEndTile = maze[mazeFloor]->getTileAt(currentRobotCoord);
 	int angleUsed = 0;
-	if(blackEndTile.wallExists(Up)){
-		angleUsed = 180;
-		driveTrain.turnToAngle(angleUsed);
-	}else if(blackEndTile.wallExists(Right)){
+
+	if(returnTo.getX() == maze[mazeFloor]->getWidth() - 1){
 		angleUsed = -90;
 		driveTrain.turnToAngle(angleUsed);
-
-	}else if(blackEndTile.wallExists(Down)){
-		driveTrain.turnToAngle(angleUsed);
-	}else if(blackEndTile.wallExists(Left)){
+	}else if(returnTo.getX() == 0){
 		angleUsed = 90;
 		driveTrain.turnToAngle(angleUsed);
+	}else if(returnTo.getY() == maze[mazeFloor]->getHeight() - 1){
+		angleUsed = 180;
+		driveTrain.turnToAngle(angleUsed);
+	}else if(returnTo.getY() == 0) {
+		driveTrain.turnToAngle(angleUsed);
+
 	}
 	/// WAIT UNTIL SIGNAL IS RECEIVED
-
+	while(!Serial2.available()){
+		lcd.display("Waiting for partner...");
+		delay(100);
+	}
 	driveTrain.driveDisplacement(distanceMoveTiles / 2, angleUsed, -.4, true);
 	driveTrain.driveDisplacement(distanceMoveTiles / 2 , angleUsed, .4, true);
 	delay(1000);
-	driveTrain.driveDisplacement(distanceMoveTiles *  2, angleUsed, -.4, true);
-	
+	driveTrain.driveStraight(angleUsed, -.5);
+	delay(2500);
+	driveTrain.turn(0);
 	bool wallFront, silverTileReachedPassed, silverReached;
 
 	while(!wallFront && !silverTileReachedPassed){
@@ -250,13 +255,17 @@ void Cerebrum::turnRobot(Direction dir){
 	switch(dir){
 		case Right:
 			turnCounter++;
+			delay(10);
 			driveTrain.turnToAngle(angles[1]);
+			delay(10);
 			shiftAngle(Right);
 		break;
 
 		case Left:
 			turnCounter++;
+			delay(10);
 			driveTrain.turnToAngle(angles[3]);
+			delay(10);
 			shiftAngle(Left);
 		break;
 		default:
@@ -284,7 +293,7 @@ void Cerebrum::shiftAngle(Direction dir){
 	int fourth = angles[3];
 	
 	switch(dir){
-		case Right:
+		case Right:{
 			angles[0] = second;
 			angles[1] = third;
 			angles[2] = fourth;
@@ -298,9 +307,9 @@ void Cerebrum::shiftAngle(Direction dir){
 			}else if(currentRobotDirection == Down){
 				currentRobotDirection = Left;
 			}
-		break;
+		}break;
 
-		case Left:
+		case Left:{
 			angles[0] = fourth;
 			angles[1] = first;
 			angles[2] = second;
@@ -314,7 +323,10 @@ void Cerebrum::shiftAngle(Direction dir){
 			}else if(currentRobotDirection == Down){
 				currentRobotDirection = Right;
 			}
-		break;
+		}break;
+
+		default:{
+		}break;
 	};	
 }
 

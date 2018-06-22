@@ -10,7 +10,7 @@ void setup() {
   LCD lcd = LCD::getInstance();
 
   lcd.display(String("Booting up..."));
-  Serial.begin(9600);
+  Serial2.begin(115200);
   driveTrain = &DriveTrain::getInstance();
   cerebrum = &Cerebrum::getInstance(*driveTrain);
 	lcd.display(String("Robot booted up"));
@@ -98,8 +98,16 @@ void setup() {
 }
 
 void loop() {
+  // LCD lcd = LCD::getInstance();
 
+  //   if(Serial2.available()){
+  //       delay(200);
+  //     lcd.display("HI");
+  //     delay(2500);
+  //   }else{
+  //     lcd.display(":C");
 
+  //   }
   // LCD lcd = LCD::getInstance();
   // String str;
   // str.concat(analogRead(13));
