@@ -24,6 +24,7 @@ public:
     Node* getNeighbors(uint8_t index);
     uint8_t getCurrentNeighbors();
     virtual uint8_t getCost() = 0;
+    void clearNeighbors();
 
     void clear();
 

@@ -4,7 +4,7 @@ Path::Path(){
 
 }
 
-Path::Path(vector<Coord> path){
+Path::Path(Absis<Coord> path){
     this->path = path;
 }
 
@@ -34,12 +34,12 @@ bool Path::getValid(){
     return valid;
 }
 
-vector<Coord> Path::getPath(){
+Absis<Coord> Path::getPath(){
     return path;
 }
 
 void Path::print(){
-    for(Coord coord : path){
-        cout << endl <<"x: " << (int) coord.getX() << "\ty: " << (int) coord.getY() << endl;
+    for(int i = 0; i < path.size(); ++i){
+        Coord coord = path[i];
     }
 }

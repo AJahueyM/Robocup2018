@@ -9,73 +9,36 @@ Gyro::Gyro(){
 	//bno.setExtCrystalUse(true);
 	delay(1000);
 	double startTime = millis();
-  	yawOffSet = getYaw();
-	pitchOffSet = 0;
+	resetAll();
 	Serial.println("BNO Initialized");
 }
-
-
-int Gyro::getYaw(){
-
+void Gyro::updateValues(){
 	if(millis() - lastReadTime > readRateMs){
+		lastReadTime = millis();
 		imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
-		int i = euler.x();
-		bool debug = false;
-		if(debug){
-			Serial.print("Before= ");
-			Serial.print(i);
-		}
+		int rawX = euler.x();
 
-		yaw = i - yawOffSet; ///TODO= REVISAR ESTO, Primero fue 40, luego fue 160, no se que esta pasando
+		yaw = rawX - yawOffSet;
 		if(yaw > 180)
 			yaw -= 360;
 
 		if(yaw < -180)
 			yaw+=360;
 
-		if(debug){
-			Serial.print("\t After= ");
-			Serial.print(yaw);
+		int pitchNew = abs(euler.y() + pitchOffSet);
+		
+		pitch = pitchNew;
+	}	
+}
 
-			Serial.print("\t Offset");
-			Serial.println(yawOffSet);
-		}
-		lastReadTime = millis();
-  	}
 
- //  	int finalAngle = baseAngle;
- // 	int vueltas  = baseAngle / 180;
-
- //  	if(baseAngle > 180){
- //      if(vueltas % 2 == 0){
- //        finalAngle = (abs(baseAngle) % 180);
- //      }else{
- //        finalAngle = -180 + (abs(baseAngle) % 180);
- //      }
- //  	}else if(baseAngle < -180){
- //    	if(vueltas % 2 == 0){
-	//       	finalAngle = -1*(abs(baseAngle) % 180);  
-	//     }else{
-	//       finalAngle = 180 - (abs(baseAngle)%180);
-	//     }
-	// }
+int Gyro::getYaw(){
+  	updateValues();
 	return yaw;
 }
 
 int Gyro::getPitch(){
-	if(millis() - lastReadTime > readRateMs){
-
-		imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
-		int pitchNew = abs(euler.y() - pitchOffSet);
-		if(pitchNew > 180)
-				pitchNew -= 360;
-
-		if(pitchNew < -180)
-			pitchNew+=360;
-
-		pitch = abs(pitchNew);
-		lastReadTime = millis();
-	}
+	updateValues();
 	return pitch;
 
 }
@@ -89,11 +52,12 @@ void Gyro::resetYaw(){
 
 void Gyro::resetPitch(){
 	imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
-  	pitchOffSet = abs(euler.y());	
+  	pitchOffSet = -euler.y();	
 }
 
 void Gyro::resetAll(){
 	resetYaw();
+	delay(readRateMs * 2);
 	resetPitch();
 }
 void Gyro::setYawOffset(int value){

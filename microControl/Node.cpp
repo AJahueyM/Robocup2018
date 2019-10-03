@@ -60,6 +60,12 @@ Node* Node::getNeighbors(uint8_t index){
 uint8_t Node::getCurrentNeighbors(){
     return currentNeighbors;
 }
+void Node::clearNeighbors(){
+    for(int i = 0; i < currentNeighbors; ++i)
+        neighbors[i] = nullptr;
+        
+    currentNeighbors = 0;
+}
 
 void Node::clear(){
     setF(0);

@@ -32,7 +32,7 @@ public:
 private:
 	Cerebrum(DriveTrain& driveTrain);
     Cerebrum &operator=(const Cerebrum &);
-	Path getPathLowerCost(Coord start, vector<Coord> targets, Map* map);
+	Path getPathLowerCost(Coord start, Absis<Coord> targets, Map* map);
 	bool roundCompleted(Absis<Map*> maps);
 	NavigationResult navigateLevel(Map* mapCurrent, Coord startCoord);
 	void followPath(Path& path);
@@ -47,7 +47,6 @@ private:
 
 	void updateTelemetry();
 	void showVisitedTilesLCD();
-	vector<Coord> getCandidates();
     DriveTrain& driveTrain;
     Direction currentRobotDirection = Up;
    	Direction robotRight, robotLeft, robotUp, robotDown;
@@ -55,10 +54,11 @@ private:
     Absis<Map*> maze;
     LCD& lcd;
 	Button *button1, *button2;
-    double movementSpeed = .75, preciseMovementSpeed = .35, rampMovementSpeed = .4;
- 	uint8_t distanceMoveTiles = 30, turnCounter = 0, mazeFloor = 0, wallTolerance = 9, wallThreshold = 15;
+    double movementSpeed = .75, preciseMovementSpeed = .35, rampMovementSpeed = .4, rampMovementSpeedOverride = .75;
+ 	uint8_t distanceMoveTiles = 30, rampAngle = 20,  turnCounter = 0, mazeFloor = 0, wallTolerance = 9, wallThreshold = 15;
+	long rampMovementSpeedOverTimeout = 4000 ;
 	short int  angles[4];
-	int lowBumpAngleDiff = 2, mediumAngleDiff = 4, maxAngleDiff = 8, limitTurnCounter = 6;
+	int lowBumpAngleDiff = 2, mediumAngleDiff = 4, maxAngleDiff = 8, limitTurnCounter = 6, distanceThresholdGridAlign = 5;
  	bool hasStarted = false;
 };
 #endif

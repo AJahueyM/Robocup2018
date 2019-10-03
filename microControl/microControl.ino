@@ -1,12 +1,10 @@
 #include "Cerebrum.h"
 #include <MemoryFree.h>
 #include <ArduinoSTL.h>
-#include "TOF.h"
 
 DriveTrain* driveTrain;
 Cerebrum* cerebrum;
 using namespace std;
-    uint8_t sLetterPin = 10, hLetterPin = 11, uLetterPin = 12, directionLetterPin = 13;
 
 void setup() {
   LCD lcd = LCD::getInstance();
@@ -16,11 +14,7 @@ void setup() {
   driveTrain = &DriveTrain::getInstance();
   cerebrum = &Cerebrum::getInstance(*driveTrain);
 	lcd.display(String("Robot booted up"));
-  pinMode(sLetterPin, INPUT);
-  pinMode(hLetterPin, INPUT);
-  pinMode(uLetterPin, INPUT);
-  pinMode(directionLetterPin, INPUT);
-
+  
   Button colorCalButton(30);
 
   if(colorCalButton.getState()){
@@ -41,9 +35,21 @@ void setup() {
 
     while(!colorCalButton.getState()){
       delay(10);
+      lcd.display(colorSensor.getColor());
+    }
+    delay(200);
+
+    while(!colorCalButton.getState()){
+      delay(10);
       lcd.display("PLACE ON BLACK AND PRESS");
     }
     colorSensor.calibrateBlack();
+      delay(200);
+
+    while(!colorCalButton.getState()){
+      delay(10);
+      lcd.display(colorSensor.getColor());
+    }
     delay(200);
 
     while(!colorCalButton.getState()){
@@ -55,8 +61,22 @@ void setup() {
 
     while(!colorCalButton.getState()){
       delay(10);
-      lcd.display("PLACE ON SILVER AND PRESS");
+      lcd.display(colorSensor.getColor());
     }
+    delay(200);
+
+    colorSensor.saveProfiles();
+
+
+    delay(200);
+
+    while(!colorCalButton.getState()){
+      delay(10);
+      lcd.display("PLACE ON VICTIM");
+    }
+    driveTrain->calibrateHeatVictim();
+    delay(200);
+
   }
 
   delay(200);
@@ -65,15 +85,8 @@ void setup() {
     lcd.display("PLACE ON STARTING POS");
   }
 
+
   driveTrain->blinkLeds(10);
-
-  
-  // driveTrain->driveDisplacement(30,0, .5);
-  // driveTrain->turnToAngle(-90);
-  // driveTrain->driveDisplacement(30,-90, .5);
-
-  // TOF tof(TOF::validPin[0]);
-  // tof.getDistance();
 
   cerebrum->start();
 
@@ -98,6 +111,7 @@ void loop() {
   //driveTrain->getYaw();
   //cout <<  << endl;
   //driveTrain->turnToAngle(0);
+  // LCD lcd = LCD::getInstance();
   // String str;
   // str.concat(driveTrain->getDistanceFront());
   // str.concat(" ");

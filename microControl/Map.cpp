@@ -148,15 +148,15 @@ int Map::getNonVisitedTiles(){
 	return counter;
 }
 
-vector<Coord> Map::getCandidates(){
-	vector <Coord> vec;
+Absis<Coord> Map::getCandidates(){
+	Absis <Coord> vec;
 	Absis<Absis<Tile>> &maze = getTileMap();
 	for (int y = 0; y < maze.size(); ++y) {
 		for (int x = 0; x < maze[0].size(); ++x) {
-			if (maze[y][x].wasVisited()) {
+			if (maze[y][x].wasVisited() && maze[y][x].getColor() != Black) {
 
 				//cout << "LA TILE VISITADA ES (" << x << "," << y << ")" << endl;
-				vector <Tile*> neighbors;
+				Absis <Tile*> neighbors;
 				for(int i = 0; i < maze[y][x].getCurrentNeighbors(); ++i){
 					neighbors.push_back(maze[y][x].getNeighbors(i));
 				}
@@ -242,15 +242,22 @@ void Map::updateNeighbors(){
 	for(int y = 0; y < tileMap.size(); ++y){
 		for(int x = 0; x < tileMap[0].size(); ++x){
 			Tile& node = tileMap[y][x];
-			if(node.wasVisited()){
+			if(node.wasVisited() && node.getColor() != Black){
+				node.clearNeighbors();
 				if(y - 1 >= 0 && !node.wallExists(Down))
-					node.addNeighbor(&tileMap[y-1][x]);
+					if(tileMap[y-1][x].getColor() != Black)
+						node.addNeighbor(&tileMap[y-1][x]);
+					
 				if(y + 1 < tileMap.size() && !node.wallExists(Up))
-					node.addNeighbor(&tileMap[y+1][x]);
+					if(tileMap[y+1][x].getColor() != Black)
+						node.addNeighbor(&tileMap[y+1][x]);
+
 				if(x + 1 < tileMap[0].size() && !node.wallExists(Right))
-					node.addNeighbor(&tileMap[y][x+1]);
+					if(tileMap[y][x + 1].getColor() != Black)
+						node.addNeighbor(&tileMap[y][x+1]);
 				if(x - 1 >= 0 && !node.wallExists(Left))
-					node.addNeighbor(&tileMap[y][x-1]);
+					if(tileMap[y][x - 1].getColor() != Black)
+						node.addNeighbor(&tileMap[y][x-1]);
 			}
 		}
 	}
@@ -290,8 +297,8 @@ Ramp* Map::getRampAt(Coord coord){
 	return nullptr;
 }
 
-vector<Coord> Map::getRampsCoords(){
-	vector<Coord> coords;
+Absis<Coord> Map::getRampsCoords(){
+	Absis<Coord> coords;
 	for(int i = 0; i < ramps.size(); ++i){
 		coords.push_back(ramps[i].getOrigin());
 	}
