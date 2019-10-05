@@ -1,7 +1,7 @@
 #include "AStar.h"
 
 int AStar::heuristic(Coord start, Coord end){
-    return abs(start.getX() - start.getX()) + abs(end.getY() - end.getY());
+    return abs(end.getX() - start.getX()) + abs(end.getY() - start.getY());
 }
 
 Path AStar::getPath(Coord startCoord, Coord endCoord, Absis<Absis<Tile>>& maze){
